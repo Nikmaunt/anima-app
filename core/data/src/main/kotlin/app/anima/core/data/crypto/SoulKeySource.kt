@@ -37,7 +37,11 @@ class KeystoreSoulKeySource @Inject constructor(
         val atomic = AtomicFile(file)
         if (file.exists()) {
             val blob = atomic.readFully()
-            if (blob.size > IV_LENGTH) return unwrap(blob)
+            // A corrupt wrapped key must fail loudly. Silently regenerating
+            // here would overwrite the only key to an existing soul.db —
+            // irreversible data destruction disguised as recovery.
+            check(blob.size > IV_LENGTH) { "soul.key is corrupted (${blob.size} bytes)" }
+            return unwrap(blob)
         }
         val fresh = ByteArray(PASSPHRASE_BYTES).also { SecureRandom().nextBytes(it) }
         val wrapped = wrap(fresh)

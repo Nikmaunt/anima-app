@@ -38,6 +38,7 @@ class NetworkIsolationTest {
             // scheduler components must stay stripped.
             assertThat(text).doesNotContain("JobInfoSchedulerService")
             assertThat(text).doesNotContain("AlarmManagerSchedulerBroadcastReceiver")
+            assertThat(text).doesNotContain("TransportBackendDiscovery")
         }
     }
 
