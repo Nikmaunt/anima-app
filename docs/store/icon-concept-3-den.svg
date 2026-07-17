@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Concept 3 "The Den" — a glowing squircle aperture in a dark field,
+       creature curled inside, one eye open, tail breaking the frame:
+       "lives inside the device", literally. -->
+  <rect width="512" height="512" fill="#201714"/>
+  <!-- den aperture (squircle-ish) -->
+  <path d="M 116 256 C 116 150 150 116 256 116 C 362 116 396 150 396 256
+           C 396 362 362 396 256 396 C 150 396 116 362 116 256 Z"
+        fill="url(#denGlow)"/>
+  <!-- curled creature: body arc -->
+  <path d="M 180 300 C 172 240 210 196 262 196 C 316 196 344 238 338 288
+           C 334 326 302 348 262 348 C 224 348 190 332 180 300 Z"
+        fill="#F4E3C8"/>
+  <!-- tail wraps and breaks the aperture edge -->
+  <path d="M 200 330 C 160 360 140 400 150 448 C 122 430 104 396 110 356
+           C 114 330 138 314 166 310 Z" fill="#F4E3C8"/>
+  <!-- closed eye + open eye -->
+  <path d="M 232 262 C 240 256 250 256 258 262" stroke="#4A3628" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <circle cx="298" cy="260" r="11" fill="#4A3628"/>
+  <circle cx="301" cy="257" r="3.5" fill="#FFF3DD"/>
+  <!-- ember floor glow -->
+  <ellipse cx="256" cy="360" rx="96" ry="18" fill="#F2775E" opacity="0.35"/>
+  <defs>
+    <linearGradient id="denGlow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3B2440"/>
+      <stop offset="0.7" stop-color="#5A2E3C"/>
+      <stop offset="1" stop-color="#B25B3F"/>
+    </linearGradient>
+  </defs>
+</svg>

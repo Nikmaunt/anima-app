@@ -1,6 +1,7 @@
 package app.anima.core.mind
 
 import app.anima.core.model.FactCategory
+import app.anima.core.model.FactJson
 import app.anima.core.model.MindEvent
 import app.anima.core.model.MindPrompt
 import com.google.common.truth.Truth.assertThat

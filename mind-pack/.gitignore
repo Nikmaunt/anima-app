@@ -1,0 +1,4 @@
+# Licensed model weights never enter git (ADR-010) — the AAB gets them
+# from the owner's licensed download at bundle-build time.
+src/main/assets/*.task
+src/main/assets/*.litertlm

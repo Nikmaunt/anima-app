@@ -1,11 +1,12 @@
 package app.anima.core.mind
 
 import app.anima.core.model.FactCandidate
-import app.anima.core.model.FactCategory
+import app.anima.core.model.FactJson
 import app.anima.core.model.MindEngine
 import app.anima.core.model.MindEvent
 import app.anima.core.model.MindFailure
 import app.anima.core.model.MindPrompt
+import app.anima.core.model.MindPrompts
 import app.anima.core.model.MindStatus
 import com.google.mlkit.genai.common.FeatureStatus
 import com.google.mlkit.genai.common.GenAiException
@@ -16,10 +17,6 @@ import com.google.mlkit.genai.prompt.generateContentRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -105,37 +102,3 @@ class NanoMindEngine
             const val BATTERY_QUOTA = 27
         }
     }
-
-/** Tolerant JSON-array parse; extraction is suggestions-only by design. */
-internal object FactJson {
-    private val json =
-        Json {
-            ignoreUnknownKeys = true
-            isLenient = true
-        }
-    const val MAX_FACT_CHARS = 300
-    const val MAX_CANDIDATES = 5
-
-    fun parseCandidates(raw: String): List<FactCandidate> {
-        val start = raw.indexOf('[')
-        val end = raw.lastIndexOf(']')
-        if (start < 0 || end <= start) return emptyList()
-        return runCatching {
-            json
-                .parseToJsonElement(raw.substring(start, end + 1))
-                .jsonArray
-                .mapNotNull { element ->
-                    val obj = element.jsonObject
-                    val text =
-                        obj["text"]
-                            ?.jsonPrimitive
-                            ?.content
-                            ?.trim()
-                            .orEmpty()
-                    if (text.isEmpty() || text.length > MAX_FACT_CHARS) return@mapNotNull null
-                    val category = obj["category"]?.jsonPrimitive?.content.orEmpty()
-                    FactCandidate(FactCategory.fromWire(category.lowercase()), text)
-                }.take(MAX_CANDIDATES)
-        }.getOrDefault(emptyList())
-    }
-}

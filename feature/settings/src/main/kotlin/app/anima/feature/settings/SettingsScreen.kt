@@ -31,9 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.anima.core.cloudmind.CloudMindConfigStore
 import app.anima.core.creature.ConceptGallery
 import app.anima.core.data.prefs.AnimaPrefs
 import app.anima.core.data.repo.IdentityRepository
+import app.anima.core.model.CloudMindConfig
 import app.anima.core.model.CreatureConcept
 import app.anima.core.model.Personality
 import app.anima.core.ui.components.GhostButton
@@ -56,6 +58,10 @@ data class SettingsUiState(
     val calmMotion: Boolean = false,
     val personality: Personality = Personality.Default,
     val personalityCustomised: Boolean = false,
+    /** ADR-011: always visible — the user must never wonder which mind speaks. */
+    val cloud: CloudMindConfig = CloudMindConfig.Disabled,
+    /** FLAG_SECURE toggle for the Soul screen (threat-model: shoulder surfing). */
+    val soulScreenshotsAllowed: Boolean = false,
 )
 
 @HiltViewModel
@@ -64,6 +70,7 @@ class SettingsViewModel
     constructor(
         private val identity: IdentityRepository,
         private val prefs: AnimaPrefs,
+        private val cloudStore: CloudMindConfigStore,
     ) : ViewModel() {
         private val seed = MutableStateFlow(0L)
 
@@ -71,10 +78,11 @@ class SettingsViewModel
             combine(
                 identity.observeName(),
                 identity.observeConcept(),
-                prefs.calmMotion(),
+                combine(prefs.calmMotion(), cloudStore.config, prefs.soulScreenshotsAllowed(), ::Triple),
                 prefs.personality(),
                 seed,
-            ) { name, concept, calm, personality, s ->
+            ) { name, concept, calmCloudShots, personality, s ->
+                val (calm, cloud, shots) = calmCloudShots
                 val effectiveConcept = concept ?: CreatureConcept.SPIRIT_ORB
                 SettingsUiState(
                     name = name.orEmpty(),
@@ -83,6 +91,8 @@ class SettingsViewModel
                     calmMotion = calm,
                     personality = personality ?: Personality.presetFor(effectiveConcept),
                     personalityCustomised = personality != null,
+                    cloud = cloud,
+                    soulScreenshotsAllowed = shots,
                 )
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
 
@@ -111,6 +121,15 @@ class SettingsViewModel
         fun resetPersonality() {
             viewModelScope.launch { prefs.clearPersonality() }
         }
+
+        /** The always-visible mind switch (ADR-011); setup lives on Mind. */
+        fun setCloudEnabled(value: Boolean) {
+            viewModelScope.launch { cloudStore.setEnabled(value) }
+        }
+
+        fun setSoulScreenshotsAllowed(value: Boolean) {
+            viewModelScope.launch { prefs.setSoulScreenshotsAllowed(value) }
+        }
     }
 
 @Composable
@@ -118,6 +137,8 @@ fun SettingsScreen(
     onBack: () -> Unit,
     onOpenNotifications: () -> Unit,
     onOpenMind: () -> Unit,
+    onOpenTrust: () -> Unit = {},
+    onOpenCrashLog: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -232,15 +253,62 @@ fun SettingsScreen(
 
             SectionCard {
                 SectionLabel("Mind")
-                Text(
-                    "Which mind speaks on this phone, and the one-time mind-file " +
-                        "download for phones without a built-in one.",
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            if (state.cloud.enabled) "Mind: cloud" else "Mind: local",
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                        Text(
+                            when {
+                                state.cloud.enabled && state.cloud.usable ->
+                                    "Messages go to your provider. Flip off to keep everything on this phone."
+                                state.cloud.enabled ->
+                                    "Cloud is on but not set up — the local mind keeps speaking."
+                                else -> "Everything stays on this phone."
+                            },
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                    Switch(
+                        checked = state.cloud.enabled,
+                        onCheckedChange = viewModel::setCloudEnabled,
+                        colors =
+                            SwitchDefaults.colors(
+                                checkedTrackColor = colors.accent,
+                                checkedThumbColor = colors.background,
+                            ),
+                    )
+                }
                 GhostButton("Mind…", onClick = onOpenMind)
             }
 
-            PrivacyCard()
+            PrivacyCard(cloudEnabled = state.cloud.enabled)
+
+            SectionCard {
+                SectionLabel("More")
+                GhostButton("Why no internet…", onClick = onOpenTrust)
+                GhostButton("Last crash (local only)…", onClick = onOpenCrashLog)
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Soul screen screenshots", style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            "Off = the memories screen refuses screenshots and " +
+                                "hides itself in the app switcher.",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                    Switch(
+                        checked = state.soulScreenshotsAllowed,
+                        onCheckedChange = viewModel::setSoulScreenshotsAllowed,
+                        colors =
+                            SwitchDefaults.colors(
+                                checkedTrackColor = colors.accent,
+                                checkedThumbColor = colors.background,
+                            ),
+                    )
+                }
+            }
         }
     }
 }
@@ -268,17 +336,27 @@ private fun PersonalitySlider(
 }
 
 @Composable
-private fun PrivacyCard() {
+private fun PrivacyCard(cloudEnabled: Boolean) {
     SectionCard {
         SectionLabel("Privacy, honestly")
         Text(
-            "The network is used for exactly one thing: fetching the mind " +
-                "file when you ask for it, on the Mind screen. Nothing else " +
-                "ever goes online — no accounts, no analytics, no crash " +
-                "reporting; a build-time test fails if any other part of the " +
-                "app touches the network. Memory lives in an encrypted " +
-                "database; its key never leaves this phone's secure hardware. " +
-                "Thinking happens on this device or not at all.",
+            if (cloudEnabled) {
+                "Right now the CLOUD mind is on: your messages, the creature's " +
+                    "body report and the memory facts needed for an answer go " +
+                    "to the provider you configured. Everything else — the " +
+                    "soul database, the notification diary — stays on this " +
+                    "phone, encrypted. Flip the mind switch above and Anima " +
+                    "is fully offline again."
+            } else {
+                "The network is used for exactly two things, both under your " +
+                    "control: delivering the mind file (Google Play or a " +
+                    "download you start) and the optional cloud mind — which " +
+                    "is OFF. No accounts, no analytics, no crash reporting; " +
+                    "a build-time test fails if any other part of the app " +
+                    "touches the network. Memory lives in an encrypted " +
+                    "database; its key never leaves this phone's secure " +
+                    "hardware. Thinking happens on this device or not at all."
+            },
             style = MaterialTheme.typography.bodyMedium,
         )
     }

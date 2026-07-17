@@ -57,6 +57,19 @@ fun SoulScreen(
     val context = LocalContext.current
     val clipboard = LocalClipboardManager.current
 
+    // Threat-model.md: the memory list is the most shoulder-surfable and
+    // screenshot-leakable surface. FLAG_SECURE while this screen shows,
+    // unless the user flipped the Settings toggle. Cleared on leave.
+    val screenshotsAllowed by viewModel.screenshotsAllowed.collectAsState()
+    val activity = androidx.activity.compose.LocalActivity.current
+    androidx.compose.runtime.DisposableEffect(screenshotsAllowed, activity) {
+        val window = activity?.window
+        if (!screenshotsAllowed) {
+            window?.addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
+        }
+        onDispose { window?.clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE) }
+    }
+
     var backupPassphrase by remember { mutableStateOf("") }
     val exportLauncher =
         rememberLauncherForActivityResult(
@@ -145,9 +158,18 @@ fun SoulScreen(
             }
             if (state.facts.isEmpty()) {
                 item {
-                    Text(
-                        "Nothing yet. Talk to it — and confirm what it may keep.",
-                        style = MaterialTheme.typography.bodyMedium,
+                    // v0.3: empty states keep the creature in the room.
+                    app.anima.core.creature.CreatureEmptyState(
+                        concept = state.concept,
+                        seed = state.seed,
+                        line =
+                            if (state.query.isBlank() && state.categoryFilter == null) {
+                                "\"My memory is an open field so far. Tell me things — " +
+                                    "and tap yes on what I may keep.\""
+                            } else {
+                                "\"Nothing in my memory matches that. Try another word?\""
+                            },
+                        night = colors.isNight,
                     )
                 }
             }

@@ -38,7 +38,11 @@ class SpiritOrbRenderer : CreatureRenderer {
         // Metaball satellites: three droplets orbiting on chain lag.
         val satellites = 3
         for (i in 0 until satellites) {
-            val chainIdx = (i * 2).coerceAtMost(pose.secondaryCount - 1)
+            // secondaryCount is 0 in reduced-motion statics (the widget
+            // snapshot) — clamp to a valid slot; the arrays are zero-filled,
+            // so the satellites simply ride their pure orbits. Found by the
+            // v0.3 GMD suite (index -1 crash on the snapshot path).
+            val chainIdx = (i * 2).coerceIn(0, pose.secondaryCount.coerceAtLeast(1) - 1)
             val phase = ctx.timeSeconds * (0.25f + i * 0.09f) + i * 2.1f
             val orbit = r * (1.45f + 0.18f * sin(phase * 0.7f))
             val sx = c.x + cos(phase) * orbit + pose.secondaryX[chainIdx] * r * 2f

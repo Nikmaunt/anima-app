@@ -93,6 +93,19 @@ enum class JournalKind(
 
     /** v0.2: battery reached 100% while we were together. */
     FULLY_FED("fully_fed"),
+
+    /**
+     * v0.3: battery level snapshot (detail = percent), recorded only while
+     * the app is open (no background sampling — the entity budget stands).
+     * Feeds the diary charge chart.
+     */
+    BODY_SAMPLE("body_sample"),
+
+    /** v0.3: hatch anniversary — a Story-timeline moment. */
+    BIRTHDAY("birthday"),
+
+    /** v0.3: the creature told a dream after being woken at night. */
+    DREAM_TOLD("dream_told"),
     ;
 
     companion object {

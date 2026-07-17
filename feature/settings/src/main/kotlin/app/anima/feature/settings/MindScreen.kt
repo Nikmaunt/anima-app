@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -25,14 +26,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import app.anima.core.model.CloudMindConfig
 import app.anima.core.model.MindStatus
 import app.anima.core.model.MindTier
+import app.anima.core.modeldelivery.PackPhase
 import app.anima.core.ui.components.GhostButton
 import app.anima.core.ui.components.SectionCard
 import app.anima.core.ui.components.SectionLabel
@@ -79,8 +85,18 @@ fun MindScreen(
                 SectionLabel("Right now")
                 Text(
                     when (state.tier) {
+                        MindTier.CLOUD ->
+                            "Thinking with YOUR cloud provider (${state.cloud.host()}). " +
+                                "In this mode messages and the facts needed for an answer " +
+                                "leave this phone."
                         MindTier.NANO -> "Thinking with this phone's built-in mind (Gemini Nano)."
-                        MindTier.GEMMA -> "Thinking with the downloaded mind (Gemma, fully on this phone)."
+                        MindTier.GEMMA ->
+                            if (state.model?.fromPack == true) {
+                                "Thinking with the bundled mind (Gemma, delivered with the " +
+                                    "app, fully on this phone)."
+                            } else {
+                                "Thinking with the downloaded mind (Gemma, fully on this phone)."
+                            }
                         MindTier.NONE ->
                             "The mind sleeps. This phone has no built-in mind for apps, " +
                                 "and no mind file is installed yet. Everything else about " +
@@ -96,6 +112,8 @@ fun MindScreen(
                 }
             }
 
+            PackCard(state, onFetch = viewModel::requestPackFetch, onForceGemma = viewModel::setForceGemma)
+
             SectionCard {
                 SectionLabel("Mind file")
                 val model = state.model
@@ -110,7 +128,16 @@ fun MindScreen(
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     Spacer(Modifier.height(6.dp))
-                    GhostButton("Delete the mind file", onClick = viewModel::deleteModel)
+                    if (model.fromPack) {
+                        Text(
+                            "Delivered with the app by Google Play (Gemma — see the " +
+                                "bundled license notice). It updates with the app and " +
+                                "cannot be deleted separately.",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    } else {
+                        GhostButton("Delete the mind file", onClick = viewModel::deleteModel)
+                    }
                 } else {
                     Text(
                         "No mind file installed. Gemma 3 1B (~530 MB, once) lets the " +
@@ -191,6 +218,8 @@ fun MindScreen(
                 }
             }
 
+            CloudCard(state, viewModel)
+
             state.notice?.let { notice ->
                 SectionCard {
                     SectionLabel("What happened")
@@ -203,6 +232,160 @@ fun MindScreen(
         }
     }
 }
+
+/** ADR-010: what Play's mind pack is doing right now, honestly. */
+@Composable
+private fun PackCard(
+    state: MindUiState,
+    onFetch: () -> Unit,
+    onForceGemma: (Boolean) -> Unit,
+) {
+    val colors = LocalAnimaColors.current
+    when (val phase = state.packPhase) {
+        is PackPhase.Downloading -> {
+            SectionCard {
+                SectionLabel("The mind is on its way")
+                if (phase.bytesTotal > 0) {
+                    LinearProgressIndicator(
+                        progress = { (phase.bytesDone.toFloat() / phase.bytesTotal).coerceIn(0f, 1f) },
+                        modifier = Modifier.fillMaxWidth(),
+                        color = colors.accent,
+                    )
+                    Text(
+                        "%.0f / %.0f MB — Google Play delivers it by itself; no need to wait here.".format(
+                            Locale.US,
+                            phase.bytesDone / MB,
+                            phase.bytesTotal / MB,
+                        ),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                } else {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth(), color = colors.accent)
+                }
+            }
+        }
+        is PackPhase.WaitingForConsent -> {
+            SectionCard {
+                SectionLabel("The mind waits for permission")
+                Text(
+                    "Google Play holds the ~660 MB mind until you allow the download " +
+                        "(it prefers Wi-Fi).",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                GhostButton("Let it come", onClick = onFetch)
+            }
+        }
+        is PackPhase.Ready -> {
+            if (!state.ramGateAllows) {
+                SectionCard {
+                    SectionLabel("A caution about this phone")
+                    Text(
+                        "The bundled mind is here, but this phone has little memory " +
+                            "(under ~6 GB). Running Gemma may make everything slow. " +
+                            "You can try anyway, or use the cloud mind below.",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                        Column(Modifier.weight(1f)) {
+                            Text("Try anyway", style = MaterialTheme.typography.bodyLarge)
+                        }
+                        Switch(
+                            checked = state.forceGemma,
+                            onCheckedChange = onForceGemma,
+                            colors =
+                                SwitchDefaults.colors(
+                                    checkedTrackColor = colors.accent,
+                                    checkedThumbColor = colors.background,
+                                ),
+                        )
+                    }
+                }
+            }
+        }
+        is PackPhase.Failed, PackPhase.Absent -> Unit // The manual paths below stay.
+    }
+}
+
+/** ADR-011: the optional user-keyed cloud mind — plain words, no dark corners. */
+@Composable
+private fun CloudCard(
+    state: MindUiState,
+    viewModel: MindViewModel,
+) {
+    val colors = LocalAnimaColors.current
+    var keyDraft by remember { mutableStateOf("") }
+    SectionCard {
+        SectionLabel("Cloud mind (optional)")
+        Text(
+            "Off by default. If you turn it on, the creature thinks with an AI " +
+                "provider YOU choose, using YOUR key. In that mode every message " +
+                "you send — plus the creature's memory facts needed for the " +
+                "answer and its body report — leaves this phone and goes to " +
+                "${state.cloud.host()}. Nothing else does. The soul stays here.",
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    if (state.cloud.enabled) "Mind: cloud" else "Mind: local",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                if (state.cloud.enabled && !state.cloud.usable) {
+                    Text(
+                        "Enabled but not configured — the local mind keeps speaking.",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
+            Switch(
+                checked = state.cloud.enabled,
+                onCheckedChange = viewModel::setCloudEnabled,
+                colors =
+                    SwitchDefaults.colors(
+                        checkedTrackColor = colors.accent,
+                        checkedThumbColor = colors.background,
+                    ),
+            )
+        }
+        MindTextField(
+            value = state.cloudUrlDraft,
+            onValueChange = viewModel::onCloudUrlChange,
+            placeholder = "https://api.your-provider.com/v1",
+        )
+        MindTextField(
+            value = state.cloudModelDraft,
+            onValueChange = viewModel::onCloudModelChange,
+            placeholder = "model name (e.g. gpt-4.1-mini)",
+        )
+        MindTextField(
+            value = keyDraft,
+            onValueChange = { keyDraft = it },
+            placeholder = if (state.cloud.hasKey) "API key (stored — paste to replace)" else "API key",
+        )
+        Row {
+            GhostButton("Save", onClick = {
+                viewModel.saveCloudSetup(keyDraft)
+                keyDraft = ""
+            })
+            if (state.cloud.hasKey) {
+                Spacer(Modifier.width(8.dp))
+                GhostButton("Forget key", onClick = viewModel::forgetCloudKey)
+            }
+        }
+        Text(
+            "The key is encrypted with this phone's hardware keystore, never " +
+                "logged, and never part of the soul export. Offline? The " +
+                "creature falls back to its local mind by itself.",
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+}
+
+private fun CloudMindConfig.host(): String =
+    baseUrl
+        .removePrefix("https://")
+        .substringBefore('/')
+        .ifBlank { "your provider" }
 
 @Composable
 private fun MindTextField(

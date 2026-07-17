@@ -1,5 +1,6 @@
 package app.anima.core.mind
 
+import app.anima.core.model.CloudMindBackend
 import app.anima.core.model.FactCandidate
 import app.anima.core.model.MindEngine
 import app.anima.core.model.MindEvent
@@ -17,21 +18,26 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * ADR-005 tier selection: NANO where the Prompt API answers, GEMMA where a
- * local model is installed, honest sleep otherwise. Probed per call — the
- * probe is a cheap binder call / StateFlow read, and staying stateless means
- * installing or deleting a model needs no invalidation choreography.
+ * ADR-005 tier selection, amended by ADR-011: CLOUD strictly when the user
+ * opted in AND the backend reports itself ready (configured + online) —
+ * otherwise NANO where the Prompt API answers, GEMMA where a local model is
+ * installed, honest sleep last. Probed per call — the probe is a cheap
+ * binder call / StateFlow read, and staying stateless means installing or
+ * deleting a model (or going offline mid-session) needs no invalidation
+ * choreography: offline cloud simply falls through to the local tiers.
  */
 @Singleton
 class TieredMindEngine
     @Inject
     constructor(
+        private val cloud: CloudMindBackend,
         private val nano: NanoMindEngine,
         private val gemma: GemmaMindEngine,
         private val locator: MindModelLocator,
     ) : MindEngine,
         MindInventory {
         private suspend fun active(): Pair<MindTier, MindEngine>? {
+            if (cloud.status() == MindStatus.READY) return MindTier.CLOUD to cloud
             val nanoStatus = nano.status()
             if (nanoStatus != MindStatus.ASLEEP) return MindTier.NANO to nano
             if (locator.installed.value != null) return MindTier.GEMMA to gemma
@@ -66,5 +72,6 @@ class TieredMindEngine
                 activeTier = active()?.first ?: MindTier.NONE,
                 nano = nano.status(),
                 gemmaModel = locator.installed.value,
+                cloud = cloud.currentConfig(),
             )
     }

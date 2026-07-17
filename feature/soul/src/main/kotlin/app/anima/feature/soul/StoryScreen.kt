@@ -28,6 +28,7 @@ import app.anima.core.data.repo.ChatRepository
 import app.anima.core.data.repo.IdentityRepository
 import app.anima.core.data.repo.JournalRepository
 import app.anima.core.data.repo.SoulRepository
+import app.anima.core.model.CreatureConcept
 import app.anima.core.model.StoryMoment
 import app.anima.core.model.StoryTimeline
 import app.anima.core.ui.components.GhostButton
@@ -45,6 +46,8 @@ import javax.inject.Inject
 data class StoryUiState(
     val creatureName: String = "",
     val moments: List<StoryMoment> = emptyList(),
+    val concept: CreatureConcept = CreatureConcept.SPIRIT_ORB,
+    val seed: Long = 0L,
 )
 
 @HiltViewModel
@@ -68,6 +71,8 @@ class StoryViewModel
                 state.value =
                     StoryUiState(
                         creatureName = identity.name().orEmpty(),
+                        concept = identity.concept() ?: CreatureConcept.SPIRIT_ORB,
+                        seed = identity.seed() ?: 0L,
                         moments =
                             StoryTimeline.build(
                                 hatchedAtMillis = identity.hatchedAtMillis() ?: now,
@@ -112,6 +117,16 @@ fun StoryScreen(
         }
 
         LazyColumn(verticalArrangement = Arrangement.spacedBy(0.dp)) {
+            if (state.moments.isEmpty()) {
+                item {
+                    app.anima.core.creature.CreatureEmptyState(
+                        concept = state.concept,
+                        seed = state.seed,
+                        line = "\"Our story hasn't written its first line yet. It will.\"",
+                        night = colors.isNight,
+                    )
+                }
+            }
             items(state.moments) { moment ->
                 Row(Modifier.padding(vertical = 10.dp)) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {

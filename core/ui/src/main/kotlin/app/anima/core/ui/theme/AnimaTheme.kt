@@ -9,9 +9,12 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.dp
+import java.time.LocalDate
 
 /** Semantic colors beyond Material's scheme; the creature layer reads these. */
 @Immutable
@@ -64,12 +67,54 @@ fun animaLightColors() =
         isNight = false,
     )
 
+/**
+ * v0.3 seasonality: the world the creature lives in breathes with the year —
+ * QUIET variations only (a few percent toward a seasonal tint on the deep
+ * surfaces; text/accent untouched, so contrast stays proven by test).
+ */
+enum class Season {
+    WINTER,
+    SPRING,
+    SUMMER,
+    AUTUMN,
+    ;
+
+    companion object {
+        fun fromMonth(month: Int): Season =
+            when (month) {
+                12, 1, 2 -> WINTER
+                3, 4, 5 -> SPRING
+                6, 7, 8 -> SUMMER
+                else -> AUTUMN
+            }
+    }
+}
+
+fun AnimaColors.seasoned(season: Season): AnimaColors {
+    val tint =
+        when (season) {
+            Season.WINTER -> Color(0xFF3A5A8C) // colder blue
+            Season.SPRING -> Color(0xFF3A6B4F) // young green
+            Season.SUMMER -> Color(0xFF8C6A3A) // warm gold
+            Season.AUTUMN -> Color(0xFF8C4A3A) // ember rust
+        }
+    return copy(
+        background = lerp(background, tint, SEASON_TINT),
+        surface = lerp(surface, tint, SEASON_TINT),
+        surfaceHigh = lerp(surfaceHigh, tint, SEASON_TINT * 0.7f),
+        accentSoft = lerp(accentSoft, tint, SEASON_TINT),
+    )
+}
+
+const val SEASON_TINT = 0.06f
+
 @Composable
 fun AnimaTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    val colors = if (darkTheme) animaDarkColors() else animaLightColors()
+    val season = remember { Season.fromMonth(LocalDate.now().monthValue) }
+    val colors = (if (darkTheme) animaDarkColors() else animaLightColors()).seasoned(season)
     val scheme =
         if (darkTheme) {
             darkColorScheme(

@@ -1,7 +1,9 @@
 package app.anima.feature.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,6 +42,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,11 +52,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import app.anima.core.creature.CreatureSurface
+import app.anima.core.creature.PurrHaptics
 import app.anima.core.creature.rememberCreature
+import app.anima.core.model.ChatMessage
 import app.anima.core.model.ChatRole
 import app.anima.core.model.CreatureGenome
 import app.anima.core.model.FactCandidate
 import app.anima.core.model.MindStatus
+import app.anima.core.model.MindTier
 import app.anima.core.model.tunedBy
 import app.anima.core.ui.components.GhostButton
 import app.anima.core.ui.components.PillButton
@@ -101,10 +109,20 @@ fun HomeScreen(
     controller.setStage(state.stage)
     controller.onThinking(state.streamingReply != null)
 
+    // v0.3 haptic map: rich moments run through PurrHaptics' own primitive
+    // gates (arePrimitivesSupported) — unsupported hardware stays silent.
+    val context = LocalContext.current
+    val richHaptics = remember { PurrHaptics(context) }
     LaunchedEffect(bodyEvent) {
         when (bodyEvent) {
-            BodyEvent.CELEBRATE_CHARGE -> controller.onCelebrate()
-            BodyEvent.STARTLE_STORM -> controller.onStartle()
+            BodyEvent.CELEBRATE_CHARGE -> {
+                controller.onCelebrate()
+                richHaptics.celebrate()
+            }
+            BodyEvent.STARTLE_STORM -> {
+                controller.onStartle()
+                richHaptics.startle()
+            }
             null -> Unit
         }
         if (bodyEvent != null) viewModel.onBodyEventHandled()
@@ -130,7 +148,12 @@ fun HomeScreen(
             Column(Modifier.weight(1f)) {
                 Text(state.creatureName, style = MaterialTheme.typography.titleMedium)
                 Text(
-                    pluralDays(state.daysTogether),
+                    // ADR-011: the user always knows which mind speaks.
+                    if (state.activeTier == MindTier.CLOUD) {
+                        pluralDays(state.daysTogether) + " · cloud mind"
+                    } else {
+                        pluralDays(state.daysTogether)
+                    },
                     style = MaterialTheme.typography.labelMedium,
                 )
             }
@@ -151,12 +174,39 @@ fun HomeScreen(
         )
 
         // Fact candidates: nothing enters the soul without a tap.
+        val hapticFeedback = LocalHapticFeedback.current
         if (state.candidates.isNotEmpty()) {
             CandidateBar(
                 candidate = state.candidates.first(),
-                onConfirm = viewModel::confirmCandidate,
-                onReject = viewModel::rejectCandidate,
+                onConfirm = {
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                    viewModel.confirmCandidate(it)
+                },
+                onReject = {
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Reject)
+                    viewModel.rejectCandidate(it)
+                },
             )
+        }
+
+        // v0.3 dreams: at night, one gentle wake earns a told dream.
+        if (state.dreamAvailable && state.streamingReply == null) {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    "It's asleep, dreaming of the day…",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                GhostButton("Wake it gently", onClick = {
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                    viewModel.wakeForDream()
+                })
+            }
         }
 
         state.mindNotice?.let { notice ->
@@ -173,13 +223,21 @@ fun HomeScreen(
 
         ChatPanel(
             state = state,
-            onSend = viewModel::send,
+            onSend = { text ->
+                hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                viewModel.send(text)
+            },
             onTyping = { active ->
                 controller.onTyping(active)
                 if (active) viewModel.onInteraction()
             },
             onRequestDownload = viewModel::requestMindDownload,
             onOpenMind = onOpenSettings,
+            onRegenerate = viewModel::regenerate,
+            onRememberThis = { message ->
+                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                viewModel.rememberThis(message)
+            },
             modifier = Modifier.weight(1f),
         )
     }
@@ -192,6 +250,8 @@ private fun ChatPanel(
     onTyping: (Boolean) -> Unit,
     onRequestDownload: () -> Unit,
     onOpenMind: () -> Unit,
+    onRegenerate: () -> Unit,
+    onRememberThis: (ChatMessage) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalAnimaColors.current
@@ -212,8 +272,30 @@ private fun ChatPanel(
                     .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+            if (state.messages.isEmpty() && state.streamingReply == null) {
+                item(key = "empty") {
+                    // v0.3: no blank thread — the creature (already on
+                    // screen above) breaks the ice in its own voice.
+                    Text(
+                        if (state.mindStatus == MindStatus.READY) {
+                            "It's watching you, waiting for the first word."
+                        } else {
+                            "No words yet — but it feels the battery, the " +
+                                "warmth, the hour. Talk happens when a mind " +
+                                "arrives; everything else is already alive."
+                        },
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(vertical = 10.dp),
+                    )
+                }
+            }
             items(state.messages, key = { it.id }) { message ->
-                MessageBubble(text = message.text, mine = message.role == ChatRole.USER)
+                MessageBubble(
+                    text = message.text,
+                    mine = message.role == ChatRole.USER,
+                    // v0.3: long-press → "remember this" (same confirm gate).
+                    onLongPress = { onRememberThis(message) },
+                )
             }
             if (state.streamingReply != null) {
                 item(key = "streaming") {
@@ -231,6 +313,12 @@ private fun ChatPanel(
                 // while the thread is idle; a tap just sends the question.
                 if (state.starters.isNotEmpty() && state.streamingReply == null) {
                     StarterChips(starters = state.starters, onPick = onSend)
+                }
+                // v0.3: another roll of the same question, honestly appended.
+                if (state.streamingReply == null && state.messages.lastOrNull()?.role == ChatRole.CREATURE) {
+                    Row(Modifier.padding(horizontal = 20.dp)) {
+                        GhostButton("Say it differently", onClick = onRegenerate)
+                    }
                 }
                 InputRow(enabled = state.streamingReply == null, onSend = onSend, onTyping = onTyping)
             }
@@ -318,28 +406,37 @@ private fun MindBanner(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MessageBubble(
     text: String,
     mine: Boolean,
+    onLongPress: (() -> Unit)? = null,
 ) {
     val colors = LocalAnimaColors.current
     Row(Modifier.fillMaxWidth(), horizontalArrangement = if (mine) Arrangement.End else Arrangement.Start) {
+        val shape =
+            RoundedCornerShape(
+                topStart = 18.dp,
+                topEnd = 18.dp,
+                bottomStart = if (mine) 18.dp else 6.dp,
+                bottomEnd = if (mine) 6.dp else 18.dp,
+            )
         Text(
             text = text,
             style = MaterialTheme.typography.bodyLarge,
             color = if (mine) colors.background else colors.text,
             modifier =
                 Modifier
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 18.dp,
-                            topEnd = 18.dp,
-                            bottomStart = if (mine) 18.dp else 6.dp,
-                            bottomEnd = if (mine) 6.dp else 18.dp,
-                        ),
-                    ).background(if (mine) colors.accent else colors.surface)
-                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                    .clip(shape)
+                    .background(if (mine) colors.accent else colors.surface)
+                    .let { base ->
+                        if (onLongPress != null) {
+                            base.combinedClickable(onClick = {}, onLongClick = onLongPress)
+                        } else {
+                            base
+                        }
+                    }.padding(horizontal = 14.dp, vertical = 10.dp),
         )
     }
 }

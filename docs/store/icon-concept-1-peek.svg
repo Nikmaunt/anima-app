@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Concept 1 "The Peek" — creature face rising from the bottom edge,
+       eye contact at 48px. Play spec: no pre-rounded corners, no baked
+       shadow; content inside the ~384px safe centre. -->
+  <rect width="512" height="512" fill="#1A1B2E"/>
+  <!-- faint star specks -->
+  <circle cx="120" cy="96" r="4" fill="#8B87B8" opacity="0.5"/>
+  <circle cx="404" cy="140" r="3" fill="#8B87B8" opacity="0.4"/>
+  <circle cx="330" cy="70" r="2.5" fill="#8B87B8" opacity="0.35"/>
+  <!-- dome body rising from bottom -->
+  <path d="M 60 512 C 60 300 180 220 256 220 C 332 220 452 300 452 512 Z" fill="#5E6E8C"/>
+  <path d="M 60 512 C 60 300 180 220 256 220 C 332 220 452 300 452 512 Z" fill="url(#bodyGlow)"/>
+  <!-- ear nubs -->
+  <path d="M 150 268 C 138 220 150 190 172 172 C 178 208 176 236 168 256 Z" fill="#5E6E8C"/>
+  <path d="M 362 268 C 374 220 362 190 340 172 C 334 208 336 236 344 256 Z" fill="#5E6E8C"/>
+  <!-- amber eyes with bloom -->
+  <circle cx="196" cy="330" r="52" fill="#FFB65C" opacity="0.16"/>
+  <circle cx="316" cy="330" r="52" fill="#FFB65C" opacity="0.16"/>
+  <circle cx="196" cy="330" r="30" fill="#FFC876"/>
+  <circle cx="316" cy="330" r="30" fill="#FFC876"/>
+  <circle cx="204" cy="322" r="10" fill="#FFF3DD"/>
+  <circle cx="324" cy="322" r="10" fill="#FFF3DD"/>
+  <defs>
+    <linearGradient id="bodyGlow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7B8BAD" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#39415C" stop-opacity="0.75"/>
+    </linearGradient>
+  </defs>
+</svg>

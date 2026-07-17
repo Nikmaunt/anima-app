@@ -10,6 +10,9 @@ plugins {
 
 android {
     namespace = "app.anima.core.data"
+
+    // MigrationTestHelper reads the committed schema JSONs on-device.
+    sourceSets["androidTest"].assets.srcDir("$projectDir/schemas")
 }
 
 dependencies {
@@ -29,4 +32,14 @@ dependencies {
     testImplementation(libs.turbine)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core.ktx)
+
+    // GMD suite (v0.3 Phase 0): the paths Robolectric cannot reach — real
+    // SQLCipher opens, the AndroidKeyStore wrap, schema validation on-device.
+    androidTestImplementation(libs.junit4)
+    androidTestImplementation(libs.truth)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.core.ktx)
+    androidTestImplementation(libs.room.testing)
 }

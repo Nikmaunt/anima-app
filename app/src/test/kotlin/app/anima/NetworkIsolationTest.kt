@@ -6,19 +6,28 @@ import org.junit.Test
 import java.io.File
 
 /**
- * The network guarantee as a failing build, v2 (ADR-004 as amended by
- * ADR-005). What changed against v0.1, per the fresh audit (docs/audit-v01.md):
+ * The network guarantee as a failing build, v3 (ADR-004 as amended by
+ * ADR-005 and ADR-011). What changed against v2:
  *
- *  1. INTERNET now legitimately exists in the merged manifest — but it must
- *     originate from exactly one module manifest, :core:model-delivery.
- *  2. The merged-manifest check can no longer pass vacuously: if no build
- *     output exists the test FAILS and tells you to run assembleDebug.
- *  3. The dependency grep now covers every build.gradle.kts in the repo —
- *     a hardcoded okhttp coordinate in any module fails the build.
- *  4. Source-level network APIs stay banned everywhere EXCEPT
- *     core/model-delivery (the single sanctioned exception).
+ *  1. The sanctioned network world grew to exactly TWO modules:
+ *     :core:model-delivery (model bytes in) and :core:cloud-mind (the
+ *     user-keyed cloud mind, ADR-011). INTERNET must originate from
+ *     exactly these two module manifests; source-level network APIs are
+ *     banned everywhere else.
+ *  2. The version catalog still carries no third-party network stack at
+ *     all — both modules speak platform HttpsURLConnection.
+ *  3. :core:cloud-mind gets the listener treatment: a pinned dependency
+ *     allowlist, a logging ban (the BYOK key and the user's words must
+ *     never reach a log), and a soul-export guard (cloud.key never rides
+ *     the export).
  */
 class NetworkIsolationTest {
+    private val networkModules =
+        listOf(
+            "core/model-delivery/src/main/AndroidManifest.xml",
+            "core/cloud-mind/src/main/AndroidManifest.xml",
+        )
+
     private val repoRoot: File by lazy {
         // Unit tests run with CWD = <repo>/app; walk up to the repo root.
         generateSequence(File(System.getProperty("user.dir"))) { it.parentFile }
@@ -49,7 +58,7 @@ class NetworkIsolationTest {
     }
 
     @Test
-    fun `INTERNET is declared by exactly one module manifest - model-delivery`() {
+    fun `INTERNET is declared by exactly two module manifests - the sanctioned pair`() {
         val declaring =
             repoRoot
                 .walkTopDown()
@@ -60,11 +69,11 @@ class NetworkIsolationTest {
                     text.contains("android.permission.INTERNET")
                 }.map { it.relativeTo(repoRoot).path.replace('\\', '/') }
                 .toList()
-        assertThat(declaring).containsExactly("core/model-delivery/src/main/AndroidManifest.xml")
+        assertThat(declaring).containsExactlyElementsIn(networkModules)
     }
 
     @Test
-    fun `no module source touches network APIs except model-delivery`() {
+    fun `no module source touches network APIs except the sanctioned pair`() {
         val forbidden =
             listOf(
                 "okhttp",
@@ -78,8 +87,10 @@ class NetworkIsolationTest {
             )
         val offenders = mutableListOf<String>()
         sourceFiles()
-            .filterNot { it.path.replace('\\', '/').contains("core/model-delivery/") }
-            .forEach { file ->
+            .filterNot { file ->
+                val path = file.path.replace('\\', '/')
+                path.contains("core/model-delivery/") || path.contains("core/cloud-mind/")
+            }.forEach { file ->
                 val text = file.readText()
                 forbidden.forEach { needle ->
                     if (text.contains(needle)) offenders += "${file.relativeTo(repoRoot)} -> $needle"
@@ -151,6 +162,64 @@ class NetworkIsolationTest {
                 .that(allowed.any { line.contains(it) })
                 .isTrue()
         }
+    }
+
+    @Test
+    fun `cloud-mind module dependencies are the audited allowlist`() {
+        val buildFile = File(repoRoot, "core/cloud-mind/build.gradle.kts").readText()
+        val dependencyLines =
+            buildFile
+                .lineSequence()
+                .map { it.trim() }
+                .filter { it.startsWith("implementation(") || it.startsWith("api(") }
+                .toList()
+        val allowed =
+            listOf(
+                "projects.core.model",
+                "libs.androidx.core.ktx",
+                "libs.kotlinx.coroutines.android",
+                "libs.kotlinx.serialization.json",
+                "libs.androidx.datastore.preferences",
+            )
+        dependencyLines.forEach { line ->
+            assertWithMessage("unexpected dependency in cloud-mind module: $line")
+                .that(allowed.any { line.contains(it) })
+                .isTrue()
+        }
+    }
+
+    @Test
+    fun `cloud-mind never logs - the key and the user's words stay out of logcat`() {
+        val offenders = mutableListOf<String>()
+        File(repoRoot, "core/cloud-mind/src/main")
+            .walkTopDown()
+            .filter { it.isFile && it.extension == "kt" }
+            .forEach { file ->
+                val text = file.readText()
+                val banned =
+                    listOf("android.util.Log", "Log.d(", "Log.i(", "Log.w(", "Log.e(", "println(", "printStackTrace(")
+                banned.forEach { needle ->
+                    if (text.contains(needle)) offenders += "${file.relativeTo(repoRoot)} -> $needle"
+                }
+            }
+        assertThat(offenders).isEmpty()
+    }
+
+    @Test
+    fun `soul export never touches the cloud key`() {
+        // The BYOK key lives in cloud.key (noBackupFilesDir); the export
+        // reads the DB only. Neither the backup codec nor any UI surface may
+        // reference the key file or the vault.
+        val offenders = mutableListOf<String>()
+        sourceFiles()
+            .filterNot { it.path.replace('\\', '/').contains("core/cloud-mind/") }
+            .forEach { file ->
+                val text = file.readText()
+                listOf("cloud.key", "CloudKeyVault").forEach { needle ->
+                    if (text.contains(needle)) offenders += "${file.relativeTo(repoRoot)} -> $needle"
+                }
+            }
+        assertThat(offenders).isEmpty()
     }
 
     private fun sourceFiles(): Sequence<File> =

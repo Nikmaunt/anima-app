@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The SECOND and LAST module allowed to declare INTERNET (ADR-011; the
+  first is :core:model-delivery, ADR-005). It merges into the app manifest;
+  NetworkIsolationTest v3 asserts the permission originates from exactly
+  these two module manifests and nowhere else. Traffic here happens ONLY
+  when the user has explicitly enabled the cloud mind and supplied their
+  own endpoint and key.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+</manifest>

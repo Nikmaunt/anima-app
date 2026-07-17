@@ -143,6 +143,15 @@ class JournalRepository
             kind: JournalKind,
             sinceMillis: Long,
         ): Int = dao.countOfKindSince(kind.wire, sinceMillis)
+
+        /** v0.3 diary chart: one kind's entries since a moment, oldest first. */
+        suspend fun ofKindSince(
+            kind: JournalKind,
+            sinceMillis: Long,
+        ): List<BodyJournalEntry> =
+            dao.ofKindSince(kind.wire, sinceMillis).map {
+                BodyJournalEntry(it.id, kind, it.atMillis, it.detail)
+            }
     }
 
 @Singleton

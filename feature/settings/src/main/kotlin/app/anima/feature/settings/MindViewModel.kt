@@ -3,7 +3,9 @@ package app.anima.feature.settings
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.anima.core.cloudmind.CloudMindConfigStore
 import app.anima.core.data.repo.JournalRepository
+import app.anima.core.model.CloudMindConfig
 import app.anima.core.model.InstalledMindModel
 import app.anima.core.model.JournalKind
 import app.anima.core.model.MindEngine
@@ -14,12 +16,17 @@ import app.anima.core.modeldelivery.DeliveryEvent
 import app.anima.core.modeldelivery.DeliveryFailure
 import app.anima.core.modeldelivery.MindModelDownloader
 import app.anima.core.modeldelivery.MindModelImporter
+import app.anima.core.modeldelivery.MindModelResolver
 import app.anima.core.modeldelivery.MindModelStore
+import app.anima.core.modeldelivery.PackModelSource
+import app.anima.core.modeldelivery.PackPhase
+import app.anima.core.modeldelivery.RamGate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,6 +42,14 @@ data class MindUiState(
     val urlDraft: String = "",
     val shaDraft: String = "",
     val allowMetered: Boolean = false,
+    // ADR-010: Play pack + RAM gate.
+    val packPhase: PackPhase = PackPhase.Absent,
+    val ramGateAllows: Boolean = true,
+    val forceGemma: Boolean = false,
+    // ADR-011: cloud mind. The key itself never appears here.
+    val cloud: CloudMindConfig = CloudMindConfig.Disabled,
+    val cloudUrlDraft: String = "",
+    val cloudModelDraft: String = "",
 )
 
 @HiltViewModel
@@ -47,6 +62,10 @@ class MindViewModel
         private val downloader: MindModelDownloader,
         private val importer: MindModelImporter,
         private val journal: JournalRepository,
+        private val pack: PackModelSource,
+        private val resolver: MindModelResolver,
+        private val ramGate: RamGate,
+        private val cloudStore: CloudMindConfigStore,
     ) : ViewModel() {
         private val state = MutableStateFlow(MindUiState())
         val uiState: StateFlow<MindUiState> = state.asStateFlow()
@@ -54,7 +73,23 @@ class MindViewModel
         private var transfer: Job? = null
 
         init {
+            pack.refresh()
             refresh()
+            viewModelScope.launch {
+                combine(pack.phase, resolver.forceGemma, cloudStore.config, ::Triple)
+                    .collect { (phase, force, cloud) ->
+                        state.value =
+                            state.value.copy(
+                                packPhase = phase,
+                                ramGateAllows = ramGate.allowsSpontaneousGemma(),
+                                forceGemma = force,
+                                cloud = cloud,
+                                cloudUrlDraft = state.value.cloudUrlDraft.ifEmpty { cloud.baseUrl },
+                                cloudModelDraft = state.value.cloudModelDraft.ifEmpty { cloud.model },
+                            )
+                        refresh()
+                    }
+            }
         }
 
         fun refresh() {
@@ -124,6 +159,57 @@ class MindViewModel
 
         fun dismissNotice() {
             state.value = state.value.copy(notice = null)
+        }
+
+        // --- ADR-010: pack + RAM gate ---
+
+        /** WAITING_FOR_WIFI / REQUIRES_USER_CONFIRMATION: ask Play to go on. */
+        fun requestPackFetch() = pack.requestFetch()
+
+        fun setForceGemma(value: Boolean) {
+            viewModelScope.launch {
+                resolver.setForceGemma(value)
+                refresh()
+            }
+        }
+
+        // --- ADR-011: cloud mind ---
+
+        fun onCloudUrlChange(value: String) {
+            state.value = state.value.copy(cloudUrlDraft = value)
+        }
+
+        fun onCloudModelChange(value: String) {
+            state.value = state.value.copy(cloudModelDraft = value)
+        }
+
+        /** Key comes through here once, straight into the Keystore wrap. */
+        fun saveCloudSetup(key: String) {
+            viewModelScope.launch {
+                val url = state.value.cloudUrlDraft.trim()
+                if (!url.startsWith("https://")) {
+                    state.value = state.value.copy(notice = "Cloud endpoints must start with https://")
+                    return@launch
+                }
+                cloudStore.setEndpoint(url, state.value.cloudModelDraft)
+                if (key.isNotBlank()) cloudStore.storeKey(key.trim().encodeToByteArray())
+                refresh()
+            }
+        }
+
+        fun setCloudEnabled(value: Boolean) {
+            viewModelScope.launch {
+                cloudStore.setEnabled(value)
+                refresh()
+            }
+        }
+
+        fun forgetCloudKey() {
+            viewModelScope.launch {
+                cloudStore.clearKeyAndDisable()
+                state.value = state.value.copy(notice = "Cloud key erased. The mind is local again.")
+                refresh()
+            }
         }
 
         private fun onDeliveryEvent(event: DeliveryEvent) {

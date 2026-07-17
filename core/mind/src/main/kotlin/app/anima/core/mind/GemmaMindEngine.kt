@@ -2,11 +2,13 @@ package app.anima.core.mind
 
 import android.content.Context
 import app.anima.core.model.FactCandidate
+import app.anima.core.model.FactJson
 import app.anima.core.model.MindEngine
 import app.anima.core.model.MindEvent
 import app.anima.core.model.MindFailure
 import app.anima.core.model.MindModelLocator
 import app.anima.core.model.MindPrompt
+import app.anima.core.model.MindPrompts
 import app.anima.core.model.MindStatus
 import com.google.mediapipe.tasks.genai.llminference.LlmInference
 import com.google.mediapipe.tasks.genai.llminference.LlmInferenceSession

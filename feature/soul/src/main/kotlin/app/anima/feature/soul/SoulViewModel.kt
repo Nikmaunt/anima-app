@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.anima.core.data.backup.SoulBackup
 import app.anima.core.data.backup.SoulBackupCodec
+import app.anima.core.data.prefs.AnimaPrefs
 import app.anima.core.data.repo.IdentityRepository
 import app.anima.core.data.repo.JournalRepository
 import app.anima.core.data.repo.SoulRepository
@@ -32,6 +33,8 @@ import javax.inject.Inject
 
 data class SoulUiState(
     val facts: List<SoulFact> = emptyList(),
+    val concept: CreatureConcept = CreatureConcept.SPIRIT_ORB,
+    val seed: Long = 0L,
     val stats: RelationshipStats? = null,
     val importCandidates: List<FactCandidate> = emptyList(),
     val importText: String = "",
@@ -51,7 +54,14 @@ class SoulViewModel
         private val identity: IdentityRepository,
         private val journal: JournalRepository,
         private val backup: SoulBackup,
+        prefs: AnimaPrefs,
     ) : ViewModel() {
+        /** FLAG_SECURE gate for this screen (threat-model.md; default ON). */
+        val screenshotsAllowed: StateFlow<Boolean> =
+            prefs
+                .soulScreenshotsAllowed()
+                .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
         private val importCandidates = MutableStateFlow<List<FactCandidate>>(emptyList())
         private val importText = MutableStateFlow("")
         private val stats = MutableStateFlow<RelationshipStats?>(null)
@@ -59,6 +69,7 @@ class SoulViewModel
         private val categoryFilter = MutableStateFlow<FactCategory?>(null)
         private val editing = MutableStateFlow<Pair<SoulFact, String>?>(null)
         private val backupNotice = MutableStateFlow<String?>(null)
+        private val identityBits = MutableStateFlow(CreatureConcept.SPIRIT_ORB to 0L)
 
         val uiState: StateFlow<SoulUiState> =
             kotlinx.coroutines.flow
@@ -84,6 +95,8 @@ class SoulViewModel
                             }
                     SoulUiState(
                         facts = filtered,
+                        concept = identityBits.value.first,
+                        seed = identityBits.value.second,
                         stats = imports.third,
                         importCandidates = imports.first,
                         importText = imports.second,
@@ -103,7 +116,11 @@ class SoulViewModel
         )
 
         init {
-            viewModelScope.launch { stats.value = identity.stats(System.currentTimeMillis()) }
+            viewModelScope.launch {
+                stats.value = identity.stats(System.currentTimeMillis())
+                identityBits.value =
+                    (identity.concept() ?: CreatureConcept.SPIRIT_ORB) to (identity.seed() ?: 0L)
+            }
         }
 
         fun forget(fact: SoulFact) {

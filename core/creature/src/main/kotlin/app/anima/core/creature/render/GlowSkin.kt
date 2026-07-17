@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.nativeCanvas
 
 /**
  * The AGSL "skin" layer (ADR-001): an organic glow with a noise-wobbled rim,
@@ -37,7 +38,11 @@ class GlowSkin {
         intensity: Float,
         time: Float,
     ) {
-        val s = shader
+        // AGSL needs a hardware canvas. The widget snapshot (and any
+        // offscreen Bitmap render) draws on a SOFTWARE canvas where a
+        // RuntimeShader brush throws — found by the v0.3 GMD suite; the
+        // API-level gate alone was never enough.
+        val s = shader?.takeIf { drawContext.canvas.nativeCanvas.isHardwareAccelerated }
         if (s != null) {
             s.setFloatUniform("uTime", time)
             s.setFloatUniform("uCenter", center.x, center.y)

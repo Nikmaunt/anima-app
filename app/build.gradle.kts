@@ -11,8 +11,8 @@ android {
 
     defaultConfig {
         applicationId = "app.anima"
-        versionCode = 2
-        versionName = "0.2.0"
+        versionCode = 3
+        versionName = "0.3.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -29,16 +29,24 @@ android {
         }
     }
 
+    // ADR-010: the Gemma model rides a fast-follow asset pack in the AAB.
+    // Plain APK builds (debug deploys) carry no packs — the model chain
+    // falls through to the downloaded/SAF paths.
+    assetPacks += ":mind-pack"
+
     packaging {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
 
     lint {
-        // lintVitalAnalyzeRelease deadlocks on this machine while scanning
-        // the MediaPipe tasks-genai AAR (reproduced twice, 15–40 min hangs).
-        // Release lint is disabled for the *build*; run `gradlew lint`
-        // explicitly when needed. Recorded in the v0.2 report.
-        checkReleaseBuilds = false
+        // v0.3: release lint is back ON. v0.2 disabled it after 15–40 min
+        // "deadlocks" scanning the MediaPipe tasks-genai AAR; with the
+        // daemon at -Xmx6g (gradle.properties) the full lintVitalRelease
+        // chain runs green in under a minute and the hang does not
+        // reproduce (docs/research-v3.md §C.1). If a genuine hang ever
+        // returns, the fallback is a targeted baseline + ADR, never
+        // checkReleaseBuilds=false.
+        abortOnError = true
     }
 }
 
@@ -53,6 +61,7 @@ dependencies {
     baselineProfile(projects.baselineprofile)
     implementation(libs.androidx.profileinstaller)
     implementation(projects.core.modelDelivery)
+    implementation(projects.core.cloudMind)
     implementation(projects.core.model)
     implementation(projects.core.body)
     implementation(projects.core.creature)

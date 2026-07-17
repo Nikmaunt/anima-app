@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Permission budget (ADR-004 as amended by ADR-005), in full:
+  Permission budget (ADR-004 as amended by ADR-005 and ADR-011), in full:
   - ACCESS_NETWORK_STATE, VIBRATE: normal install-time permissions, no dialogs.
-  - INTERNET is declared by exactly one module manifest —
-    :core:model-delivery — for exactly one flow: the user-initiated download
-    of the mind's model file. No other module may declare it or touch network
-    APIs in source; NetworkIsolationTest fails the build otherwise (and fails
-    loudly if the merged manifest is missing, closing the v0.1 vacuous-pass
-    gap found by the audit).
+  - INTERNET is declared by exactly two module manifests —
+    :core:model-delivery (model bytes in: Play pack / user-initiated
+    download) and :core:cloud-mind (the strictly opt-in BYOK cloud mind).
+    No other module may declare it or touch network APIs in source;
+    NetworkIsolationTest v3 fails the build otherwise (and fails loudly if
+    the merged manifest is missing, closing the v0.1 vacuous-pass gap).
   - Notification Access is a special access granted on the system screen,
     strictly opt-in from an in-app explainer; the listener service lives in
     :feature:notifications with the system-held bind permission.

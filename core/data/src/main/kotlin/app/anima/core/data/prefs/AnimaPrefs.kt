@@ -65,6 +65,16 @@ class AnimaPrefs
             }
         }
 
+        private val soulScreenshotsAllowed = booleanPreferencesKey("soul_screenshots_allowed")
+
+        /** Default OFF: the Soul screen sets FLAG_SECURE (threat-model.md). */
+        fun soulScreenshotsAllowed(): Flow<Boolean> =
+            context.animaDataStore.data.map { it[soulScreenshotsAllowed] ?: false }
+
+        suspend fun setSoulScreenshotsAllowed(value: Boolean) {
+            context.animaDataStore.edit { it[soulScreenshotsAllowed] = value }
+        }
+
         private val lastGreetingDay = longPreferencesKey("last_greeting_epoch_day")
 
         /**
@@ -81,5 +91,29 @@ class AnimaPrefs
 
         suspend fun markGreetedToday(epochDay: Long) {
             context.animaDataStore.edit { it[lastGreetingDay] = epochDay }
+        }
+
+        private val lastDreamNight = longPreferencesKey("last_dream_night_key")
+
+        /** v0.3 dreams: one per night; the key is the day the night began. */
+        suspend fun shouldDreamTonight(nightKey: Long): Boolean =
+            context.animaDataStore.data
+                .map { it[lastDreamNight] ?: Long.MIN_VALUE }
+                .first() < nightKey
+
+        suspend fun markDreamTold(nightKey: Long) {
+            context.animaDataStore.edit { it[lastDreamNight] = nightKey }
+        }
+
+        private val lastBirthdayYear = longPreferencesKey("last_birthday_year")
+
+        /** v0.3: hatch-anniversary celebration, once per calendar year. */
+        suspend fun shouldCelebrateBirthday(year: Long): Boolean =
+            context.animaDataStore.data
+                .map { it[lastBirthdayYear] ?: 0L }
+                .first() < year
+
+        suspend fun markBirthdayCelebrated(year: Long) {
+            context.animaDataStore.edit { it[lastBirthdayYear] = year }
         }
     }

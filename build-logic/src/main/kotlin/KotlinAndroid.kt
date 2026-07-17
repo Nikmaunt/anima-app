@@ -21,6 +21,7 @@ internal fun Project.configureKotlinAndroid(
 
         defaultConfig {
             minSdk = 31
+            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         }
 
         compileOptions {
@@ -32,6 +33,17 @@ internal fun Project.configureKotlinAndroid(
             // Robolectric-based DAO/engine tests run on the JVM under `check`.
             unitTests.isIncludeAndroidResources = true
             unitTests.isReturnDefaultValues = true
+            // Gradle Managed Device (v0.3 DoD): headless ATD emulator for the
+            // paths Robolectric cannot exercise — real SQLCipher open, the
+            // Keystore key wrap, migrations. API 34 is the newest aosp_atd
+            // image (research-v3 §C.2); real LLM inference never runs here.
+            managedDevices {
+                localDevices.create("atd34") {
+                    device = "Pixel 6"
+                    apiLevel = 34
+                    systemImageSource = "aosp-atd"
+                }
+            }
         }
     }
 

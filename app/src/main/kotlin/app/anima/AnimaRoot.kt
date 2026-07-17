@@ -20,8 +20,10 @@ import app.anima.feature.home.BodyDiaryScreen
 import app.anima.feature.home.HomeScreen
 import app.anima.feature.notifications.NotificationsScreen
 import app.anima.feature.onboarding.OnboardingScreen
+import app.anima.feature.settings.CrashLogScreen
 import app.anima.feature.settings.MindScreen
 import app.anima.feature.settings.SettingsScreen
+import app.anima.feature.settings.TrustScreen
 import app.anima.feature.soul.SoulScreen
 import app.anima.feature.soul.StoryScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -84,10 +86,18 @@ private fun AnimaNavHost(startAtHome: Boolean) {
                 onBack = { nav.popBackStack() },
                 onOpenNotifications = { nav.navigate(Routes.NOTIFICATIONS) },
                 onOpenMind = { nav.navigate(Routes.MIND) },
+                onOpenTrust = { nav.navigate(Routes.TRUST) },
+                onOpenCrashLog = { nav.navigate(Routes.CRASHLOG) },
             )
         }
         composable(Routes.MIND) {
             MindScreen(onBack = { nav.popBackStack() })
+        }
+        composable(Routes.TRUST) {
+            TrustScreen(onBack = { nav.popBackStack() })
+        }
+        composable(Routes.CRASHLOG) {
+            CrashLogScreen(onBack = { nav.popBackStack() })
         }
         composable(Routes.NOTIFICATIONS) {
             NotificationsScreen(onBack = { nav.popBackStack() })
@@ -113,4 +123,6 @@ private object Routes {
     const val MIND = "mind"
     const val STORY = "story"
     const val DIARY = "diary"
+    const val TRUST = "trust"
+    const val CRASHLOG = "crashlog"
 }

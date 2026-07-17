@@ -1,5 +1,7 @@
 package app.anima.core.ui.theme
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import kotlin.math.pow
@@ -23,6 +25,26 @@ class PaletteContrastTest {
         assertThat(contrast(AnimaPalette.PaperText, AnimaPalette.PaperSurface)).isAtLeast(4.5)
         assertThat(contrast(AnimaPalette.PaperTextDim, AnimaPalette.PaperSurface)).isAtLeast(4.5)
     }
+
+    @Test
+    fun `seasonal tint keeps text AA in every season, both themes`() {
+        // v0.3 seasonality shifts the deep surfaces by a few percent; the
+        // token test alone no longer covers what the user actually sees.
+        Season.entries.forEach { season ->
+            listOf(animaDarkColors(), animaLightColors()).forEach { base ->
+                val seasoned = base.seasoned(season)
+                assertThat(contrastC(seasoned.text, seasoned.background)).isAtLeast(4.5)
+                assertThat(contrastC(seasoned.text, seasoned.surface)).isAtLeast(4.5)
+                assertThat(contrastC(seasoned.text, seasoned.surfaceHigh)).isAtLeast(4.5)
+                assertThat(contrastC(seasoned.textDim, seasoned.surface)).isAtLeast(4.5)
+            }
+        }
+    }
+
+    private fun contrastC(
+        fg: Color,
+        bg: Color,
+    ): Double = contrast(fg.toArgb().toLong() and 0xFFFFFFFFL, bg.toArgb().toLong() and 0xFFFFFFFFL)
 
     @Test
     fun `accents are readable as large text or UI components (3_0)`() {

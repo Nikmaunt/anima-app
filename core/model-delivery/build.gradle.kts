@@ -17,6 +17,10 @@ dependencies {
     api(projects.core.model)
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.android)
+    // Play Asset Delivery client (ADR-010): IPC to the Play Store app for
+    // the :mind-pack fast-follow pack — not an HTTP stack.
+    implementation(libs.play.asset.delivery.ktx)
+    implementation(libs.androidx.datastore.preferences)
 
     testImplementation(libs.junit4)
     testImplementation(libs.truth)

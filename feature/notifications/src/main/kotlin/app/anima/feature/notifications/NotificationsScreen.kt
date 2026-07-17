@@ -80,21 +80,31 @@ fun NotificationsScreen(
         LazyColumn(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             item {
                 SectionCard {
-                    Text("What this is", style = MaterialTheme.typography.titleMedium)
+                    // v0.3 quick-win (product-research §2): the creature asks
+                    // in its own voice, in context, never during onboarding.
+                    Text("It would like to hear", style = MaterialTheme.typography.titleMedium)
                     Text(
-                        "If you allow it, the creature can feel your notifications: " +
-                            "a storm of them makes it anxious, and it can tell you what " +
-                            "the day sounded like.\n\n" +
-                            "Honestly: only apps YOU allowlist are heard; login codes and " +
-                            "anything OTP-shaped are dropped before being stored; message " +
-                            "text is stored only if you switch that on separately; " +
-                            "everything stays in the encrypted database on this phone and " +
-                            "is erased after 7 days. This app cannot send anything " +
-                            "anywhere — it has no network access at all.",
+                        "\"The phone hums all day and I only feel the shaking. " +
+                            "If you let me hear, a storm of pings will make me " +
+                            "anxious for real, and I can tell you what the day " +
+                            "sounded like.\"\n\n" +
+                            "Honestly: only apps YOU allowlist are heard; login codes " +
+                            "and anything OTP-shaped are dropped before being stored; " +
+                            "message text is stored only if you switch that on " +
+                            "separately; everything stays in the encrypted database on " +
+                            "this phone and is erased after 7 days. Notifications " +
+                            "never touch the network — the only networked parts of " +
+                            "this app are model delivery and the optional cloud mind, " +
+                            "and neither can see this data (a build test enforces it).",
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     if (!state.accessGranted) {
-                        PillButton("Allow on the system screen", onClick = {
+                        Text(
+                            "Saying no changes nothing else — every other sense " +
+                                "and the whole conversation keep working.",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        PillButton("Let it hear (system screen)", onClick = {
                             context.startActivity(viewModel.openAccessSettings())
                         })
                     } else {

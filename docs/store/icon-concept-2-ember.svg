@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Concept 2 "The Ember" (RECOMMENDED) — glowing scalloped orb with
+       eye-dots: "something alive glowing in your pocket". Scallop wink at
+       the M3E shape library; excellent monochrome/themed-icon behavior
+       (orb contour + eyes as the mono layer). -->
+  <rect width="512" height="512" fill="#14142B"/>
+  <!-- vignette keeps the glow inside the tile -->
+  <rect width="512" height="512" fill="url(#vignette)"/>
+  <!-- outer bloom -->
+  <circle cx="256" cy="256" r="170" fill="url(#bloom)"/>
+  <!-- scalloped orb: 12-lobe flower path -->
+  <path d="M 256 116
+           C 282 116 296 92 318 100 C 340 108 336 136 354 148
+           C 372 160 396 148 408 168 C 420 188 400 208 404 230
+           C 408 252 434 262 430 284 C 426 306 398 306 388 326
+           C 378 346 392 370 374 384 C 356 398 334 380 312 386
+           C 290 392 282 420 256 420 C 230 420 222 392 200 386
+           C 178 380 156 398 138 384 C 120 370 134 346 124 326
+           C 114 306 86 306 82 284 C 78 262 104 252 108 230
+           C 112 208 92 188 104 168 C 116 148 140 160 158 148
+           C 176 136 172 108 194 100 C 216 92 230 116 256 116 Z"
+        fill="url(#core)"/>
+  <!-- eye dots: being, not lamp -->
+  <circle cx="216" cy="262" r="17" fill="#2A1B10"/>
+  <circle cx="296" cy="262" r="17" fill="#2A1B10"/>
+  <circle cx="221" cy="256" r="5" fill="#FFF3DD"/>
+  <circle cx="301" cy="256" r="5" fill="#FFF3DD"/>
+  <!-- one star speck -->
+  <circle cx="392" cy="104" r="4" fill="#C9C4F2" opacity="0.6"/>
+  <defs>
+    <radialGradient id="core" cx="0.5" cy="0.42" r="0.65">
+      <stop offset="0" stop-color="#FFE0A6"/>
+      <stop offset="0.55" stop-color="#FFB65C"/>
+      <stop offset="1" stop-color="#F2775E"/>
+    </radialGradient>
+    <radialGradient id="bloom" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFB65C" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#FFB65C" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vignette" cx="0.5" cy="0.5" r="0.75">
+      <stop offset="0.6" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.45"/>
+    </radialGradient>
+  </defs>
+</svg>

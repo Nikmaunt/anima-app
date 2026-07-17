@@ -14,11 +14,20 @@ package app.anima.core.model
 object PromptBuilder {
     const val MAX_PROMPT_CHARS = 9000
     const val GEMMA_PROMPT_CHARS = 5100
+
+    /**
+     * ADR-011: a remote model has real context to spare — ~8k tokens at the
+     * same conservative 3 chars/token floor. Still a WINDOW, not the soul:
+     * the fact/dialogue caps below apply to every tier equally; cloud only
+     * relaxes the char-trimming pressure.
+     */
+    const val CLOUD_PROMPT_CHARS = 24000
     const val MAX_FACTS = 24
     const val MAX_DIALOGUE_TURNS = 12
 
     fun budgetFor(tier: MindTier): Int =
         when (tier) {
+            MindTier.CLOUD -> CLOUD_PROMPT_CHARS
             MindTier.GEMMA -> GEMMA_PROMPT_CHARS
             MindTier.NANO, MindTier.NONE -> MAX_PROMPT_CHARS
         }

@@ -84,9 +84,8 @@ fun OnboardingScreen(
                     concept = state.concept ?: CreatureConcept.SPIRIT_ORB,
                     name = state.name,
                     onNameChanged = viewModel::onNameChanged,
-                    onConfirm = viewModel::onNameConfirmed,
+                    onConfirm = { viewModel.complete(onFinished) },
                 )
-            OnboardingStage.PRIVACY -> PrivacyStage(onAgree = { viewModel.complete(onFinished) })
         }
     }
 }
@@ -285,46 +284,20 @@ private fun NameStage(
                     .background(colors.surface)
                     .padding(vertical = 14.dp),
         )
-        Spacer(Modifier.height(18.dp))
-        PillButton("That's the name", onClick = onConfirm, enabled = name.isNotBlank())
-        Spacer(Modifier.height(24.dp))
-    }
-}
-
-@Composable
-private fun PrivacyStage(onAgree: () -> Unit) {
-    val colors = LocalAnimaColors.current
-    Column(Modifier.fillMaxSize().padding(horizontal = 24.dp)) {
-        Spacer(Modifier.height(28.dp))
-        Text("The honest part", style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(14.dp))
+        // The honest contract, compressed to what matters before the first
+        // word (v0.3 ≤3-screen onboarding); the full story is the trust
+        // page in Settings, reachable any time.
         Text(
-            "• This app has no internet access — the permission simply doesn't " +
-                "exist in it. Nothing you say can leave this phone.\n\n" +
-                "• Its memory is an encrypted database; the key lives in this " +
-                "phone's secure hardware.\n\n" +
-                "• It thinks on this device or not at all. On phones that can't " +
-                "run on-device AI its mind sleeps — it never pretends.\n\n" +
-                "• It remembers a fact about you only after you tap yes.\n\n" +
-                "• Its whole soul exports to one file you own. Delete the app, " +
-                "and everything dies with it — except what you exported.",
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        Spacer(Modifier.weight(1f))
-        Text(
-            "Optional senses (notifications) and memory import live in Settings — " +
-                "nothing is on by default.",
+            "It lives on this phone. Conversations stay here, memory is " +
+                "encrypted, and it remembers a fact only after you tap yes. " +
+                "The whole story: Settings → Why no internet.",
             style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(14.dp))
-        PillButton(
-            "Begin",
-            onClick = onAgree,
-            modifier =
-                Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(bottom = 26.dp),
-        )
+        PillButton("That's the name — begin", onClick = onConfirm, enabled = name.isNotBlank())
+        Spacer(Modifier.height(24.dp))
     }
 }
 

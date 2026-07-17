@@ -14,6 +14,7 @@ android {
 dependencies {
     implementation(projects.core.model)
     implementation(projects.core.modelDelivery)
+    implementation(projects.core.cloudMind)
     implementation(projects.core.creature)
     implementation(projects.core.body)
     implementation(projects.core.data)

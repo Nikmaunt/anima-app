@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 500" font-family="Georgia, 'Noto Serif', serif">
+  <!-- Feature graphic 1024x500 (Play spec: JPEG/24-bit PNG, no alpha at
+       export). One message, creature left third with eye contact, 5-word
+       headline, factual privacy pill (no award/price claims). -->
+  <rect width="1024" height="500" fill="url(#sky)"/>
+  <circle cx="150" cy="80" r="3" fill="#C9C4F2" opacity="0.6"/>
+  <circle cx="840" cy="60" r="4" fill="#C9C4F2" opacity="0.5"/>
+  <circle cx="930" cy="150" r="2.5" fill="#C9C4F2" opacity="0.5"/>
+  <circle cx="70" cy="200" r="2.5" fill="#C9C4F2" opacity="0.4"/>
+
+  <!-- The Ember creature, left third, looking right toward the copy -->
+  <circle cx="280" cy="265" r="185" fill="url(#bloom)"/>
+  <path d="M 280 130
+           C 305 130 318 108 339 116 C 360 124 356 150 373 161
+           C 390 172 412 161 423 180 C 434 199 416 217 420 238
+           C 424 259 448 268 444 289 C 440 310 414 310 405 328
+           C 396 346 409 368 392 381 C 375 394 355 377 335 383
+           C 315 389 304 415 280 415 C 256 415 245 389 225 383
+           C 205 377 185 394 168 381 C 151 368 164 346 155 328
+           C 146 310 120 310 116 289 C 112 268 136 259 140 238
+           C 144 217 126 199 137 180 C 148 161 170 172 187 161
+           C 204 150 200 124 221 116 C 242 108 255 130 280 130 Z"
+        fill="url(#core)"/>
+  <circle cx="248" cy="268" r="15" fill="#2A1B10"/>
+  <circle cx="320" cy="268" r="15" fill="#2A1B10"/>
+  <circle cx="253" cy="263" r="4.5" fill="#FFF3DD"/>
+  <circle cx="325" cy="263" r="4.5" fill="#FFF3DD"/>
+
+  <!-- Headline: 5 words, warm off-white, right-of-center -->
+  <text x="530" y="240" font-size="64" fill="#F6EFE4" font-weight="bold">A friend that</text>
+  <text x="530" y="316" font-size="64" fill="#FFC876" font-weight="bold">lives offline</text>
+
+  <!-- factual pill -->
+  <rect x="533" y="352" rx="21" ry="21" width="264" height="42" fill="none" stroke="#8B87B8" stroke-width="2"/>
+  <text x="565" y="380" font-size="24" fill="#C9C4F2">No internet needed</text>
+
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#14142B"/>
+      <stop offset="1" stop-color="#1F1B33"/>
+    </linearGradient>
+    <radialGradient id="core" cx="0.5" cy="0.42" r="0.65">
+      <stop offset="0" stop-color="#FFE0A6"/>
+      <stop offset="0.55" stop-color="#FFB65C"/>
+      <stop offset="1" stop-color="#F2775E"/>
+    </radialGradient>
+    <radialGradient id="bloom" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFB65C" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#FFB65C" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

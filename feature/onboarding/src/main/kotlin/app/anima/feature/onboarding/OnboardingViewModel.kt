@@ -18,7 +18,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class OnboardingStage { HATCH, CHOOSE, NAME, PRIVACY }
+/**
+ * v0.3 quick-win (product-research §2): three screens to the first
+ * conversation. The honest contract rides the NAME screen in three lines;
+ * the full story lives on the always-available trust page in Settings.
+ */
+enum class OnboardingStage { HATCH, CHOOSE, NAME }
 
 data class OnboardingUiState(
     val stage: OnboardingStage = OnboardingStage.HATCH,
@@ -55,13 +60,10 @@ class OnboardingViewModel
             state.value = state.value.copy(name = name.take(24))
         }
 
-        fun onNameConfirmed() {
-            if (state.value.name.isNotBlank()) state.value = state.value.copy(stage = OnboardingStage.PRIVACY)
-        }
-
         fun complete(onDone: () -> Unit) {
             val snapshot = state.value
             val concept = snapshot.concept ?: return
+            if (snapshot.name.isBlank()) return
             viewModelScope.launch {
                 val now = System.currentTimeMillis()
                 identity.hatch(snapshot.name, concept, snapshot.seed, now)

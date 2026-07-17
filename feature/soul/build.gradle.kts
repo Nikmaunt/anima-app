@@ -15,6 +15,8 @@ android {
 dependencies {
     implementation(projects.core.model)
     implementation(projects.core.data)
+    // v0.3: creature-present empty states (the rig, not pictures).
+    implementation(projects.core.creature)
     implementation(projects.core.ui)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

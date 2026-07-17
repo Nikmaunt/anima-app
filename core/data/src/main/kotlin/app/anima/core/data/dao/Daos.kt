@@ -94,6 +94,16 @@ interface BodyJournalDao {
         kind: String,
         sinceMillis: Long,
     ): Int
+
+    /** v0.3 diary chart: samples/events of one kind, oldest first. */
+    @Query(
+        "SELECT * FROM body_journal WHERE kind = :kind AND atMillis >= :sinceMillis " +
+            "ORDER BY atMillis ASC",
+    )
+    suspend fun ofKindSince(
+        kind: String,
+        sinceMillis: Long,
+    ): List<BodyJournalEntity>
 }
 
 @Dao
