@@ -5,7 +5,9 @@ package app.anima.core.model
  * across silhouettes (orb / animal / tentacled / pixel grid / machine / plant /
  * flame / winged), not palettes.
  */
-enum class CreatureConcept(val wire: String) {
+enum class CreatureConcept(
+    val wire: String,
+) {
     /** Soft glowing orb; metaball satellites; liquid glass. */
     SPIRIT_ORB("spirit_orb"),
 
@@ -32,7 +34,6 @@ enum class CreatureConcept(val wire: String) {
     ;
 
     companion object {
-        fun fromWire(wire: String): CreatureConcept =
-            entries.firstOrNull { it.wire == wire } ?: SPIRIT_ORB
+        fun fromWire(wire: String): CreatureConcept = entries.firstOrNull { it.wire == wire } ?: SPIRIT_ORB
     }
 }

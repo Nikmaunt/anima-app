@@ -31,9 +31,13 @@ import app.anima.core.data.entity.SoulFactEntity
 )
 abstract class AnimaDatabase : RoomDatabase() {
     abstract fun soulFactDao(): SoulFactDao
+
     abstract fun chatDao(): ChatDao
+
     abstract fun bodyJournalDao(): BodyJournalDao
+
     abstract fun notifEventDao(): NotifEventDao
+
     abstract fun metaDao(): MetaDao
 
     companion object {

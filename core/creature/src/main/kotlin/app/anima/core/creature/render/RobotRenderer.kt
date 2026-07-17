@@ -15,7 +15,6 @@ import kotlin.math.sin
  * real battery percent and shimmers while eating.
  */
 class RobotRenderer : CreatureRenderer {
-
     override fun DrawScope.render(ctx: RenderContext) {
         val pose = ctx.pose
         val c = Offset(size.width / 2f, size.height / 2f)
@@ -110,14 +109,16 @@ class RobotRenderer : CreatureRenderer {
         val barTop = Offset(c.x - barW / 2f, c.y + bodyH * 0.28f)
         drawRoundRect(
             screen.copy(alpha = 0.85f),
-            topLeft = barTop, size = Size(barW, barH),
+            topLeft = barTop,
+            size = Size(barW, barH),
             cornerRadius = CornerRadius(barH / 2f, barH / 2f),
         )
         val level = ctx.batteryPercent.coerceIn(0, 100) / 100f
-        val fillColor = when {
-            ctx.batteryPercent <= 20 && !ctx.charging -> Hues.hsl(18f, 0.85f, 0.6f)
-            else -> eyeGlow
-        }
+        val fillColor =
+            when {
+                ctx.batteryPercent <= 20 && !ctx.charging -> Hues.hsl(18f, 0.85f, 0.6f)
+                else -> eyeGlow
+            }
         // Eating shimmer: the filled edge pulses forward.
         val shimmer = if (ctx.charging) (sin(ctx.timeSeconds * 4f) * 0.03f + 0.03f) else 0f
         drawRoundRect(

@@ -13,8 +13,9 @@ import android.os.VibratorManager
  * wrong-feeling buzz. Tap feedback uses view-level haptic constants instead
  * (no permission path); this class covers only the composed purr.
  */
-class PurrHaptics(context: Context) {
-
+class PurrHaptics(
+    context: Context,
+) {
     private val vibrator: Vibrator =
         (context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
 
@@ -29,16 +30,21 @@ class PurrHaptics(context: Context) {
      * One soft purr burst (3 low ticks, sinusoidal scales). Rate-limited so a
      * continuous drag purrs as a texture, not a rattle.
      */
-    fun purr(nowMillis: Long, intensity: Float) {
+    fun purr(
+        nowMillis: Long,
+        intensity: Float,
+    ) {
         if (!lowTickSupported) return
         if (nowMillis - lastPurrAtMillis < PURR_MIN_GAP_MILLIS) return
         lastPurrAtMillis = nowMillis
         val base = (0.2f + 0.2f * intensity.coerceIn(0f, 1f))
-        val effect = VibrationEffect.startComposition()
-            .addPrimitive(VibrationEffect.Composition.PRIMITIVE_LOW_TICK, base, 0)
-            .addPrimitive(VibrationEffect.Composition.PRIMITIVE_LOW_TICK, base * 1.4f, 50)
-            .addPrimitive(VibrationEffect.Composition.PRIMITIVE_LOW_TICK, base, 50)
-            .compose()
+        val effect =
+            VibrationEffect
+                .startComposition()
+                .addPrimitive(VibrationEffect.Composition.PRIMITIVE_LOW_TICK, base, 0)
+                .addPrimitive(VibrationEffect.Composition.PRIMITIVE_LOW_TICK, base * 1.4f, 50)
+                .addPrimitive(VibrationEffect.Composition.PRIMITIVE_LOW_TICK, base, 50)
+                .compose()
         runCatching { vibrator.vibrate(effect) }
     }
 

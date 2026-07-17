@@ -13,7 +13,6 @@ import app.anima.core.model.Mood
  * when sleepy. Deliberately flat and graphic against the glow concepts.
  */
 class FoxKitRenderer : CreatureRenderer {
-
     private val earPath = Path()
     private val tailPath = Path()
 
@@ -30,14 +29,20 @@ class FoxKitRenderer : CreatureRenderer {
         tailPath.reset()
         tailPath.moveTo(c.x + bodyR * 0.5f, c.y + bodyR * 0.75f)
         tailPath.cubicTo(
-            c.x + bodyR * 1.6f + tailSwing, c.y + bodyR * 0.9f,
-            c.x + bodyR * 1.9f + tailSwing * 1.4f, c.y - bodyR * 0.1f,
-            c.x + bodyR * 1.35f + tailSwing, c.y - bodyR * 0.55f,
+            c.x + bodyR * 1.6f + tailSwing,
+            c.y + bodyR * 0.9f,
+            c.x + bodyR * 1.9f + tailSwing * 1.4f,
+            c.y - bodyR * 0.1f,
+            c.x + bodyR * 1.35f + tailSwing,
+            c.y - bodyR * 0.55f,
         )
         tailPath.cubicTo(
-            c.x + bodyR * 1.5f + tailSwing, c.y + bodyR * 0.5f,
-            c.x + bodyR * 1.1f, c.y + bodyR * 0.95f,
-            c.x + bodyR * 0.4f, c.y + bodyR * 1.0f,
+            c.x + bodyR * 1.5f + tailSwing,
+            c.y + bodyR * 0.5f,
+            c.x + bodyR * 1.1f,
+            c.y + bodyR * 0.95f,
+            c.x + bodyR * 0.4f,
+            c.y + bodyR * 1.0f,
         )
         drawPath(tailPath, furDeep)
         drawCircle(cream, radius = bodyR * 0.22f, center = Offset(c.x + bodyR * 1.38f + tailSwing, c.y - bodyR * 0.42f))
@@ -47,7 +52,9 @@ class FoxKitRenderer : CreatureRenderer {
         drawOval(
             brush = Brush.verticalGradient(listOf(fur, furDeep), startY = c.y - breathR, endY = c.y + breathR * 1.3f),
             topLeft = Offset(c.x - breathR * 1.05f, c.y - breathR * 0.7f),
-            size = androidx.compose.ui.geometry.Size(breathR * 2.1f, breathR * 1.75f),
+            size =
+                androidx.compose.ui.geometry
+                    .Size(breathR * 2.1f, breathR * 1.75f),
         )
 
         // Head.
@@ -58,24 +65,30 @@ class FoxKitRenderer : CreatureRenderer {
         drawOval(
             cream,
             topLeft = Offset(headC.x - headR * 0.5f, headC.y + headR * 0.05f),
-            size = androidx.compose.ui.geometry.Size(headR, headR * 0.75f),
+            size =
+                androidx.compose.ui.geometry
+                    .Size(headR, headR * 0.75f),
         )
 
         // Antenna-ears: triangles whose tips ride chain links 0 and 1.
-        val earPerk = when (ctx.mood) {
-            Mood.SLEEPY, Mood.ASLEEP -> 0.35f
-            Mood.BORED -> 0.6f
-            Mood.ANXIOUS -> 1.15f
-            else -> 1f
-        } * (0.85f + 0.3f * pose.energy)
+        val earPerk =
+            when (ctx.mood) {
+                Mood.SLEEPY, Mood.ASLEEP -> 0.35f
+                Mood.BORED -> 0.6f
+                Mood.ANXIOUS -> 1.15f
+                else -> 1f
+            } * (0.85f + 0.3f * pose.energy)
         // Flourish 0: ear flick.
-        val flick = if (pose.flourishPhase > 0f && pose.flourishKind == 0) {
-            kotlin.math.sin(pose.flourishPhase * Math.PI.toFloat() * 3f) * 0.25f
-        } else {
-            0f
-        }
-        drawEar(headC, headR, side = -1f, perk = earPerk, flick = flick, lagX = pose.secondaryX[0] * headR * 1.6f, fur = furDeep, inner = cream)
-        drawEar(headC, headR, side = 1f, perk = earPerk, flick = -flick, lagX = pose.secondaryX[1] * headR * 1.6f, fur = furDeep, inner = cream)
+        val flick =
+            if (pose.flourishPhase > 0f && pose.flourishKind == 0) {
+                kotlin.math.sin(pose.flourishPhase * Math.PI.toFloat() * 3f) * 0.25f
+            } else {
+                0f
+            }
+        val earLagL = pose.secondaryX[0] * headR * 1.6f
+        val earLagR = pose.secondaryX[1] * headR * 1.6f
+        drawEar(headC, headR, side = -1f, perk = earPerk, flick = flick, lagX = earLagL, fur = furDeep, inner = cream)
+        drawEar(headC, headR, side = 1f, perk = earPerk, flick = -flick, lagX = earLagR, fur = furDeep, inner = cream)
 
         // Eyes + nose.
         val eyeGap = headR * 0.42f
@@ -84,14 +97,24 @@ class FoxKitRenderer : CreatureRenderer {
         val iris = Color(0xFF29211C)
         with(EyeKit) {
             drawRoundEye(
-                Offset(headC.x - eyeGap, eyeY), eyeR,
+                Offset(headC.x - eyeGap, eyeY),
+                eyeR,
                 openness(pose.blinkLeft, pose.lidDroop),
-                pose.gazeX, pose.gazeY, eyeR * 0.8f, iris, happy = pose.petLean,
+                pose.gazeX,
+                pose.gazeY,
+                eyeR * 0.8f,
+                iris,
+                happy = pose.petLean,
             )
             drawRoundEye(
-                Offset(headC.x + eyeGap, eyeY), eyeR,
+                Offset(headC.x + eyeGap, eyeY),
+                eyeR,
                 openness(pose.blinkRight, pose.lidDroop),
-                pose.gazeX, pose.gazeY, eyeR * 0.8f, iris, happy = pose.petLean,
+                pose.gazeX,
+                pose.gazeY,
+                eyeR * 0.8f,
+                iris,
+                happy = pose.petLean,
             )
         }
         drawCircle(iris, radius = headR * 0.075f, center = Offset(headC.x, headC.y + headR * 0.3f))

@@ -6,6 +6,8 @@ import app.anima.core.creature.engine.CreatureEngine
 import app.anima.core.model.BodyState
 import app.anima.core.model.CreatureConcept
 import app.anima.core.model.CreatureGenome
+import app.anima.core.model.Evolution
+import app.anima.core.model.LifeStage
 
 /**
  * The one handle a screen holds on its creature. Wraps the engine so feature
@@ -25,6 +27,13 @@ class CreatureController(
         private set
     internal var growth: Float = 0.3f
         private set
+    internal var stageScale: Float = 1f
+        private set
+
+    /** Evolution (v0.2): life stage scales the whole body on top of the genome. */
+    fun setStage(stage: LifeStage) {
+        stageScale = Evolution.sizeScaleOf(stage)
+    }
 
     fun setBodyState(state: BodyState) {
         engine.setMood(state.mood)
@@ -38,8 +47,11 @@ class CreatureController(
     }
 
     fun onTyping(active: Boolean) = engine.onTyping(active)
+
     fun onThinking(active: Boolean) = engine.onThinking(active)
+
     fun onStartle() = engine.onStartle()
+
     fun onCelebrate() = engine.onCelebrate()
 }
 
@@ -48,6 +60,7 @@ fun rememberCreature(
     concept: CreatureConcept,
     seed: Long,
     genome: CreatureGenome = CreatureGenome.from(seed),
-): CreatureController = remember(concept, seed) {
-    CreatureController(concept, seed, genome)
-}
+): CreatureController =
+    remember(concept, seed, genome) {
+        CreatureController(concept, seed, genome)
+    }

@@ -28,14 +28,25 @@ class RenderContext {
 
 /** Hue helpers shared by renderers. */
 object Hues {
-    fun hsl(hue: Float, saturation: Float, lightness: Float, alpha: Float = 1f): Color {
+    fun hsl(
+        hue: Float,
+        saturation: Float,
+        lightness: Float,
+        alpha: Float = 1f,
+    ): Color {
         var h = hue % 360f
         if (h < 0) h += 360f
         return Color.hsl(h, saturation.coerceIn(0f, 1f), lightness.coerceIn(0f, 1f), alpha)
     }
 
     /** Mood-wide tint: flush pushes toward ember red, low energy desaturates. */
-    fun bodyColor(baseHue: Float, sat: Float, light: Float, ctx: RenderContext, alpha: Float = 1f): Color {
+    fun bodyColor(
+        baseHue: Float,
+        sat: Float,
+        light: Float,
+        ctx: RenderContext,
+        alpha: Float = 1f,
+    ): Color {
         val pose = ctx.pose
         val hue = baseHue + ctx.genome.hueShiftDeg - pose.flush * 18f
         val s = sat * (0.55f + 0.45f * pose.energy)

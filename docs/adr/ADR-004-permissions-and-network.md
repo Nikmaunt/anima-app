@@ -44,3 +44,23 @@ it runs in the separate AICore system process.
 - The version catalog contains no network coordinates; `:feature:notifications`
   has no dependency capable of network I/O (verified by its dependency list).
 - DoD audit re-checks all of the above read-only.
+
+## Amendment (v0.2, 2026-07-17): the single network exception + test v2
+
+ADR-005 introduces `:core:model-delivery` — the one module allowed to touch
+the network, for the one flow of fetching the mind's model file on explicit
+user action. Changes against the original text of this ADR:
+
+- The app manifest no longer strips INTERNET at merge; the permission now
+  merges in from `core/model-delivery/src/main/AndroidManifest.xml` and from
+  nowhere else. DataTransport telemetry components stay stripped.
+- **Honest limitation:** Android permissions are app-wide; once merged, the
+  OS lets the whole process open sockets. Per-module scoping is a build-time
+  discipline, not an OS guarantee. NetworkIsolationTest v2 enforces it:
+  INTERNET originates only from model-delivery's manifest; no source outside
+  that module references network APIs; no build file in the repo carries a
+  network-stack coordinate; the version catalog stays clean.
+- The audit's two efficacy gaps are closed: the merged-manifest assertion
+  now FAILS when no build output exists (and `:app` unit tests depend on the
+  manifest-packaging task so the input always exists), and the dependency
+  grep covers every `build.gradle.kts`, not just the catalog.

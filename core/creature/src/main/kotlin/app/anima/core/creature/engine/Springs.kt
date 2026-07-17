@@ -49,17 +49,26 @@ class Spring2(
     val x = SpringF(stiffness, damping)
     val y = SpringF(stiffness, damping)
 
-    fun setTarget(tx: Float, ty: Float) {
+    fun setTarget(
+        tx: Float,
+        ty: Float,
+    ) {
         x.target = tx
         y.target = ty
     }
 
-    fun snapTo(vx: Float, vy: Float) {
+    fun snapTo(
+        vx: Float,
+        vy: Float,
+    ) {
         x.snapTo(vx)
         y.snapTo(vy)
     }
 
-    fun impulse(ix: Float, iy: Float) {
+    fun impulse(
+        ix: Float,
+        iy: Float,
+    ) {
         x.impulse(ix)
         y.impulse(iy)
     }
@@ -83,13 +92,18 @@ class SpringChain(
     baseDamping: Float,
     falloff: Float = 0.72f,
 ) {
-    val chain: List<Spring2> = List(links) { index ->
-        val factor = 1f + index * (1f - falloff)
-        Spring2(baseStiffness / factor, baseDamping / (1f + index * 0.12f))
-    }
+    val chain: List<Spring2> =
+        List(links) { index ->
+            val factor = 1f + index * (1f - falloff)
+            Spring2(baseStiffness / factor, baseDamping / (1f + index * 0.12f))
+        }
 
     /** Drives the head; the rest follow their predecessor. */
-    fun step(headX: Float, headY: Float, dt: Float) {
+    fun step(
+        headX: Float,
+        headY: Float,
+        dt: Float,
+    ) {
         var tx = headX
         var ty = headY
         for (link in chain) {
@@ -100,7 +114,10 @@ class SpringChain(
         }
     }
 
-    fun snapTo(headX: Float, headY: Float) {
+    fun snapTo(
+        headX: Float,
+        headY: Float,
+    ) {
         chain.forEach { it.snapTo(headX, headY) }
     }
 }
@@ -111,6 +128,5 @@ object Substep {
     const val MAX_STEPS = 4
 
     /** Number of fixed substeps for an elapsed wall-clock delta. */
-    fun count(dtMillis: Float): Int =
-        min(MAX_STEPS, kotlin.math.max(1, (dtMillis / MILLIS + 0.5f).toInt()))
+    fun count(dtMillis: Float): Int = min(MAX_STEPS, kotlin.math.max(1, (dtMillis / MILLIS + 0.5f).toInt()))
 }

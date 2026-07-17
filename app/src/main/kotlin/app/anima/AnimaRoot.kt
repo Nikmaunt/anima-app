@@ -19,22 +19,29 @@ import app.anima.core.ui.theme.LocalAnimaColors
 import app.anima.feature.home.HomeScreen
 import app.anima.feature.notifications.NotificationsScreen
 import app.anima.feature.onboarding.OnboardingScreen
+import app.anima.feature.settings.MindScreen
 import app.anima.feature.settings.SettingsScreen
 import app.anima.feature.soul.SoulScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
 @HiltViewModel
-class RootViewModel @Inject constructor(prefs: AnimaPrefs) : ViewModel() {
-    /** null = still reading; avoids flashing onboarding for a hatched creature. */
-    val onboardingDone: StateFlow<Boolean?> = prefs.onboardingDone()
-        .map { it as Boolean? }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
-}
+class RootViewModel
+    @Inject
+    constructor(
+        prefs: AnimaPrefs,
+    ) : ViewModel() {
+        /** null = still reading; avoids flashing onboarding for a hatched creature. */
+        val onboardingDone: StateFlow<Boolean?> =
+            prefs
+                .onboardingDone()
+                .map { it as Boolean? }
+                .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    }
 
 @Composable
 fun AnimaRoot(viewModel: RootViewModel = hiltViewModel()) {
@@ -70,7 +77,11 @@ private fun AnimaNavHost(startAtHome: Boolean) {
             SettingsScreen(
                 onBack = { nav.popBackStack() },
                 onOpenNotifications = { nav.navigate(Routes.NOTIFICATIONS) },
+                onOpenMind = { nav.navigate(Routes.MIND) },
             )
+        }
+        composable(Routes.MIND) {
+            MindScreen(onBack = { nav.popBackStack() })
         }
         composable(Routes.NOTIFICATIONS) {
             NotificationsScreen(onBack = { nav.popBackStack() })
@@ -87,4 +98,5 @@ private object Routes {
     const val SETTINGS = "settings"
     const val NOTIFICATIONS = "notifications"
     const val SOUL = "soul"
+    const val MIND = "mind"
 }

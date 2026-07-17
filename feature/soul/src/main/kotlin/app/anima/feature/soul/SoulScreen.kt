@@ -168,18 +168,22 @@ fun SoulScreen(
 }
 
 @Composable
-private fun Counter(label: String, value: String) {
+private fun Counter(
+    label: String,
+    value: String,
+) {
     Column(Modifier.padding(end = 22.dp)) {
         Text(value, style = MaterialTheme.typography.headlineMedium)
         Text(label, style = MaterialTheme.typography.labelMedium)
     }
 }
 
-private fun categoryName(category: FactCategory): String = when (category) {
-    FactCategory.IDENTITY -> "identity"
-    FactCategory.PREFERENCE -> "preference"
-    FactCategory.PEOPLE -> "people"
-    FactCategory.WORK -> "work"
-    FactCategory.MOMENT -> "moment"
-    FactCategory.OTHER -> "other"
-}
+private fun categoryName(category: FactCategory): String =
+    when (category) {
+        FactCategory.IDENTITY -> "identity"
+        FactCategory.PREFERENCE -> "preference"
+        FactCategory.PEOPLE -> "people"
+        FactCategory.WORK -> "work"
+        FactCategory.MOMENT -> "moment"
+        FactCategory.OTHER -> "other"
+    }

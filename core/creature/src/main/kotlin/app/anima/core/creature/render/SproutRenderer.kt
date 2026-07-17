@@ -17,7 +17,6 @@ import kotlin.math.sin
  * the face lives in the blossom.
  */
 class SproutRenderer : CreatureRenderer {
-
     private val stemPath = Path()
     private val leafPath = Path()
 
@@ -43,9 +42,12 @@ class SproutRenderer : CreatureRenderer {
         stemPath.reset()
         stemPath.moveTo(baseC.x, baseC.y - r * 0.1f)
         stemPath.cubicTo(
-            baseC.x - r * 0.05f, baseC.y - r * 0.7f,
-            stemTop.x - topSway * 0.5f, stemTop.y + r * 0.6f,
-            stemTop.x, stemTop.y,
+            baseC.x - r * 0.05f,
+            baseC.y - r * 0.7f,
+            stemTop.x - topSway * 0.5f,
+            stemTop.y + r * 0.6f,
+            stemTop.x,
+            stemTop.y,
         )
         drawPath(stemPath, stem, style = Stroke(width = r * 0.11f, cap = StrokeCap.Round))
 
@@ -56,8 +58,9 @@ class SproutRenderer : CreatureRenderer {
             val lx = baseC.x + (stemTop.x - baseC.x) * t * 0.8f
             val ly = baseC.y - r * 0.1f + (stemTop.y - baseC.y + r * 0.1f) * t
             val side = if (i % 2 == 0) -1f else 1f
-            val flutter = sin(ctx.timeSeconds * 1.4f + i * 1.3f) * 8f * pose.energy +
-                pose.secondaryX[(i + 2) % pose.secondaryCount.coerceAtLeast(1)] * 30f
+            val flutter =
+                sin(ctx.timeSeconds * 1.4f + i * 1.3f) * 8f * pose.energy +
+                    pose.secondaryX[(i + 2) % pose.secondaryCount.coerceAtLeast(1)] * 30f
             rotate(degrees = side * 42f + flutter, pivot = Offset(lx, ly)) {
                 leafPath.reset()
                 leafPath.moveTo(lx, ly)
@@ -71,11 +74,12 @@ class SproutRenderer : CreatureRenderer {
         // Blossom head: petals + face disc. Flourish 1 = a petal shiver.
         val headR = r * (0.5f + ctx.growth * 0.15f)
         val petals = 6
-        val petalShiver = if (pose.flourishPhase > 0f && pose.flourishKind == 1) {
-            sin(pose.flourishPhase * Math.PI.toFloat() * 4f) * 6f
-        } else {
-            0f
-        }
+        val petalShiver =
+            if (pose.flourishPhase > 0f && pose.flourishKind == 1) {
+                sin(pose.flourishPhase * Math.PI.toFloat() * 4f) * 6f
+            } else {
+                0f
+            }
         for (i in 0 until petals) {
             rotate(degrees = i * (360f / petals) + petalShiver, pivot = stemTop) {
                 drawOval(
@@ -86,11 +90,14 @@ class SproutRenderer : CreatureRenderer {
             }
         }
         drawCircle(
-            brush = Brush.radialGradient(
-                listOf(Hues.hsl(48f, 0.6f, 0.8f), petal),
-                center = stemTop, radius = headR * 0.62f,
-            ),
-            radius = headR * 0.6f, center = stemTop,
+            brush =
+                Brush.radialGradient(
+                    listOf(Hues.hsl(48f, 0.6f, 0.8f), petal),
+                    center = stemTop,
+                    radius = headR * 0.62f,
+                ),
+            radius = headR * 0.6f,
+            center = stemTop,
         )
 
         // Face in the blossom.
@@ -99,14 +106,24 @@ class SproutRenderer : CreatureRenderer {
         val iris = Color(0xFF3A2E1E)
         with(EyeKit) {
             drawRoundEye(
-                Offset(stemTop.x - eyeGap, stemTop.y - headR * 0.05f), eyeR,
+                Offset(stemTop.x - eyeGap, stemTop.y - headR * 0.05f),
+                eyeR,
                 openness(pose.blinkLeft, pose.lidDroop),
-                pose.gazeX, pose.gazeY, eyeR * 0.7f, iris, happy = pose.petLean,
+                pose.gazeX,
+                pose.gazeY,
+                eyeR * 0.7f,
+                iris,
+                happy = pose.petLean,
             )
             drawRoundEye(
-                Offset(stemTop.x + eyeGap, stemTop.y - headR * 0.05f), eyeR,
+                Offset(stemTop.x + eyeGap, stemTop.y - headR * 0.05f),
+                eyeR,
                 openness(pose.blinkRight, pose.lidDroop),
-                pose.gazeX, pose.gazeY, eyeR * 0.7f, iris, happy = pose.petLean,
+                pose.gazeX,
+                pose.gazeY,
+                eyeR * 0.7f,
+                iris,
+                happy = pose.petLean,
             )
         }
     }

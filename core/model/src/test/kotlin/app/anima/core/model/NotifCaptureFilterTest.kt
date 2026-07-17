@@ -5,7 +5,6 @@ import org.junit.Test
 
 /** Ported case-for-case from the hermes-lens OTP filter test suite intent. */
 class NotifCaptureFilterTest {
-
     // --- looksLikeOtp ---
 
     @Test

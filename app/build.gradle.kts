@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.anima.android.application)
     alias(libs.plugins.anima.android.compose)
     alias(libs.plugins.anima.hilt)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -17,8 +18,14 @@ android {
 
     buildTypes {
         release {
-            // R8 config is a post-v0.1 task; debug is the verification target.
-            isMinifyEnabled = false
+            // v0.2: full R8 + resource shrinking. JNI/reflection keeps live
+            // in proguard-rules.pro; everything else relies on consumer rules.
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
 
@@ -27,7 +34,17 @@ android {
     }
 }
 
+// NetworkIsolationTest asserts against the merged debug manifest and fails
+// when it is absent (the v0.1 vacuous-pass gap). Guarantee the input exists
+// whenever unit tests run, even for a bare `gradlew :app:test`.
+tasks.withType<Test>().configureEach {
+    dependsOn("processDebugManifestForPackage")
+}
+
 dependencies {
+    baselineProfile(projects.baselineprofile)
+    implementation(libs.androidx.profileinstaller)
+    implementation(projects.core.modelDelivery)
     implementation(projects.core.model)
     implementation(projects.core.body)
     implementation(projects.core.creature)

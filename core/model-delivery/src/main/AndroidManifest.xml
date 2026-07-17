@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ADR-005 / ADR-004 amendment: this module manifest is the ONLY place in the
+  whole app that declares INTERNET. It merges into the app manifest, so the
+  process as a whole gains the permission (Android has no per-module
+  permissions) — the *source* discipline is what we can and do enforce:
+  NetworkIsolationTest fails the build if any other module manifests the
+  permission or touches network APIs in source.
+
+  The permission exists for exactly one flow: the user pressing "download the
+  mind" on the Mind screen (explicit action, Wi-Fi by default, resumable,
+  hash-verified). The zero-network guarantee for everything else stands.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+</manifest>

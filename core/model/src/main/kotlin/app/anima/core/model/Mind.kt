@@ -25,13 +25,19 @@ data class MindPrompt(
 
 sealed interface MindEvent {
     /** A streamed chunk of the creature's reply. */
-    data class Chunk(val text: String) : MindEvent
+    data class Chunk(
+        val text: String,
+    ) : MindEvent
 
     /** Terminal: the full reply text. */
-    data class Done(val fullText: String) : MindEvent
+    data class Done(
+        val fullText: String,
+    ) : MindEvent
 
     /** Terminal: mapped, human-safe failure. */
-    data class Failed(val reason: MindFailure) : MindEvent
+    data class Failed(
+        val reason: MindFailure,
+    ) : MindEvent
 }
 
 enum class MindFailure {
@@ -53,6 +59,12 @@ interface MindEngine {
     /** Triggers the system-side model fetch when status == DOWNLOADABLE. */
     suspend fun requestDownload(): Boolean
 
+    /**
+     * Drop expensive backend resources (the GEMMA tier holds ~1 GB while
+     * loaded). Safe to call anytime; the next reply reloads lazily.
+     */
+    suspend fun releaseResources() {}
+
     /** One streamed reply. Implementations must never fabricate when ASLEEP. */
     fun reply(prompt: MindPrompt): Flow<MindEvent>
 
@@ -61,5 +73,8 @@ interface MindEngine {
      * exchange. Candidates are suggestions only — persistence requires the
      * user's explicit confirmation in UI.
      */
-    suspend fun extractFactCandidates(userText: String, creatureText: String): List<FactCandidate>
+    suspend fun extractFactCandidates(
+        userText: String,
+        creatureText: String,
+    ): List<FactCandidate>
 }

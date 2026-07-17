@@ -13,36 +13,40 @@ import javax.inject.Singleton
  * on every change so the listener can never see a stale copy.
  */
 @Singleton
-class NotifConfigStore @Inject constructor(
-    @ApplicationContext context: Context,
-) {
-    private val prefs: SharedPreferences =
-        context.getSharedPreferences(FILE, Context.MODE_PRIVATE)
+class NotifConfigStore
+    @Inject
+    constructor(
+        @ApplicationContext context: Context,
+    ) {
+        private val prefs: SharedPreferences =
+            context.getSharedPreferences(FILE, Context.MODE_PRIVATE)
 
-    data class Config(
-        val enabled: Boolean,
-        val storeText: Boolean,
-        val allowlist: Set<String>,
-    )
+        data class Config(
+            val enabled: Boolean,
+            val storeText: Boolean,
+            val allowlist: Set<String>,
+        )
 
-    fun read(): Config = Config(
-        enabled = prefs.getBoolean(KEY_ENABLED, false),
-        storeText = prefs.getBoolean(KEY_STORE_TEXT, false),
-        allowlist = prefs.getStringSet(KEY_ALLOWLIST, emptySet())?.toSet() ?: emptySet(),
-    )
+        fun read(): Config =
+            Config(
+                enabled = prefs.getBoolean(KEY_ENABLED, false),
+                storeText = prefs.getBoolean(KEY_STORE_TEXT, false),
+                allowlist = prefs.getStringSet(KEY_ALLOWLIST, emptySet())?.toSet() ?: emptySet(),
+            )
 
-    fun write(config: Config) {
-        prefs.edit()
-            .putBoolean(KEY_ENABLED, config.enabled)
-            .putBoolean(KEY_STORE_TEXT, config.storeText)
-            .putStringSet(KEY_ALLOWLIST, config.allowlist)
-            .apply()
+        fun write(config: Config) {
+            prefs
+                .edit()
+                .putBoolean(KEY_ENABLED, config.enabled)
+                .putBoolean(KEY_STORE_TEXT, config.storeText)
+                .putStringSet(KEY_ALLOWLIST, config.allowlist)
+                .apply()
+        }
+
+        private companion object {
+            const val FILE = "notif_config"
+            const val KEY_ENABLED = "enabled"
+            const val KEY_STORE_TEXT = "store_text"
+            const val KEY_ALLOWLIST = "allowlist"
+        }
     }
-
-    private companion object {
-        const val FILE = "notif_config"
-        const val KEY_ENABLED = "enabled"
-        const val KEY_STORE_TEXT = "store_text"
-        const val KEY_ALLOWLIST = "allowlist"
-    }
-}

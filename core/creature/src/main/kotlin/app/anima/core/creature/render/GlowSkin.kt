@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
  * filled rect, not the screen.
  */
 class GlowSkin {
-
     private val shader: RuntimeShader? =
         if (Build.VERSION.SDK_INT >= 33) RuntimeShader(AGSL_SOURCE) else null
     private var brush: ShaderBrush? = null
@@ -54,19 +53,23 @@ class GlowSkin {
             drawRect(
                 brush = b,
                 topLeft = Offset(center.x - radius * 2.2f, center.y - radius * 2.2f),
-                size = androidx.compose.ui.geometry.Size(radius * 4.4f, radius * 4.4f),
+                size =
+                    androidx.compose.ui.geometry
+                        .Size(radius * 4.4f, radius * 4.4f),
             )
         } else {
             drawCircle(
-                brush = Brush.radialGradient(
-                    colors = listOf(
-                        color.copy(alpha = 0.55f * intensity),
-                        color.copy(alpha = 0.18f * intensity),
-                        Color.Transparent,
+                brush =
+                    Brush.radialGradient(
+                        colors =
+                            listOf(
+                                color.copy(alpha = 0.55f * intensity),
+                                color.copy(alpha = 0.18f * intensity),
+                                Color.Transparent,
+                            ),
+                        center = center,
+                        radius = radius * 2.2f,
                     ),
-                    center = center,
-                    radius = radius * 2.2f,
-                ),
                 radius = radius * 2.2f,
                 center = center,
             )

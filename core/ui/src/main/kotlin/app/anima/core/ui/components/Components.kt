@@ -33,13 +33,16 @@ fun PillButton(
         modifier = modifier,
         enabled = enabled,
         shape = RoundedCornerShape(50),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = colors.accent,
-            contentColor = colors.background,
-        ),
-        contentPadding = androidx.compose.foundation.layout.PaddingValues(
-            horizontal = 28.dp, vertical = 14.dp,
-        ),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = colors.accent,
+                contentColor = colors.background,
+            ),
+        contentPadding =
+            androidx.compose.foundation.layout.PaddingValues(
+                horizontal = 28.dp,
+                vertical = 14.dp,
+            ),
     ) {
         Text(text, style = MaterialTheme.typography.labelLarge)
     }
@@ -71,12 +74,13 @@ fun SectionCard(
 ) {
     val colors = LocalAnimaColors.current
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium)
-            .background(colors.surface)
-            .border(1.dp, colors.outline.copy(alpha = 0.5f), MaterialTheme.shapes.medium)
-            .padding(20.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.medium)
+                .background(colors.surface)
+                .border(1.dp, colors.outline.copy(alpha = 0.5f), MaterialTheme.shapes.medium)
+                .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         content = content,
     )
@@ -84,7 +88,10 @@ fun SectionCard(
 
 /** Small all-caps section label. */
 @Composable
-fun SectionLabel(text: String, modifier: Modifier = Modifier) {
+fun SectionLabel(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
     Text(
         text = text.uppercase(),
         style = MaterialTheme.typography.labelMedium,

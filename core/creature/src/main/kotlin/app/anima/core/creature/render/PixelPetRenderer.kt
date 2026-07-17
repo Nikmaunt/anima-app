@@ -14,7 +14,6 @@ import app.anima.core.model.Mood
  * blink turns eye pixels off. All squares, no anti-alias pretence.
  */
 class PixelPetRenderer : CreatureRenderer {
-
     /** 12×12 logical grid; left 6 columns generated, mirrored right. */
     private val grid = 12
     private var spriteSeedCache = Long.MIN_VALUE
@@ -27,10 +26,12 @@ class PixelPetRenderer : CreatureRenderer {
 
         val px = size.minDimension * 0.75f / grid
         // Snap wander to whole pixels — motion stays chunky on purpose.
-        val originX = size.width / 2f - (grid / 2f) * px +
-            (pose.offsetX * size.minDimension / px).toInt() * px
-        val originY = size.height / 2f - (grid / 2f) * px +
-            (pose.offsetY * size.minDimension / px).toInt() * px
+        val originX =
+            size.width / 2f - (grid / 2f) * px +
+                (pose.offsetX * size.minDimension / px).toInt() * px
+        val originY =
+            size.height / 2f - (grid / 2f) * px +
+                (pose.offsetY * size.minDimension / px).toInt() * px
 
         // Two-frame walk cycle; frame rate follows energy (asleep ≈ frozen).
         val fps = 1.6f * (0.25f + pose.energy)
@@ -56,27 +57,37 @@ class PixelPetRenderer : CreatureRenderer {
         // Eyes: 1-pixel squares; blink = pixels off; gaze = 1-pixel shift.
         val eyesClosed = pose.blinkLeft > 0.5f || pose.lidDroop > 0.7f || ctx.mood == Mood.ASLEEP
         if (!eyesClosed) {
-            val gx = if (pose.gazeX > 0.35f) 1 else if (pose.gazeX < -0.35f) -1 else 0
+            val gx =
+                if (pose.gazeX > 0.35f) {
+                    1
+                } else if (pose.gazeX < -0.35f) {
+                    -1
+                } else {
+                    0
+                }
             val gy = if (pose.gazeY > 0.35f) 1 else 0
             val eyeColor = Color(0xFF10141C)
             val eyeRow = grid / 2 - 2 + gy
-            drawRect(eyeColor, Offset(originX + (grid / 2 - 2 + gx) * px, originY + eyeRow * px + breathShift), Size(px, px))
-            drawRect(eyeColor, Offset(originX + (grid / 2 + 1 + gx) * px, originY + eyeRow * px + breathShift), Size(px, px))
+            val eyeY = originY + eyeRow * px + breathShift
+            drawRect(eyeColor, Offset(originX + (grid / 2 - 2 + gx) * px, eyeY), Size(px, px))
+            drawRect(eyeColor, Offset(originX + (grid / 2 + 1 + gx) * px, eyeY), Size(px, px))
         } else {
             // Closed eyes: 2-pixel dashes.
             val eyeColor = Color(0xFF10141C).copy(alpha = 0.8f)
             val eyeRow = grid / 2 - 2
-            drawRect(eyeColor, Offset(originX + (grid / 2 - 2) * px, originY + eyeRow * px + breathShift), Size(px, px * 0.4f))
-            drawRect(eyeColor, Offset(originX + (grid / 2 + 1) * px, originY + eyeRow * px + breathShift), Size(px, px * 0.4f))
+            val eyeY = originY + eyeRow * px + breathShift
+            drawRect(eyeColor, Offset(originX + (grid / 2 - 2) * px, eyeY), Size(px, px * 0.4f))
+            drawRect(eyeColor, Offset(originX + (grid / 2 + 1) * px, eyeY), Size(px, px * 0.4f))
         }
 
         // Mood pixels: hearts when petted, sweat drop when hot, Z when asleep.
-        val accentColor = when {
-            pose.petLean > 0.3f -> Hues.hsl(350f, 0.75f, 0.65f)
-            ctx.mood == Mood.HOT -> Hues.hsl(200f, 0.7f, 0.6f)
-            ctx.mood == Mood.ASLEEP -> Color(0xFF9AA3C0)
-            else -> null
-        }
+        val accentColor =
+            when {
+                pose.petLean > 0.3f -> Hues.hsl(350f, 0.75f, 0.65f)
+                ctx.mood == Mood.HOT -> Hues.hsl(200f, 0.7f, 0.6f)
+                ctx.mood == Mood.ASLEEP -> Color(0xFF9AA3C0)
+                else -> null
+            }
         accentColor?.let {
             val bx = originX + (grid + 1) * px * 0.9f
             val by = originY + px * 1.5f

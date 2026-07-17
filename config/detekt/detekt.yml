@@ -1,0 +1,55 @@
+# Anima detekt config — deltas over the default ruleset only.
+# Philosophy: zero findings is enforced (`detekt` is part of `check`); rules
+# that fight the domain (a hand-tuned creature rig full of motion constants,
+# Compose PascalCase, math-dense renderers) are tuned here, not baselined away.
+
+complexity:
+  LongMethod:
+    # Renderers draw a whole creature in one pass; splitting them into
+    # per-limb functions was tried in v0.1 and read worse. Composable
+    # screens are declarative trees, not logic — length is not complexity.
+    threshold: 120
+    ignoreAnnotated: ['Composable']
+  LongParameterList:
+    active: false # Compose slot APIs and rig constructors
+  CyclomaticComplexMethod:
+    # Pixel/ember renderers branch per feature of the creature's face.
+    threshold: 30
+  ComplexCondition:
+    threshold: 5
+  NestedBlockDepth:
+    threshold: 5
+  TooManyFunctions:
+    active: false
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated: ['Composable']
+  MatchingDeclarationName:
+    # Files like Noise.kt/AnimaTheme.kt group a small family of declarations
+    # under a topic name on purpose.
+    active: false
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Z][A-Za-z0-9]*|[A-Z][_A-Z0-9]*'
+
+style:
+  MagicNumber:
+    # The rig IS magic numbers (spring constants, easing shapes, palette
+    # mixes). Flagging each would produce hundreds of noise findings.
+    active: false
+  ReturnCount:
+    # Gate/filter functions (NotifCaptureFilter) are early-return chains by
+    # design; counting returns punishes the clearest shape.
+    active: false
+  UnusedPrivateMember:
+    ignoreAnnotated: ['Preview']
+  ThrowsCount:
+    max: 4
+
+exceptions:
+  SwallowedException:
+    # runCatching-with-default is the deliberate pattern at the mind/IO edge:
+    # the creature degrades honestly instead of crashing.
+    active: false
+  TooGenericExceptionCaught:
+    active: false

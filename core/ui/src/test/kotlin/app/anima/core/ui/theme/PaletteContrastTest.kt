@@ -9,7 +9,6 @@ import kotlin.math.pow
  * a palette tweak that breaks readability fails the build, no device needed.
  */
 class PaletteContrastTest {
-
     @Test
     fun `night text on night backgrounds meets AA`() {
         assertThat(contrast(AnimaPalette.NightText, AnimaPalette.NightDeep)).isAtLeast(4.5)
@@ -33,7 +32,10 @@ class PaletteContrastTest {
         assertThat(contrast(AnimaPalette.NightDeep, AnimaPalette.NightAccent)).isAtLeast(4.5)
     }
 
-    private fun contrast(fgArgb: Long, bgArgb: Long): Double {
+    private fun contrast(
+        fgArgb: Long,
+        bgArgb: Long,
+    ): Double {
         val l1 = relativeLuminance(fgArgb)
         val l2 = relativeLuminance(bgArgb)
         val lighter = maxOf(l1, l2)

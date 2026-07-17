@@ -44,19 +44,20 @@ data class BodySignals(
 
     companion object {
         /** A neutral daylight resting state; previews and tests start here. */
-        val Resting = BodySignals(
-            batteryPercent = 80,
-            charging = false,
-            chargeKind = ChargeKind.NONE,
-            net = NetSense.WIFI,
-            thermal = ThermalSense.CALM,
-            diskFreeBytes = 64L * 1024 * 1024 * 1024,
-            diskTotalBytes = 128L * 1024 * 1024 * 1024,
-            lowMemory = false,
-            awakeMillis = 4L * 60 * 60 * 1000,
-            sinceBootMillis = 12L * 60 * 60 * 1000,
-            minuteOfDay = 14 * 60,
-            notifRecentCount = 0,
-        )
+        val Resting =
+            BodySignals(
+                batteryPercent = 80,
+                charging = false,
+                chargeKind = ChargeKind.NONE,
+                net = NetSense.WIFI,
+                thermal = ThermalSense.CALM,
+                diskFreeBytes = 64L * 1024 * 1024 * 1024,
+                diskTotalBytes = 128L * 1024 * 1024 * 1024,
+                lowMemory = false,
+                awakeMillis = 4L * 60 * 60 * 1000,
+                sinceBootMillis = 12L * 60 * 60 * 1000,
+                minuteOfDay = 14 * 60,
+                notifRecentCount = 0,
+            )
     }
 }

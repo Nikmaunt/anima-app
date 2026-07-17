@@ -106,7 +106,10 @@ class CreatureEngine(
         petLean.target = 1f
     }
 
-    fun onPetMove(normX: Float, normY: Float) {
+    fun onPetMove(
+        normX: Float,
+        normY: Float,
+    ) {
         touchGazeX = normX.coerceIn(-1f, 1f)
         touchGazeY = normY.coerceIn(-1f, 1f)
     }
@@ -118,7 +121,10 @@ class CreatureEngine(
         touchGazeY = Float.NaN
     }
 
-    fun onLookAt(normX: Float, normY: Float) {
+    fun onLookAt(
+        normX: Float,
+        normY: Float,
+    ) {
         touchGazeX = normX.coerceIn(-1f, 1f)
         touchGazeY = normY.coerceIn(-1f, 1f)
     }
@@ -195,16 +201,17 @@ class CreatureEngine(
             if (mood == Mood.BORED && breathCycleIndex % SIGH_EVERY_CYCLES == 0L) sighBoost = SIGH_BOOST
         }
         if (sighBoost > 0f) sighBoost = (sighBoost - dt * SIGH_DECAY).coerceAtLeast(0f)
-        val swallow = if (mood == Mood.EATING && breathCycleIndex % 4 == 3L) {
-            SWALLOW_BUMP * sin(breathPhase * TWO_PI)
-        } else {
-            0f
-        }
+        val swallow =
+            if (mood == Mood.EATING && breathCycleIndex % 4 == 3L) {
+                SWALLOW_BUMP * sin(breathPhase * TWO_PI)
+            } else {
+                0f
+            }
         pose.breath =
             (asymmetricBreath(breathPhase) * (profile.breathDepth + sighBoost) + swallow).coerceIn(0f, 1.4f)
 
         // Blink scheduler: seeded intervals, never synced to cycle boundaries.
-        stepBlink(dt)
+        stepBlink()
 
         // Gaze: touch target wins; otherwise ambient darts on schedule.
         stepGaze(dt)
@@ -253,7 +260,7 @@ class CreatureEngine(
         pose.lidDroop = effectiveLid()
     }
 
-    private fun stepBlink(dt: Float) {
+    private fun stepBlink() {
         val rate = profile.blinkRateScale
         if (rate <= 0f && rouseUntil < time) {
             // Asleep: eyes closed, no schedule.
@@ -273,11 +280,12 @@ class CreatureEngine(
             if (elapsed >= BLINK_TOTAL_SECONDS) {
                 blinkStartedAt = Float.NaN
                 blinkIndex++
-                nextBlinkAt = if (pendingDoubleBlink) {
-                    time + DOUBLE_BLINK_GAP_SECONDS
-                } else {
-                    time + nextBlinkInterval()
-                }
+                nextBlinkAt =
+                    if (pendingDoubleBlink) {
+                        time + DOUBLE_BLINK_GAP_SECONDS
+                    } else {
+                        time + nextBlinkInterval()
+                    }
                 pendingDoubleBlink = false
             }
         } else if (mood == Mood.ASLEEP && rouseUntil >= time) {
@@ -293,8 +301,9 @@ class CreatureEngine(
     private fun nextBlinkInterval(): Float {
         // Uniform 2–6 s scaled by genome and mood; typing focus slows blinking.
         val u = ValueNoise.hash01(blinkIndex, seed, channel = 20)
-        var interval = (BLINK_MIN_SECONDS + u * (BLINK_MAX_SECONDS - BLINK_MIN_SECONDS)) *
-            genome.blinkRateScale / profile.blinkRateScale.coerceAtLeast(0.05f)
+        var interval =
+            (BLINK_MIN_SECONDS + u * (BLINK_MAX_SECONDS - BLINK_MIN_SECONDS)) *
+                genome.blinkRateScale / profile.blinkRateScale.coerceAtLeast(0.05f)
         if (typing) interval *= TYPING_BLINK_SLOWDOWN
         return interval
     }
@@ -330,9 +339,10 @@ class CreatureEngine(
         if (minute > 0 && minute != flourishMinute && flourishStartedAt.isNaN() && mood == Mood.ALERT) {
             flourishMinute = minute
             flourishStartedAt = time
-            pose.flourishKind = ValueNoise.hash01(minute, seed, channel = 40).let {
-                (it * FLOURISH_KINDS).toInt().coerceIn(0, FLOURISH_KINDS - 1)
-            }
+            pose.flourishKind =
+                ValueNoise.hash01(minute, seed, channel = 40).let {
+                    (it * FLOURISH_KINDS).toInt().coerceIn(0, FLOURISH_KINDS - 1)
+                }
         }
         if (!flourishStartedAt.isNaN()) {
             val phase = (time - flourishStartedAt) / FLOURISH_DURATION_SECONDS
@@ -367,7 +377,7 @@ class CreatureEngine(
         pose.lidDroop = profile.lidClosure
         pose.petLean = 0f
         pose.thinking = false
-        stepBlink(dt)
+        stepBlink()
     }
 
     private fun settleToStatics() {
@@ -431,19 +441,19 @@ class CreatureEngine(
 
         const val REDUCED_BREATH_STATIC = 0.35f
 
-        fun asymmetricBreath(phase: Float): Float {
-            return if (phase < INHALE_FRACTION) {
+        fun asymmetricBreath(phase: Float): Float =
+            if (phase < INHALE_FRACTION) {
                 smooth(phase / INHALE_FRACTION)
             } else {
                 1f - smooth((phase - INHALE_FRACTION) / (1f - INHALE_FRACTION))
             }
-        }
 
-        fun blinkPhase(elapsed: Float): Float = when {
-            elapsed < BLINK_CLOSE_SECONDS -> smooth(elapsed / BLINK_CLOSE_SECONDS)
-            elapsed < BLINK_TOTAL_SECONDS -> 1f - smooth((elapsed - BLINK_CLOSE_SECONDS) / BLINK_OPEN_SECONDS)
-            else -> 0f
-        }
+        fun blinkPhase(elapsed: Float): Float =
+            when {
+                elapsed < BLINK_CLOSE_SECONDS -> smooth(elapsed / BLINK_CLOSE_SECONDS)
+                elapsed < BLINK_TOTAL_SECONDS -> 1f - smooth((elapsed - BLINK_CLOSE_SECONDS) / BLINK_OPEN_SECONDS)
+                else -> 0f
+            }
 
         fun smooth(x: Float): Float {
             val t = x.coerceIn(0f, 1f)

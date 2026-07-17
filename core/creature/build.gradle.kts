@@ -19,5 +19,11 @@ dependencies {
 
     testImplementation(libs.junit4)
     testImplementation(libs.truth)
+    // Compose UI tests run on the JVM under Robolectric (v0.2 debt closure):
+    // no device needed, so `gradlew test` exercises creature states in CI.
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.ext.junit)
+    testImplementation(libs.androidx.ui.test.junit4)
+    testImplementation(libs.androidx.ui.test.manifest)
     testImplementation(libs.kotlinx.coroutines.test)
 }

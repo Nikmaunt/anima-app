@@ -21,18 +21,21 @@ object MoodEngine {
     const val NIGHT_END_MINUTE = 7 * 60
     const val BORED_AFTER_MILLIS = 2L * 60 * 1000
 
-    fun derive(signals: BodySignals, interactionIdleMillis: Long): Mood = when {
-        signals.thermal >= ThermalSense.HOT -> Mood.HOT
-        signals.charging -> Mood.EATING
-        signals.batteryPercent <= SLEEPY_BATTERY_MAX -> Mood.SLEEPY
-        isAnxious(signals) -> Mood.ANXIOUS
-        isNight(signals.minuteOfDay) -> Mood.ASLEEP
-        interactionIdleMillis >= BORED_AFTER_MILLIS -> Mood.BORED
-        else -> Mood.ALERT
-    }
+    fun derive(
+        signals: BodySignals,
+        interactionIdleMillis: Long,
+    ): Mood =
+        when {
+            signals.thermal >= ThermalSense.HOT -> Mood.HOT
+            signals.charging -> Mood.EATING
+            signals.batteryPercent <= SLEEPY_BATTERY_MAX -> Mood.SLEEPY
+            isAnxious(signals) -> Mood.ANXIOUS
+            isNight(signals.minuteOfDay) -> Mood.ASLEEP
+            interactionIdleMillis >= BORED_AFTER_MILLIS -> Mood.BORED
+            else -> Mood.ALERT
+        }
 
-    fun isNight(minuteOfDay: Int): Boolean =
-        minuteOfDay >= NIGHT_START_MINUTE || minuteOfDay < NIGHT_END_MINUTE
+    fun isNight(minuteOfDay: Int): Boolean = minuteOfDay >= NIGHT_START_MINUTE || minuteOfDay < NIGHT_END_MINUTE
 
     private fun isAnxious(signals: BodySignals): Boolean =
         signals.diskFreeFraction < ANXIOUS_DISK_FREE_FRACTION ||

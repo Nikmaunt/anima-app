@@ -50,18 +50,18 @@ fun ConceptGallery(
         items(CreatureConcept.entries, key = { it.wire }) { concept ->
             val isSelected = concept == selected
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(cellHeight)
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(surface)
-                    .border(
-                        width = if (isSelected) 2.dp else 1.dp,
-                        color = if (isSelected) accent else outline.copy(alpha = 0.4f),
-                        shape = RoundedCornerShape(20.dp),
-                    )
-                    .clickable { onSelect(concept) }
-                    .padding(8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(cellHeight)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(surface)
+                        .border(
+                            width = if (isSelected) 2.dp else 1.dp,
+                            color = if (isSelected) accent else outline.copy(alpha = 0.4f),
+                            shape = RoundedCornerShape(20.dp),
+                        ).clickable { onSelect(concept) }
+                        .padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 val controller = rememberCreature(concept, seed)
@@ -69,9 +69,10 @@ fun ConceptGallery(
                 CreatureSurface(
                     controller = controller,
                     night = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1.25f),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1.25f),
                     interactive = false,
                 )
                 Text(
@@ -83,13 +84,14 @@ fun ConceptGallery(
     }
 }
 
-fun conceptName(concept: CreatureConcept): String = when (concept) {
-    CreatureConcept.SPIRIT_ORB -> "Spirit orb"
-    CreatureConcept.FOX_KIT -> "Fox kit"
-    CreatureConcept.JELLY -> "Jelly"
-    CreatureConcept.PIXEL_PET -> "Pixel pet"
-    CreatureConcept.ROBOT -> "Robot"
-    CreatureConcept.SPROUT -> "Sprout"
-    CreatureConcept.EMBER -> "Ember"
-    CreatureConcept.MOTH -> "Moth"
-}
+fun conceptName(concept: CreatureConcept): String =
+    when (concept) {
+        CreatureConcept.SPIRIT_ORB -> "Spirit orb"
+        CreatureConcept.FOX_KIT -> "Fox kit"
+        CreatureConcept.JELLY -> "Jelly"
+        CreatureConcept.PIXEL_PET -> "Pixel pet"
+        CreatureConcept.ROBOT -> "Robot"
+        CreatureConcept.SPROUT -> "Sprout"
+        CreatureConcept.EMBER -> "Ember"
+        CreatureConcept.MOTH -> "Moth"
+    }

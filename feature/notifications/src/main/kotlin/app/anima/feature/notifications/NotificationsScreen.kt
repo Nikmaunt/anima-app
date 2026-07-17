@@ -54,9 +54,10 @@ fun NotificationsScreen(
 
     // Re-check system grant every time the user returns from settings.
     LaunchedEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) viewModel.refresh()
-        }
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) viewModel.refresh()
+            }
         lifecycleOwner.lifecycle.addObserver(observer)
     }
 
@@ -196,17 +197,22 @@ fun NotificationsScreen(
 }
 
 @Composable
-private fun ToggleRow(label: String, checked: Boolean, onChange: (Boolean) -> Unit) {
+private fun ToggleRow(
+    label: String,
+    checked: Boolean,
+    onChange: (Boolean) -> Unit,
+) {
     val colors = LocalAnimaColors.current
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
         Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
         Switch(
             checked = checked,
             onCheckedChange = onChange,
-            colors = SwitchDefaults.colors(
-                checkedTrackColor = colors.accent,
-                checkedThumbColor = colors.background,
-            ),
+            colors =
+                SwitchDefaults.colors(
+                    checkedTrackColor = colors.accent,
+                    checkedThumbColor = colors.background,
+                ),
         )
     }
 }

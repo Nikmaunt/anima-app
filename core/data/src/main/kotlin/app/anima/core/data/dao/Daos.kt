@@ -23,7 +23,10 @@ abstract class SoulFactDao {
     abstract suspend fun insert(fact: SoulFactEntity)
 
     @Query("UPDATE soul_facts SET supersededById = :newId WHERE id = :oldId AND supersededById IS NULL")
-    protected abstract suspend fun markSuperseded(oldId: String, newId: String): Int
+    protected abstract suspend fun markSuperseded(
+        oldId: String,
+        newId: String,
+    ): Int
 
     /**
      * Marker first (guarded by `supersededById IS NULL`), insert only if it
@@ -33,14 +36,20 @@ abstract class SoulFactDao {
      * transaction.
      */
     @Transaction
-    open suspend fun supersede(oldId: String, replacement: SoulFactEntity) {
+    open suspend fun supersede(
+        oldId: String,
+        replacement: SoulFactEntity,
+    ) {
         if (markSuperseded(oldId, replacement.id) == 1) {
             insert(replacement)
         }
     }
 
     @Query("UPDATE soul_facts SET forgottenAtMillis = :atMillis WHERE id = :id AND forgottenAtMillis IS NULL")
-    abstract suspend fun forget(id: String, atMillis: Long): Int
+    abstract suspend fun forget(
+        id: String,
+        atMillis: Long,
+    ): Int
 
     @Query(
         "SELECT * FROM soul_facts WHERE supersededById IS NULL AND forgottenAtMillis IS NULL " +
@@ -81,7 +90,10 @@ interface BodyJournalDao {
     suspend fun countOfKind(kind: String): Int
 
     @Query("SELECT COUNT(*) FROM body_journal WHERE kind = :kind AND atMillis >= :sinceMillis")
-    suspend fun countOfKindSince(kind: String, sinceMillis: Long): Int
+    suspend fun countOfKindSince(
+        kind: String,
+        sinceMillis: Long,
+    ): Int
 }
 
 @Dao
@@ -106,7 +118,10 @@ interface NotifEventDao {
     @Query("DELETE FROM notif_events WHERE postedAtMillis < :beforeMillis")
     suspend fun pruneBefore(beforeMillis: Long): Int
 
-    data class PackageCount(val packageName: String, val count: Int)
+    data class PackageCount(
+        val packageName: String,
+        val count: Int,
+    )
 }
 
 @Dao

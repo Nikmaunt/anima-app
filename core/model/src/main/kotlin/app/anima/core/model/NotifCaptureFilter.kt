@@ -14,10 +14,11 @@ object NotifCaptureFilter {
      * OTP keyword alternation (en/ru/pl + banking), substring on purpose:
      * `подтверж` catches every inflection, `verif` catches verify/verification.
      */
-    private val otpKeyword = Regex(
-        "code|код|kod|otp|2fa|verif|подтверж|pin|cvv|cvc|пароль|password|hasło",
-        setOf(RegexOption.IGNORE_CASE),
-    )
+    private val otpKeyword =
+        Regex(
+            "code|код|kod|otp|2fa|verif|подтверж|pin|cvv|cvc|пароль|password|hasło",
+            setOf(RegexOption.IGNORE_CASE),
+        )
 
     /** An isolated 4–8 digit run — the shape of an OTP, not of a phone number. */
     private val isolatedDigits = Regex("(?<![0-9])[0-9]{4,8}(?![0-9])")
@@ -26,7 +27,10 @@ object NotifCaptureFilter {
      * True iff the notification looks like an OTP/2FA message: BOTH a keyword
      * AND an isolated short digit run anywhere across title+text.
      */
-    fun looksLikeOtp(title: String?, text: String?): Boolean {
+    fun looksLikeOtp(
+        title: String?,
+        text: String?,
+    ): Boolean {
         val haystack = listOfNotNull(title, text).joinToString("\n")
         if (haystack.isEmpty()) return false
         return otpKeyword.containsMatchIn(haystack) && isolatedDigits.containsMatchIn(haystack)
@@ -77,7 +81,12 @@ data class CapturedNotif(
  * dedups instead of double-counting in the storm detector.
  */
 object NotifIdentity {
-    fun entryId(packageName: String, postTimeMillis: Long, title: String, text: String?): String {
+    fun entryId(
+        packageName: String,
+        postTimeMillis: Long,
+        title: String,
+        text: String?,
+    ): String {
         val hash = fnv1a64("$title|${text.orEmpty()}")
         return "$packageName:$postTimeMillis:${hash.toULong().toString(16).take(12)}"
     }

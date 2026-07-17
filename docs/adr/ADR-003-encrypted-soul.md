@@ -41,3 +41,35 @@ design changes and is the documented industry pattern.
   an explicit item in the manual S24 checklist.
 - Losing the Keystore key (factory reset without export) loses the soul —
   by design; the product's answer is the one-file soul export.
+
+## Addendum (v0.2, 2026-07-17): passphrase zeroing — what is actually true
+
+The original text claimed the passphrase is "zeroed after opening the DB".
+The v0.1 audit (docs/audit-v01.md) found no zeroing anywhere in app code.
+Investigating the library itself (bytecode of `net.zetetic:sqlcipher-android`
+4.6.1, since secondary sources contradicted each other):
+
+- `SupportOpenHelperFactory` **retains the exact `byte[]` reference** and
+  never scrubs it. There is **no `clearPassphrase` parameter** in this
+  library — the boolean ctor argument is `enableWriteAheadLogging` (the
+  deprecated `android-database-sqlcipher` had clearing; its successor
+  dropped it).
+- Therefore in v0.1 the passphrase lived in the Java heap, unscrubbed, for
+  the whole process lifetime. The ADR overclaimed.
+
+v0.2 mechanism (explicit, ours):
+
+- `SoulKeyHolder` (core:data) is the single custodian of the plaintext array;
+  the same reference goes into the factory, so scrubbing the holder's array
+  also scrubs the factory's retained copy.
+- `AnimaApp.onCreate` eagerly opens the DB on an IO coroutine and then calls
+  `SoulKeyHolder.zero()` — plaintext window is startup-seconds, not
+  process-lifetime. A hypothetical re-open after zeroing fails loudly (wrong
+  key) instead of silently working with a scrubbed array; accepted, because
+  the Room singleton holds its connection for the process lifetime.
+
+**Accepted limitation, on the record:** SQLCipher's native side derives and
+holds key material for open connections; there is no API to scrub those
+native copies short of closing the database. The threat model is at-rest
+disk compromise, not a same-process memory reader — a process that can read
+our heap can read the open DB anyway.

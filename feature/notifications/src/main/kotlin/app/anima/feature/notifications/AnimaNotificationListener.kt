@@ -8,12 +8,12 @@ import app.anima.core.data.repo.NotifEventsRepository
 import app.anima.core.model.NotifCaptureFilter
 import app.anima.core.model.NotifIdentity
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * Anima's ONLY background entity (constraint #5). It does exactly one thing:
@@ -32,7 +32,6 @@ import kotlinx.coroutines.launch
  */
 @AndroidEntryPoint
 class AnimaNotificationListener : NotificationListenerService() {
-
     @Inject lateinit var configStore: NotifConfigStore
 
     @Inject lateinit var events: NotifEventsRepository
@@ -50,16 +49,17 @@ class AnimaNotificationListener : NotificationListenerService() {
     private fun capture(sbn: StatusBarNotification) {
         val config = configStore.read()
         val extras = sbn.notification?.extras
-        val captured = NotifCaptureFilter.gate(
-            enabled = config.enabled,
-            allowlist = config.allowlist,
-            packageName = sbn.packageName,
-            isGroupSummary = (sbn.notification?.flags ?: 0) and Notification.FLAG_GROUP_SUMMARY != 0,
-            isOngoing = sbn.isOngoing,
-            title = extras?.getCharSequence(Notification.EXTRA_TITLE)?.toString(),
-            text = extras?.getCharSequence(Notification.EXTRA_TEXT)?.toString(),
-            storeText = config.storeText,
-        ) ?: return
+        val captured =
+            NotifCaptureFilter.gate(
+                enabled = config.enabled,
+                allowlist = config.allowlist,
+                packageName = sbn.packageName,
+                isGroupSummary = (sbn.notification?.flags ?: 0) and Notification.FLAG_GROUP_SUMMARY != 0,
+                isOngoing = sbn.isOngoing,
+                title = extras?.getCharSequence(Notification.EXTRA_TITLE)?.toString(),
+                text = extras?.getCharSequence(Notification.EXTRA_TEXT)?.toString(),
+                storeText = config.storeText,
+            ) ?: return
 
         val id = NotifIdentity.entryId(captured.packageName, sbn.postTime, captured.title, captured.text)
         scope.launch {

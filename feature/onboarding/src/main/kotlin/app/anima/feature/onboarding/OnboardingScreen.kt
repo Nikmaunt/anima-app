@@ -71,19 +71,21 @@ fun OnboardingScreen(
     ) {
         when (state.stage) {
             OnboardingStage.HATCH -> HatchStage(seed = state.seed, onHatched = viewModel::onHatched)
-            OnboardingStage.CHOOSE -> ChooseStage(
-                seed = state.seed,
-                selected = state.concept,
-                onSelect = viewModel::onConceptChosen,
-                onConfirm = viewModel::onConceptConfirmed,
-            )
-            OnboardingStage.NAME -> NameStage(
-                seed = state.seed,
-                concept = state.concept ?: CreatureConcept.SPIRIT_ORB,
-                name = state.name,
-                onNameChanged = viewModel::onNameChanged,
-                onConfirm = viewModel::onNameConfirmed,
-            )
+            OnboardingStage.CHOOSE ->
+                ChooseStage(
+                    seed = state.seed,
+                    selected = state.concept,
+                    onSelect = viewModel::onConceptChosen,
+                    onConfirm = viewModel::onConceptConfirmed,
+                )
+            OnboardingStage.NAME ->
+                NameStage(
+                    seed = state.seed,
+                    concept = state.concept ?: CreatureConcept.SPIRIT_ORB,
+                    name = state.name,
+                    onNameChanged = viewModel::onNameChanged,
+                    onConfirm = viewModel::onNameConfirmed,
+                )
             OnboardingStage.PRIVACY -> PrivacyStage(onAgree = { viewModel.complete(onFinished) })
         }
     }
@@ -96,7 +98,10 @@ fun OnboardingScreen(
  * ambient life continues.
  */
 @Composable
-private fun HatchStage(seed: Long, onHatched: () -> Unit) {
+private fun HatchStage(
+    seed: Long,
+    onHatched: () -> Unit,
+) {
     val colors = LocalAnimaColors.current
     var progress by remember { mutableFloatStateOf(0f) }
     var skipped by remember { mutableStateOf(false) }
@@ -114,7 +119,12 @@ private fun HatchStage(seed: Long, onHatched: () -> Unit) {
     Column(
         Modifier
             .fillMaxSize()
-            .pointerInput(Unit) { detectTapGestures { skipped = true; progress = 1f } },
+            .pointerInput(Unit) {
+                detectTapGestures {
+                    skipped = true
+                    progress = 1f
+                }
+            },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.weight(0.6f))
@@ -127,28 +137,35 @@ private fun HatchStage(seed: Long, onHatched: () -> Unit) {
                     val tremble = sin(progress * 80f) * r * 0.035f * progress
                     val eggC = Offset(c.x + tremble, c.y)
                     drawOval(
-                        brush = Brush.radialGradient(
-                            listOf(Color(0xFFEFF3FF), Color(0xFF9FB4D8)),
-                            center = eggC.copy(y = eggC.y - r * 0.4f),
-                            radius = r * 1.6f,
-                        ),
+                        brush =
+                            Brush.radialGradient(
+                                listOf(Color(0xFFEFF3FF), Color(0xFF9FB4D8)),
+                                center = eggC.copy(y = eggC.y - r * 0.4f),
+                                radius = r * 1.6f,
+                            ),
                         topLeft = Offset(eggC.x - r * 0.82f, eggC.y - r * 1.05f),
-                        size = androidx.compose.ui.geometry.Size(r * 1.64f, r * 2.1f),
+                        size =
+                            androidx.compose.ui.geometry
+                                .Size(r * 1.64f, r * 2.1f),
                     )
                     // Cracks appear in thirds.
                     val crack = Color(0xFF3A4160)
                     if (progress > 0.35f) {
                         drawLine(
-                            crack, Offset(eggC.x - r * 0.3f, eggC.y - r * 0.5f),
+                            crack,
+                            Offset(eggC.x - r * 0.3f, eggC.y - r * 0.5f),
                             Offset(eggC.x + r * 0.05f, eggC.y - r * 0.1f),
-                            strokeWidth = r * 0.045f, cap = StrokeCap.Round,
+                            strokeWidth = r * 0.045f,
+                            cap = StrokeCap.Round,
                         )
                     }
                     if (progress > 0.6f) {
                         drawLine(
-                            crack, Offset(eggC.x + r * 0.05f, eggC.y - r * 0.1f),
+                            crack,
+                            Offset(eggC.x + r * 0.05f, eggC.y - r * 0.1f),
                             Offset(eggC.x + r * 0.4f, eggC.y + r * 0.25f),
-                            strokeWidth = r * 0.04f, cap = StrokeCap.Round,
+                            strokeWidth = r * 0.04f,
+                            cap = StrokeCap.Round,
                         )
                     }
                     if (progress > 0.8f) {
@@ -219,9 +236,10 @@ private fun ChooseStage(
             "This one",
             onClick = onConfirm,
             enabled = selected != null,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(vertical = 14.dp),
+            modifier =
+                Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(vertical = 14.dp),
         )
     }
 }
@@ -244,24 +262,28 @@ private fun NameStage(
         CreatureSurface(
             controller = controller,
             night = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
         )
         Text("Give it a name", style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(14.dp))
         BasicTextField(
             value = name,
             onValueChange = onNameChanged,
-            textStyle = MaterialTheme.typography.displayMedium.copy(
-                color = colors.text, textAlign = TextAlign.Center,
-            ),
+            textStyle =
+                MaterialTheme.typography.displayMedium.copy(
+                    color = colors.text,
+                    textAlign = TextAlign.Center,
+                ),
             cursorBrush = SolidColor(colors.accent),
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(20.dp))
-                .background(colors.surface)
-                .padding(vertical = 14.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(colors.surface)
+                    .padding(vertical = 14.dp),
         )
         Spacer(Modifier.height(18.dp))
         PillButton("That's the name", onClick = onConfirm, enabled = name.isNotBlank())
@@ -298,9 +320,10 @@ private fun PrivacyStage(onAgree: () -> Unit) {
         PillButton(
             "Begin",
             onClick = onAgree,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(bottom = 26.dp),
+            modifier =
+                Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 26.dp),
         )
     }
 }

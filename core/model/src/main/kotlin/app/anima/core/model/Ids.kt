@@ -9,7 +9,12 @@ import java.util.UUID
  */
 object Ids {
     fun new(prefix: String): String {
-        val hex = UUID.randomUUID().toString().replace("-", "").take(20)
+        val hex =
+            UUID
+                .randomUUID()
+                .toString()
+                .replace("-", "")
+                .take(20)
         return "$prefix-$hex"
     }
 }

@@ -4,7 +4,6 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class MoodEngineTest {
-
     private val base = BodySignals.Resting
 
     @Test
@@ -26,12 +25,13 @@ class MoodEngineTest {
 
     @Test
     fun `thermal throttling wins over everything`() {
-        val s = base.copy(
-            thermal = ThermalSense.HOT,
-            charging = true,
-            batteryPercent = 5,
-            net = NetSense.OFFLINE,
-        )
+        val s =
+            base.copy(
+                thermal = ThermalSense.HOT,
+                charging = true,
+                batteryPercent = 5,
+                net = NetSense.OFFLINE,
+            )
         assertThat(MoodEngine.derive(s, 0)).isEqualTo(Mood.HOT)
     }
 

@@ -19,7 +19,6 @@ class FakeMindEngine(
         "I felt that tap all the way down my battery."
     },
 ) : MindEngine {
-
     private var calls = 0
 
     override suspend fun status(): MindStatus = fixedStatus

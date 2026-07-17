@@ -1,7 +1,9 @@
 package app.anima.core.model
 
 /** Where a soul fact came from. Every source implies explicit user consent. */
-enum class FactSource(val wire: String) {
+enum class FactSource(
+    val wire: String,
+) {
     /** Extracted from chat, confirmed by the user in UI. */
     CHAT_CONFIRMED("chat_confirmed"),
 
@@ -13,12 +15,13 @@ enum class FactSource(val wire: String) {
     ;
 
     companion object {
-        fun fromWire(wire: String): FactSource =
-            entries.firstOrNull { it.wire == wire } ?: CHAT_CONFIRMED
+        fun fromWire(wire: String): FactSource = entries.firstOrNull { it.wire == wire } ?: CHAT_CONFIRMED
     }
 }
 
-enum class FactCategory(val wire: String) {
+enum class FactCategory(
+    val wire: String,
+) {
     IDENTITY("identity"),
     PREFERENCE("preference"),
     PEOPLE("people"),
@@ -28,8 +31,7 @@ enum class FactCategory(val wire: String) {
     ;
 
     companion object {
-        fun fromWire(wire: String): FactCategory =
-            entries.firstOrNull { it.wire == wire } ?: OTHER
+        fun fromWire(wire: String): FactCategory = entries.firstOrNull { it.wire == wire } ?: OTHER
     }
 }
 
@@ -56,14 +58,15 @@ data class FactCandidate(
     val text: String,
 )
 
-enum class ChatRole(val wire: String) {
+enum class ChatRole(
+    val wire: String,
+) {
     USER("user"),
     CREATURE("creature"),
     ;
 
     companion object {
-        fun fromWire(wire: String): ChatRole =
-            entries.firstOrNull { it.wire == wire } ?: CREATURE
+        fun fromWire(wire: String): ChatRole = entries.firstOrNull { it.wire == wire } ?: CREATURE
     }
 }
 
@@ -75,18 +78,25 @@ data class ChatMessage(
 )
 
 /** Kinds of entries in the creature's diary of its own body. */
-enum class JournalKind(val wire: String) {
+enum class JournalKind(
+    val wire: String,
+) {
     HATCHED("hatched"),
     CHARGE_START("charge_start"),
     CHARGE_STOP("charge_stop"),
     NOTIF_STORM("notif_storm"),
     RAN_HOT("ran_hot"),
     WENT_OFFLINE("went_offline"),
+
+    /** v0.2: the day a mind model was installed (ADR-005 GEMMA tier). */
+    MIND_AWAKENED("mind_awakened"),
+
+    /** v0.2: battery reached 100% while we were together. */
+    FULLY_FED("fully_fed"),
     ;
 
     companion object {
-        fun fromWire(wire: String): JournalKind? =
-            entries.firstOrNull { it.wire == wire }
+        fun fromWire(wire: String): JournalKind? = entries.firstOrNull { it.wire == wire }
     }
 }
 

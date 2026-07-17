@@ -15,7 +15,6 @@ import kotlin.math.sin
  * chain — the secondary-motion showcase. The bell pulse IS the breath.
  */
 class JellyRenderer : CreatureRenderer {
-
     private val bellPath = Path()
     private val tentaclePath = Path()
 
@@ -44,8 +43,9 @@ class JellyRenderer : CreatureRenderer {
             val segments = 3
             for (s in 1..segments) {
                 val chainIdx = ((i + s) % pose.secondaryCount.coerceAtLeast(1))
-                val sway = pose.secondaryX[chainIdx] * r * 3f +
-                    sin(phase + s * 0.8f) * r * 0.16f * (0.5f + pose.energy)
+                val sway =
+                    pose.secondaryX[chainIdx] * r * 3f +
+                        sin(phase + s * 0.8f) * r * 0.16f * (0.5f + pose.energy)
                 val nx = rootX + fx * r * 0.24f * s + sway
                 val ny = rootY + (r * 1.5f / segments) * s * (1f + pose.secondaryY[chainIdx] * 0.8f)
                 tentaclePath.quadraticTo(px, py, (px + nx) / 2f, (py + ny) / 2f)
@@ -64,9 +64,12 @@ class JellyRenderer : CreatureRenderer {
         bellPath.reset()
         bellPath.moveTo(c.x - bellW, c.y + bellH * 0.35f)
         bellPath.cubicTo(
-            c.x - bellW * 1.02f, c.y - bellH * 0.9f,
-            c.x + bellW * 1.02f, c.y - bellH * 0.9f,
-            c.x + bellW, c.y + bellH * 0.35f,
+            c.x - bellW * 1.02f,
+            c.y - bellH * 0.9f,
+            c.x + bellW * 1.02f,
+            c.y - bellH * 0.9f,
+            c.x + bellW,
+            c.y + bellH * 0.35f,
         )
         // Skirt hem: 6 scallops rippled by noise.
         val scallops = 6
@@ -80,18 +83,23 @@ class JellyRenderer : CreatureRenderer {
         bellPath.close()
         drawPath(
             bellPath,
-            brush = Brush.verticalGradient(
-                listOf(skin.copy(alpha = 0.9f), skinDeep.copy(alpha = 0.65f)),
-                startY = c.y - bellH, endY = c.y + bellH * 0.5f,
-            ),
+            brush =
+                Brush.verticalGradient(
+                    listOf(skin.copy(alpha = 0.9f), skinDeep.copy(alpha = 0.65f)),
+                    startY = c.y - bellH,
+                    endY = c.y + bellH * 0.5f,
+                ),
         )
         // Inner organs glow — a soft heart that beats with breath.
         drawCircle(
-            brush = Brush.radialGradient(
-                listOf(Color.White.copy(alpha = 0.4f + 0.2f * pose.breath), Color.Transparent),
-                center = c.copy(y = c.y - bellH * 0.15f), radius = r * 0.55f,
-            ),
-            radius = r * 0.55f, center = c.copy(y = c.y - bellH * 0.15f),
+            brush =
+                Brush.radialGradient(
+                    listOf(Color.White.copy(alpha = 0.4f + 0.2f * pose.breath), Color.Transparent),
+                    center = c.copy(y = c.y - bellH * 0.15f),
+                    radius = r * 0.55f,
+                ),
+            radius = r * 0.55f,
+            center = c.copy(y = c.y - bellH * 0.15f),
         )
 
         // Eyes inside the bell.
@@ -101,14 +109,24 @@ class JellyRenderer : CreatureRenderer {
         val iris = Color(0xFF2C2440)
         with(EyeKit) {
             drawRoundEye(
-                Offset(c.x - eyeGap, eyeY), eyeR,
+                Offset(c.x - eyeGap, eyeY),
+                eyeR,
                 openness(pose.blinkLeft, pose.lidDroop),
-                pose.gazeX, pose.gazeY, eyeR * 0.8f, iris, happy = pose.petLean,
+                pose.gazeX,
+                pose.gazeY,
+                eyeR * 0.8f,
+                iris,
+                happy = pose.petLean,
             )
             drawRoundEye(
-                Offset(c.x + eyeGap, eyeY), eyeR,
+                Offset(c.x + eyeGap, eyeY),
+                eyeR,
                 openness(pose.blinkRight, pose.lidDroop),
-                pose.gazeX, pose.gazeY, eyeR * 0.8f, iris, happy = pose.petLean,
+                pose.gazeX,
+                pose.gazeY,
+                eyeR * 0.8f,
+                iris,
+                happy = pose.petLean,
             )
         }
     }

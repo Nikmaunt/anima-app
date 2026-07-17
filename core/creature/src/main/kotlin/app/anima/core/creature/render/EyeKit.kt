@@ -4,7 +4,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 
 /**
@@ -13,9 +12,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
  * language across all bodies.
  */
 object EyeKit {
-
-    private val lidPath = Path()
-
     /**
      * Draws one round eye.
      *
@@ -43,7 +39,9 @@ object EyeKit {
                 useCenter = false,
                 topLeft = Offset(center.x - radius, center.y - radius * 0.7f),
                 size = Size(radius * 2f, radius * 1.4f),
-                style = androidx.compose.ui.graphics.drawscope.Stroke(width = radius * 0.32f),
+                style =
+                    androidx.compose.ui.graphics.drawscope
+                        .Stroke(width = radius * 0.32f),
             )
             return
         }
@@ -56,7 +54,9 @@ object EyeKit {
                 useCenter = false,
                 topLeft = Offset(center.x - radius, center.y - radius * 0.4f),
                 size = Size(radius * 2f, radius * 1.6f),
-                style = androidx.compose.ui.graphics.drawscope.Stroke(width = radius * 0.34f),
+                style =
+                    androidx.compose.ui.graphics.drawscope
+                        .Stroke(width = radius * 0.34f),
             )
             return
         }
@@ -83,6 +83,8 @@ object EyeKit {
     }
 
     /** Composes blink and droop into one openness value. */
-    fun openness(blink: Float, droop: Float): Float =
-        ((1f - blink) * (1f - droop * 0.85f)).coerceIn(0f, 1f)
+    fun openness(
+        blink: Float,
+        droop: Float,
+    ): Float = ((1f - blink) * (1f - droop * 0.85f)).coerceIn(0f, 1f)
 }

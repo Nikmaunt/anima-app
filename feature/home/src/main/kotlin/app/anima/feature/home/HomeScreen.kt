@@ -1,6 +1,8 @@
 package app.anima.feature.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
@@ -24,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,11 +43,16 @@ import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import app.anima.core.creature.CreatureSurface
 import app.anima.core.creature.rememberCreature
 import app.anima.core.model.ChatRole
+import app.anima.core.model.CreatureGenome
 import app.anima.core.model.FactCandidate
 import app.anima.core.model.MindStatus
+import app.anima.core.model.tunedBy
 import app.anima.core.ui.components.GhostButton
 import app.anima.core.ui.components.PillButton
 import app.anima.core.ui.theme.LocalAnimaColors
@@ -63,9 +72,32 @@ fun HomeScreen(
     val bodyEvent by viewModel.bodyEvents.collectAsState()
     val colors = LocalAnimaColors.current
 
-    val controller = rememberCreature(state.concept, state.seed)
+    // ON_STOP drops the loaded Gemma engine (~1 GB); ON_RESUME re-probes the
+    // tier — the Mind screen may have installed or deleted a model meanwhile.
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer =
+            LifecycleEventObserver { _, event ->
+                when (event) {
+                    Lifecycle.Event.ON_STOP -> viewModel.onAppBackgrounded()
+                    Lifecycle.Event.ON_RESUME -> viewModel.refreshMindStatus()
+                    else -> Unit
+                }
+            }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    // Personality tunes the genome (saccades, blink pace) within its bounds;
+    // the life stage scales the whole body. Both deterministic (v0.2).
+    val genome =
+        remember(state.seed, state.personality) {
+            CreatureGenome.from(state.seed).tunedBy(state.personality)
+        }
+    val controller = rememberCreature(state.concept, state.seed, genome)
     controller.setBodyState(state.bodyState)
     controller.setGrowth(state.growth)
+    controller.setStage(state.stage)
     controller.onThinking(state.streamingReply != null)
 
     LaunchedEffect(bodyEvent) {
@@ -78,18 +110,20 @@ fun HomeScreen(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colors.background)
-            .statusBarsPadding()
-            .imePadding()
-            .navigationBarsPadding(),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(colors.background)
+                .statusBarsPadding()
+                .imePadding()
+                .navigationBarsPadding(),
     ) {
         // Header: quiet chrome, the creature owns the screen.
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 8.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(Modifier.weight(1f)) {
@@ -106,9 +140,10 @@ fun HomeScreen(
         CreatureSurface(
             controller = controller,
             night = colors.isNight,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.95f),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(0.95f),
             reducedMotionOverride = if (state.calmMotion) true else null,
         )
 
@@ -141,6 +176,7 @@ fun HomeScreen(
                 if (active) viewModel.onInteraction()
             },
             onRequestDownload = viewModel::requestMindDownload,
+            onOpenMind = onOpenSettings,
             modifier = Modifier.weight(1f),
         )
     }
@@ -152,6 +188,7 @@ private fun ChatPanel(
     onSend: (String) -> Unit,
     onTyping: (Boolean) -> Unit,
     onRequestDownload: () -> Unit,
+    onOpenMind: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalAnimaColors.current
@@ -165,10 +202,11 @@ private fun ChatPanel(
     Column(modifier = modifier.fillMaxWidth()) {
         LazyColumn(
             state = listState,
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(state.messages, key = { it.id }) { message ->
@@ -185,22 +223,66 @@ private fun ChatPanel(
         }
         Spacer(Modifier.height(8.dp))
         when (state.mindStatus) {
-            MindStatus.READY -> InputRow(enabled = state.streamingReply == null, onSend = onSend, onTyping = onTyping)
-            MindStatus.DOWNLOADABLE -> MindBanner(
-                text = "Its mind can wake on this phone — the system needs to fetch it once.",
-                action = { PillButton("Wake the mind", onClick = onRequestDownload) },
-            )
+            MindStatus.READY -> {
+                // Conversation starters from the body diary (v0.2): shown
+                // while the thread is idle; a tap just sends the question.
+                if (state.starters.isNotEmpty() && state.streamingReply == null) {
+                    StarterChips(starters = state.starters, onPick = onSend)
+                }
+                InputRow(enabled = state.streamingReply == null, onSend = onSend, onTyping = onTyping)
+            }
+            MindStatus.DOWNLOADABLE ->
+                MindBanner(
+                    text = "Its mind can wake on this phone — the system needs to fetch it once.",
+                    action = { PillButton("Wake the mind", onClick = onRequestDownload) },
+                )
             MindStatus.DOWNLOADING -> MindBanner(text = "The mind is waking up… (system download)")
-            MindStatus.ASLEEP -> MindBanner(
-                text = "On this phone the mind sleeps — this device can't run its " +
-                    "on-device thinking yet. It still feels, remembers and dreams.",
+            MindStatus.ASLEEP ->
+                MindBanner(
+                    text =
+                        "The mind sleeps. This phone has no built-in mind for apps, " +
+                            "but you can bring one — a single ~530 MB file wakes it, " +
+                            "fully on-device (Settings → Mind).",
+                    action = { PillButton("Bring a mind", onClick = onOpenMind) },
+                )
+        }
+    }
+}
+
+@Composable
+private fun StarterChips(
+    starters: List<String>,
+    onPick: (String) -> Unit,
+) {
+    val colors = LocalAnimaColors.current
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = 2.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        starters.forEach { starter ->
+            Text(
+                starter,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier =
+                    Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(colors.surface)
+                        .clickable { onPick(starter) }
+                        .padding(horizontal = 14.dp, vertical = 8.dp),
             )
         }
     }
 }
 
 @Composable
-private fun MindBanner(text: String, action: (@Composable () -> Unit)? = null) {
+private fun MindBanner(
+    text: String,
+    action: (@Composable () -> Unit)? = null,
+) {
     val colors = LocalAnimaColors.current
     Column(
         Modifier
@@ -217,23 +299,27 @@ private fun MindBanner(text: String, action: (@Composable () -> Unit)? = null) {
 }
 
 @Composable
-private fun MessageBubble(text: String, mine: Boolean) {
+private fun MessageBubble(
+    text: String,
+    mine: Boolean,
+) {
     val colors = LocalAnimaColors.current
     Row(Modifier.fillMaxWidth(), horizontalArrangement = if (mine) Arrangement.End else Arrangement.Start) {
         Text(
             text = text,
             style = MaterialTheme.typography.bodyLarge,
             color = if (mine) colors.background else colors.text,
-            modifier = Modifier
-                .clip(
-                    RoundedCornerShape(
-                        topStart = 18.dp, topEnd = 18.dp,
-                        bottomStart = if (mine) 18.dp else 6.dp,
-                        bottomEnd = if (mine) 6.dp else 18.dp,
-                    ),
-                )
-                .background(if (mine) colors.accent else colors.surface)
-                .padding(horizontal = 14.dp, vertical = 10.dp),
+            modifier =
+                Modifier
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 18.dp,
+                            topEnd = 18.dp,
+                            bottomStart = if (mine) 18.dp else 6.dp,
+                            bottomEnd = if (mine) 6.dp else 18.dp,
+                        ),
+                    ).background(if (mine) colors.accent else colors.surface)
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
         )
     }
 }
@@ -321,21 +407,26 @@ private fun InputRow(
 
 /** Hand-drawn send glyph — no icon pack dependency. */
 @Composable
-private fun sendIcon(): ImageVector = remember {
-    ImageVector.Builder(
-        name = "send", defaultWidth = 24.dp, defaultHeight = 24.dp,
-        viewportWidth = 24f, viewportHeight = 24f,
-    ).apply {
-        path(fill = SolidColor(androidx.compose.ui.graphics.Color.White)) {
-            moveTo(3f, 20f)
-            lineTo(21f, 12f)
-            lineTo(3f, 4f)
-            lineTo(3f, 10f)
-            lineTo(15f, 12f)
-            lineTo(3f, 14f)
-            close()
-        }
-    }.build()
-}
+private fun sendIcon(): ImageVector =
+    remember {
+        ImageVector
+            .Builder(
+                name = "send",
+                defaultWidth = 24.dp,
+                defaultHeight = 24.dp,
+                viewportWidth = 24f,
+                viewportHeight = 24f,
+            ).apply {
+                path(fill = SolidColor(androidx.compose.ui.graphics.Color.White)) {
+                    moveTo(3f, 20f)
+                    lineTo(21f, 12f)
+                    lineTo(3f, 4f)
+                    lineTo(3f, 10f)
+                    lineTo(15f, 12f)
+                    lineTo(3f, 14f)
+                    close()
+                }
+            }.build()
+    }
 
 private fun pluralDays(days: Long): String = "together $days ${if (days == 1L) "day" else "days"}"

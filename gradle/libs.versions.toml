@@ -30,9 +30,25 @@ androidxSqlite = "2.5.2"
 # genai-prompt 1.0.0-beta3 (2026-07-14), verified against the Google Maven
 # index during Phase-0 research; see docs/research.md §C.
 mlkitGenaiPrompt = "1.0.0-beta3"
+# MediaPipe LLM Inference (GEMMA tier, ADR-005). tasks-genai 0.10.35 verified
+# latest on Google Maven 2026-07-17; maintenance mode, LiteRT-LM is the
+# designated successor (migration recorded in ADR-005). NOT a network library:
+# it runs a local .task/.litertlm file.
+mediapipeTasksGenai = "0.10.35"
 # --- Kotlinx ---
 coroutines = "1.10.2"
 serialization = "1.8.1"
+# --- Performance (baseline profile generation is device-bound; ADR-006) ---
+benchmark = "1.4.1"
+profileinstaller = "1.4.1"
+uiautomator = "2.3.0"
+# --- Static analysis ---
+# detekt 1.23.8 is the last stable line (2.0 still alpha, 2026-07); compiled
+# against Kotlin 2.0.21 — fine for rule analysis without type resolution.
+detekt = "1.23.8"
+# jlleitschuh wrapper 13.1.0 + ktlint engine 1.7.1 (Kotlin 2.2-aware).
+ktlintPlugin = "13.1.0"
+ktlintEngine = "1.7.1"
 # --- Test ---
 junit4 = "4.13.2"
 truth = "1.4.4"
@@ -93,6 +109,12 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 
 # --- On-device GenAI (confined to :core:mind) ---
 mlkit-genai-prompt = { group = "com.google.mlkit", name = "genai-prompt", version.ref = "mlkitGenaiPrompt" }
+mediapipe-tasks-genai = { group = "com.google.mediapipe", name = "tasks-genai", version.ref = "mediapipeTasksGenai" }
+
+# --- Performance ---
+androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
+androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmark" }
+androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 
 # --- Test ---
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
@@ -104,8 +126,12 @@ androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.r
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
 
 [plugins]
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintPlugin" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+android-test = { id = "com.android.test", version.ref = "agp" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

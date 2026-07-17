@@ -5,7 +5,9 @@ package app.anima.core.model
  * different phones → different creatures. Kept tiny and dependency-free so the
  * motion core stays pure.
  */
-class SplitMix64(seed: Long) {
+class SplitMix64(
+    seed: Long,
+) {
     private var state = seed
 
     fun nextLong(): Long {
@@ -20,7 +22,10 @@ class SplitMix64(seed: Long) {
     fun nextFloat(): Float = ((nextLong() ushr 40).toFloat() / (1L shl 24).toFloat())
 
     /** Uniform in [min, max). */
-    fun nextFloat(min: Float, max: Float): Float = min + nextFloat() * (max - min)
+    fun nextFloat(
+        min: Float,
+        max: Float,
+    ): Float = min + nextFloat() * (max - min)
 
     fun nextInt(bound: Int): Int = ((nextLong() ushr 33) % bound).toInt()
 }

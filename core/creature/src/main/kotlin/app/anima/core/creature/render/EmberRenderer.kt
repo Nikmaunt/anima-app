@@ -15,7 +15,6 @@ import kotlin.math.sin
  * when the phone runs hot, dim pulsing embers when asleep.
  */
 class EmberRenderer : CreatureRenderer {
-
     private val flamePath = Path()
     private val glow = GlowSkin()
 
@@ -25,11 +24,12 @@ class EmberRenderer : CreatureRenderer {
         val r = size.minDimension * 0.24f
         val hot = ctx.mood == Mood.HOT
         val asleep = ctx.mood == Mood.ASLEEP
-        val baseHue = when {
-            hot -> 8f
-            ctx.mood == Mood.ANXIOUS -> 22f
-            else -> 36f
-        }
+        val baseHue =
+            when {
+                hot -> 8f
+                ctx.mood == Mood.ANXIOUS -> 22f
+                else -> 36f
+            }
         val bodyColor = Hues.bodyColor(baseHue, sat = 0.85f, light = if (asleep) 0.4f else 0.62f, ctx = ctx)
         val coreColor = Hues.hsl(baseHue + 18f, 0.9f, 0.82f)
 
@@ -45,12 +45,13 @@ class EmberRenderer : CreatureRenderer {
 
         // Flame silhouette: teardrop with noise-rippled flanks. Raggedness
         // rises with heat and anxiety; asleep collapses to a low ember dome.
-        val rag = when {
-            hot -> 0.28f
-            ctx.mood == Mood.ANXIOUS -> 0.2f
-            asleep -> 0.03f
-            else -> 0.1f
-        }
+        val rag =
+            when {
+                hot -> 0.28f
+                ctx.mood == Mood.ANXIOUS -> 0.2f
+                asleep -> 0.03f
+                else -> 0.1f
+            }
         val height = r * (if (asleep) 1.0f else 1.9f) * (1f + pose.breath * 0.12f)
         val width = r * 1.25f
         flamePath.reset()
@@ -81,12 +82,21 @@ class EmberRenderer : CreatureRenderer {
         drawOval(
             coreColor.copy(alpha = if (asleep) 0.5f + 0.2f * pose.breath else 0.85f),
             topLeft = Offset(c.x - width * 0.28f, c.y + r * 0.45f - height * 0.55f),
-            size = androidx.compose.ui.geometry.Size(width * 0.56f, height * 0.5f),
+            size =
+                androidx.compose.ui.geometry
+                    .Size(width * 0.56f, height * 0.5f),
         )
 
         // Sparks: deterministic particles from hashed time buckets.
         if (!asleep) {
-            val sparkRate = if (hot) 10f else if (ctx.charging) 8f else 4f
+            val sparkRate =
+                if (hot) {
+                    10f
+                } else if (ctx.charging) {
+                    8f
+                } else {
+                    4f
+                }
             val bucket = (ctx.timeSeconds * sparkRate).toLong()
             for (s in 0..3) {
                 val id = bucket - s
@@ -111,14 +121,24 @@ class EmberRenderer : CreatureRenderer {
         val iris = Color(0xFF3A1408)
         with(EyeKit) {
             drawRoundEye(
-                Offset(c.x - eyeGap, eyeY), eyeR,
+                Offset(c.x - eyeGap, eyeY),
+                eyeR,
                 openness(pose.blinkLeft, pose.lidDroop),
-                pose.gazeX, pose.gazeY, eyeR * 0.7f, iris, happy = pose.petLean,
+                pose.gazeX,
+                pose.gazeY,
+                eyeR * 0.7f,
+                iris,
+                happy = pose.petLean,
             )
             drawRoundEye(
-                Offset(c.x + eyeGap, eyeY), eyeR,
+                Offset(c.x + eyeGap, eyeY),
+                eyeR,
                 openness(pose.blinkRight, pose.lidDroop),
-                pose.gazeX, pose.gazeY, eyeR * 0.7f, iris, happy = pose.petLean,
+                pose.gazeX,
+                pose.gazeY,
+                eyeR * 0.7f,
+                iris,
+                happy = pose.petLean,
             )
         }
     }

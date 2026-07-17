@@ -20,6 +20,10 @@ dependencies {
     // On-device only: ML Kit GenAI Prompt API (AICore / Gemini Nano). This is
     // NOT a network library — inference runs in the AICore system service.
     implementation(libs.mlkit.genai.prompt)
+    // On-device only: MediaPipe LLM inference over a local Gemma file
+    // (ADR-005 GEMMA tier). The model file arrives via :core:model-delivery;
+    // this module sees it through the MindModelLocator interface only.
+    implementation(libs.mediapipe.tasks.genai)
 
     testImplementation(libs.junit4)
     testImplementation(libs.truth)

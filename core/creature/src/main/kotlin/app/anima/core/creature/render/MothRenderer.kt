@@ -19,7 +19,6 @@ import kotlin.math.sin
  * luminescent dust that shimmers — this creature is most alive at night.
  */
 class MothRenderer : CreatureRenderer {
-
     private val wingPath = Path()
 
     override fun DrawScope.render(ctx: RenderContext) {
@@ -36,11 +35,12 @@ class MothRenderer : CreatureRenderer {
         val flapRaw = (sin(ctx.timeSeconds * flapRate * Math.PI.toFloat()) + 1f) / 2f
         val flap = if (asleep) 0.12f else 0.25f + flapRaw * 0.75f
         // Flourish 2: wing shimmer — a full slow beat.
-        val shimmerBeat = if (pose.flourishPhase > 0f && pose.flourishKind == 2) {
-            sin(pose.flourishPhase * Math.PI.toFloat()) * 0.4f
-        } else {
-            0f
-        }
+        val shimmerBeat =
+            if (pose.flourishPhase > 0f && pose.flourishKind == 2) {
+                sin(pose.flourishPhase * Math.PI.toFloat()) * 0.4f
+            } else {
+                0f
+            }
 
         for (side in intArrayOf(-1, 1)) {
             val spread = (flap + shimmerBeat).coerceIn(0.1f, 1.1f)
@@ -49,25 +49,33 @@ class MothRenderer : CreatureRenderer {
                 wingPath.reset()
                 wingPath.moveTo(c.x, c.y - r * 0.3f)
                 wingPath.cubicTo(
-                    c.x + r * 1.7f, c.y - r * 1.5f,
-                    c.x + r * 2.1f, c.y - r * 0.2f,
-                    c.x + r * 0.6f, c.y + r * 0.15f,
+                    c.x + r * 1.7f,
+                    c.y - r * 1.5f,
+                    c.x + r * 2.1f,
+                    c.y - r * 0.2f,
+                    c.x + r * 0.6f,
+                    c.y + r * 0.15f,
                 )
                 wingPath.close()
                 drawPath(
                     wingPath,
-                    brush = Brush.radialGradient(
-                        listOf(wing.copy(alpha = 0.9f), wing.copy(alpha = 0.5f)),
-                        center = Offset(c.x + r, c.y - r * 0.5f), radius = r * 1.8f,
-                    ),
+                    brush =
+                        Brush.radialGradient(
+                            listOf(wing.copy(alpha = 0.9f), wing.copy(alpha = 0.5f)),
+                            center = Offset(c.x + r, c.y - r * 0.5f),
+                            radius = r * 1.8f,
+                        ),
                 )
                 // Lower wing.
                 wingPath.reset()
                 wingPath.moveTo(c.x, c.y + r * 0.05f)
                 wingPath.cubicTo(
-                    c.x + r * 1.3f, c.y + r * 0.7f,
-                    c.x + r * 0.9f, c.y + r * 1.5f,
-                    c.x + r * 0.15f, c.y + r * 0.75f,
+                    c.x + r * 1.3f,
+                    c.y + r * 0.7f,
+                    c.x + r * 0.9f,
+                    c.y + r * 1.5f,
+                    c.x + r * 0.15f,
+                    c.y + r * 0.75f,
                 )
                 wingPath.close()
                 drawPath(wingPath, wing.copy(alpha = 0.75f))
@@ -120,16 +128,24 @@ class MothRenderer : CreatureRenderer {
         val eyeR = r * 0.1f
         with(EyeKit) {
             drawRoundEye(
-                Offset(c.x - eyeGap, eyeY), eyeR,
+                Offset(c.x - eyeGap, eyeY),
+                eyeR,
                 openness(pose.blinkLeft, pose.lidDroop),
-                pose.gazeX, pose.gazeY, eyeR * 0.7f,
-                irisColor = Color(0xFF1E1830), happy = pose.petLean,
+                pose.gazeX,
+                pose.gazeY,
+                eyeR * 0.7f,
+                irisColor = Color(0xFF1E1830),
+                happy = pose.petLean,
             )
             drawRoundEye(
-                Offset(c.x + eyeGap, eyeY), eyeR,
+                Offset(c.x + eyeGap, eyeY),
+                eyeR,
                 openness(pose.blinkRight, pose.lidDroop),
-                pose.gazeX, pose.gazeY, eyeR * 0.7f,
-                irisColor = Color(0xFF1E1830), happy = pose.petLean,
+                pose.gazeX,
+                pose.gazeY,
+                eyeR * 0.7f,
+                irisColor = Color(0xFF1E1830),
+                happy = pose.petLean,
             )
         }
     }

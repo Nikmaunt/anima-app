@@ -17,14 +17,15 @@ interface CreatureRenderer {
 }
 
 object Renderers {
-    fun forConcept(concept: CreatureConcept): CreatureRenderer = when (concept) {
-        CreatureConcept.SPIRIT_ORB -> SpiritOrbRenderer()
-        CreatureConcept.FOX_KIT -> FoxKitRenderer()
-        CreatureConcept.JELLY -> JellyRenderer()
-        CreatureConcept.PIXEL_PET -> PixelPetRenderer()
-        CreatureConcept.ROBOT -> RobotRenderer()
-        CreatureConcept.SPROUT -> SproutRenderer()
-        CreatureConcept.EMBER -> EmberRenderer()
-        CreatureConcept.MOTH -> MothRenderer()
-    }
+    fun forConcept(concept: CreatureConcept): CreatureRenderer =
+        when (concept) {
+            CreatureConcept.SPIRIT_ORB -> SpiritOrbRenderer()
+            CreatureConcept.FOX_KIT -> FoxKitRenderer()
+            CreatureConcept.JELLY -> JellyRenderer()
+            CreatureConcept.PIXEL_PET -> PixelPetRenderer()
+            CreatureConcept.ROBOT -> RobotRenderer()
+            CreatureConcept.SPROUT -> SproutRenderer()
+            CreatureConcept.EMBER -> EmberRenderer()
+            CreatureConcept.MOTH -> MothRenderer()
+        }
 }

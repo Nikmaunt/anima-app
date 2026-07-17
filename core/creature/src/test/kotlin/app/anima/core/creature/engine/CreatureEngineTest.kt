@@ -10,10 +10,12 @@ import org.junit.Test
  * drive it with synthetic frames and read the pose. No Robolectric needed.
  */
 class CreatureEngineTest {
-
     private fun engine(seed: Long = 42L) = CreatureEngine(seed, CreatureGenome.from(seed))
 
-    private fun CreatureEngine.run(seconds: Float, fps: Int = 60) {
+    private fun CreatureEngine.run(
+        seconds: Float,
+        fps: Int = 60,
+    ) {
         val frames = (seconds * fps).toInt()
         val stepNanos = 1_000_000_000L / fps
         var t = 1_000_000_000L

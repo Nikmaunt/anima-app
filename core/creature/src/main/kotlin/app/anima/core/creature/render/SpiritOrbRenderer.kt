@@ -15,7 +15,6 @@ import kotlin.math.sin
  * they lag and settle like drops of the same liquid.
  */
 class SpiritOrbRenderer : CreatureRenderer {
-
     private val glow = GlowSkin()
 
     override fun DrawScope.render(ctx: RenderContext) {
@@ -49,26 +48,31 @@ class SpiritOrbRenderer : CreatureRenderer {
             val toward = Offset((c.x + sx) / 2f, (c.y + sy) / 2f)
             drawCircle(core.copy(alpha = 0.10f), radius = sr * 1.8f, center = toward)
             drawCircle(
-                brush = Brush.radialGradient(
-                    listOf(core.copy(alpha = 0.9f), rim.copy(alpha = 0.25f), Color.Transparent),
-                    center = Offset(sx, sy), radius = sr * 1.9f,
-                ),
-                radius = sr * 1.9f, center = Offset(sx, sy),
+                brush =
+                    Brush.radialGradient(
+                        listOf(core.copy(alpha = 0.9f), rim.copy(alpha = 0.25f), Color.Transparent),
+                        center = Offset(sx, sy),
+                        radius = sr * 1.9f,
+                    ),
+                radius = sr * 1.9f,
+                center = Offset(sx, sy),
             )
         }
 
         // Liquid-glass body: layered translucent discs with a bright caustic.
         drawCircle(
-            brush = Brush.radialGradient(
-                listOf(
-                    core.copy(alpha = 0.95f),
-                    core.copy(alpha = 0.55f),
-                    rim.copy(alpha = 0.30f),
+            brush =
+                Brush.radialGradient(
+                    listOf(
+                        core.copy(alpha = 0.95f),
+                        core.copy(alpha = 0.55f),
+                        rim.copy(alpha = 0.30f),
+                    ),
+                    center = c.copy(y = c.y - r * 0.25f),
+                    radius = r * 1.4f,
                 ),
-                center = c.copy(y = c.y - r * 0.25f),
-                radius = r * 1.4f,
-            ),
-            radius = r, center = c,
+            radius = r,
+            center = c,
         )
         // Inner wobble highlight (living caustic).
         val wob = ValueNoise.fbm2(ctx.timeSeconds * 0.4f, ctx.seed, 51)
@@ -87,14 +91,24 @@ class SpiritOrbRenderer : CreatureRenderer {
         val iris = Color(0xFF20313E)
         with(EyeKit) {
             drawRoundEye(
-                Offset(c.x - eyeGap, eyeY), eyeR, open,
-                pose.gazeX, pose.gazeY, gazeRange = eyeR * 0.9f,
-                irisColor = iris, happy = pose.petLean,
+                Offset(c.x - eyeGap, eyeY),
+                eyeR,
+                open,
+                pose.gazeX,
+                pose.gazeY,
+                gazeRange = eyeR * 0.9f,
+                irisColor = iris,
+                happy = pose.petLean,
             )
             drawRoundEye(
-                Offset(c.x + eyeGap, eyeY), eyeR, openR,
-                pose.gazeX, pose.gazeY, gazeRange = eyeR * 0.9f,
-                irisColor = iris, happy = pose.petLean,
+                Offset(c.x + eyeGap, eyeY),
+                eyeR,
+                openR,
+                pose.gazeX,
+                pose.gazeY,
+                gazeRange = eyeR * 0.9f,
+                irisColor = iris,
+                happy = pose.petLean,
             )
         }
     }

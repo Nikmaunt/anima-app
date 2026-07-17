@@ -13,12 +13,14 @@ android {
 
 dependencies {
     implementation(projects.core.model)
+    implementation(projects.core.modelDelivery)
     implementation(projects.core.creature)
     implementation(projects.core.body)
     implementation(projects.core.data)
     implementation(projects.core.mind)
     implementation(projects.core.ui)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.hilt.navigation.compose)

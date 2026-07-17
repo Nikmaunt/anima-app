@@ -15,45 +15,46 @@ object SoulPort {
         facts: List<SoulFact>,
         journal: List<BodyJournalEntry>,
         nowMillis: Long,
-    ): String = buildString {
-        appendLine(FORMAT_MARKER)
-        appendLine("# The soul of $creatureName")
-        appendLine()
-        appendLine("A creature of the ${concept.wire.replace('_', ' ')} kind.")
-        appendLine()
-        appendLine("## Together")
-        appendLine()
-        appendLine("- Days together: ${stats.daysTogether(nowMillis)}")
-        appendLine("- Conversations: ${stats.conversationCount}")
-        appendLine("- Things remembered: ${stats.liveFactCount}")
-        appendLine("- Meals (charges): ${stats.chargeCount}")
-        val live = facts.filter { it.isLive }
-        if (live.isNotEmpty()) {
+    ): String =
+        buildString {
+            appendLine(FORMAT_MARKER)
+            appendLine("# The soul of $creatureName")
             appendLine()
-            appendLine("## What I remember")
-            FactCategory.entries.forEach { category ->
-                val inCategory = live.filter { it.category == category }
-                if (inCategory.isNotEmpty()) {
-                    appendLine()
-                    appendLine("### ${categoryTitle(category)}")
-                    appendLine()
-                    inCategory.forEach { appendLine("- ${it.text}") }
+            appendLine("A creature of the ${concept.wire.replace('_', ' ')} kind.")
+            appendLine()
+            appendLine("## Together")
+            appendLine()
+            appendLine("- Days together: ${stats.daysTogether(nowMillis)}")
+            appendLine("- Conversations: ${stats.conversationCount}")
+            appendLine("- Things remembered: ${stats.liveFactCount}")
+            appendLine("- Meals (charges): ${stats.chargeCount}")
+            val live = facts.filter { it.isLive }
+            if (live.isNotEmpty()) {
+                appendLine()
+                appendLine("## What I remember")
+                FactCategory.entries.forEach { category ->
+                    val inCategory = live.filter { it.category == category }
+                    if (inCategory.isNotEmpty()) {
+                        appendLine()
+                        appendLine("### ${categoryTitle(category)}")
+                        appendLine()
+                        inCategory.forEach { appendLine("- ${it.text}") }
+                    }
                 }
             }
-        }
-        val moments = journal.filter { it.kind == JournalKind.HATCHED || it.detail != null }
-        if (moments.isNotEmpty()) {
-            appendLine()
-            appendLine("## Key moments")
-            appendLine()
-            moments.take(MAX_EXPORT_MOMENTS).forEach {
-                appendLine("- ${it.kind.wire}${it.detail?.let { d -> ": $d" } ?: ""}")
+            val moments = journal.filter { it.kind == JournalKind.HATCHED || it.detail != null }
+            if (moments.isNotEmpty()) {
+                appendLine()
+                appendLine("## Key moments")
+                appendLine()
+                moments.take(MAX_EXPORT_MOMENTS).forEach {
+                    appendLine("- ${it.kind.wire}${it.detail?.let { d -> ": $d" } ?: ""}")
+                }
             }
+            appendLine()
+            appendLine("---")
+            appendLine("Exported from Anima. Everything above lived only on one phone.")
         }
-        appendLine()
-        appendLine("---")
-        appendLine("Exported from Anima. Everything above lived only on one phone.")
-    }
 
     /**
      * Parses fact lines from an export or from another AI's answer to the
@@ -109,14 +110,15 @@ object SoulPort {
         }
     }
 
-    private fun categoryTitle(category: FactCategory): String = when (category) {
-        FactCategory.IDENTITY -> "Identity"
-        FactCategory.PREFERENCE -> "Preferences"
-        FactCategory.PEOPLE -> "People"
-        FactCategory.WORK -> "Work"
-        FactCategory.MOMENT -> "Moments"
-        FactCategory.OTHER -> "Other"
-    }
+    private fun categoryTitle(category: FactCategory): String =
+        when (category) {
+            FactCategory.IDENTITY -> "Identity"
+            FactCategory.PREFERENCE -> "Preferences"
+            FactCategory.PEOPLE -> "People"
+            FactCategory.WORK -> "Work"
+            FactCategory.MOMENT -> "Moments"
+            FactCategory.OTHER -> "Other"
+        }
 
     const val MAX_FACT_CHARS = 300
     const val MAX_IMPORT_FACTS = 200
