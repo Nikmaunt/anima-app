@@ -97,6 +97,15 @@ data class BodyJournalEntry(
     val detail: String? = null,
 )
 
+/** One captured notification event (post-filter, capped fields). */
+data class NotifEvent(
+    val id: String,
+    val packageName: String,
+    val postedAtMillis: Long,
+    val title: String,
+    val text: String?,
+)
+
 /** Relationship counters shown in the soul and the export. */
 data class RelationshipStats(
     val hatchedAtMillis: Long,
