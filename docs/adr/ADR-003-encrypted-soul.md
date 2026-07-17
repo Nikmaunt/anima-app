@@ -35,8 +35,9 @@ design changes and is the documented industry pattern.
 ## Consequences
 
 - DAO tests run under Robolectric against **plain Room in-memory** (the DAO
-  layer is factory-agnostic); the SQLCipher factory is covered by a dedicated
-  Robolectric test that opens an encrypted file DB, and the wrap/unwrap logic
-  by JVM tests with a fake keystore boundary.
+  layer is factory-agnostic). Robolectric can load neither the SQLCipher
+  native library nor AndroidKeyStore, so the encrypted open path
+  (SupportOpenHelperFactory + Keystore unwrap) is verified on-device — it is
+  an explicit item in the manual S24 checklist.
 - Losing the Keystore key (factory reset without export) loses the soul —
   by design; the product's answer is the one-file soul export.

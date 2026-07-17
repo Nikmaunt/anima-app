@@ -38,4 +38,19 @@ internal object DataModule {
             .openHelperFactory(SupportOpenHelperFactory(passphrase))
             .build()
     }
+
+    @Provides
+    fun soulFactDao(db: AnimaDatabase) = db.soulFactDao()
+
+    @Provides
+    fun chatDao(db: AnimaDatabase) = db.chatDao()
+
+    @Provides
+    fun bodyJournalDao(db: AnimaDatabase) = db.bodyJournalDao()
+
+    @Provides
+    fun notifEventDao(db: AnimaDatabase) = db.notifEventDao()
+
+    @Provides
+    fun metaDao(db: AnimaDatabase) = db.metaDao()
 }

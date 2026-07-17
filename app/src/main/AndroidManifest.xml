@@ -8,10 +8,21 @@
     strictly opt-in from an in-app explainer; the listener service lives in
     :feature:notifications with the system-held bind permission.
 -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!--
+      The zero-network guarantee, enforced at merge time: the ML Kit GenAI
+      client library pulls in Google DataTransport telemetry, which requests
+      INTERNET. We strip the permission and the telemetry's background
+      scheduler components from the merged manifest — inference itself runs
+      in the separate AICore system process and does not need them. Asserted
+      by NetworkIsolationTest against the packaged manifest.
+    -->
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
 
     <application
         android:name=".AnimaApp"
@@ -20,6 +31,25 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:supportsRtl="true"
         android:theme="@style/Theme.Anima">
+
+        <!-- Strip DataTransport telemetry components (see note above). -->
+        <service
+            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+            tools:node="remove" />
+        <receiver
+            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+            tools:node="remove" />
+
+        <!-- Soul export: one readable file handed to the share sheet. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <activity
             android:name=".MainActivity"

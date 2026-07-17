@@ -24,6 +24,17 @@ Merged-manifest permission budget, in full:
   `VIBRATE`) are in scope of the creature's senses. Without INTERNET,
   ACCESS_NETWORK_STATE is provably read-only sensing.
 
+## Incident captured during build (kept for the audit trail)
+
+The ML Kit GenAI client library transitively pulls Google **DataTransport
+telemetry**, which injected `android.permission.INTERNET` plus two background
+scheduler components (`JobInfoSchedulerService`,
+`AlarmManagerSchedulerBroadcastReceiver`) into the merged manifest. Both are
+now stripped at merge time with `tools:node="remove"` in the app manifest;
+`NetworkIsolationTest` asserts against the packaged manifest so a library
+update that re-introduces either fails the build. Inference is unaffected —
+it runs in the separate AICore system process.
+
 ## Enforcement
 
 - `NetworkIsolationTest` (JVM): greps the merged manifest report for

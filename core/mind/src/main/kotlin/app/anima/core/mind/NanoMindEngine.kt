@@ -74,7 +74,7 @@ class NanoMindEngine @Inject constructor() : MindEngine {
     ): List<FactCandidate> = runCatching {
         val request = generateContentRequest(TextPart(extractionPrompt(userText, creatureText))) {}
         val text = model.generateContent(request).candidates.firstOrNull()?.text.orEmpty()
-        parseCandidates(text)
+        FactJson.parseCandidates(text)
     }.getOrDefault(emptyList())
 
     private fun combine(prompt: MindPrompt): String =
@@ -97,8 +97,19 @@ class NanoMindEngine @Inject constructor() : MindEngine {
         Companion: $creatureText
         """.trimIndent()
 
-    /** Tolerant JSON-array parse; extraction is suggestions-only by design. */
-    private fun parseCandidates(raw: String): List<FactCandidate> {
+    private companion object {
+        const val BUSY = 9
+        const val BATTERY_QUOTA = 27
+    }
+}
+
+/** Tolerant JSON-array parse; extraction is suggestions-only by design. */
+internal object FactJson {
+    private val json = Json { ignoreUnknownKeys = true; isLenient = true }
+    const val MAX_FACT_CHARS = 300
+    const val MAX_CANDIDATES = 5
+
+    fun parseCandidates(raw: String): List<FactCandidate> {
         val start = raw.indexOf('[')
         val end = raw.lastIndexOf(']')
         if (start < 0 || end <= start) return emptyList()
@@ -111,13 +122,5 @@ class NanoMindEngine @Inject constructor() : MindEngine {
                 FactCandidate(FactCategory.fromWire(category.lowercase()), text)
             }.take(MAX_CANDIDATES)
         }.getOrDefault(emptyList())
-    }
-
-    private companion object {
-        val json = Json { ignoreUnknownKeys = true; isLenient = true }
-        const val BUSY = 9
-        const val BATTERY_QUOTA = 27
-        const val MAX_FACT_CHARS = 300
-        const val MAX_CANDIDATES = 5
     }
 }
