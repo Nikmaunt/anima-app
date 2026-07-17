@@ -30,6 +30,9 @@ class CreatureEngine(
     private var time = 0f
     private var lastFrameNanos = Long.MIN_VALUE
 
+    /** Render-safe elapsed time: small floats, full precision for sin/noise. */
+    val timeSeconds: Float get() = time
+
     // --- breath ---
     private var breathPhase = 0f
     private var breathCycleIndex = 0L
