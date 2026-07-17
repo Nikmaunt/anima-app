@@ -25,10 +25,18 @@ abstract class SoulFactDao {
     @Query("UPDATE soul_facts SET supersededById = :newId WHERE id = :oldId AND supersededById IS NULL")
     protected abstract suspend fun markSuperseded(oldId: String, newId: String): Int
 
+    /**
+     * Marker first (guarded by `supersededById IS NULL`), insert only if it
+     * applied — a double supersede is a no-op instead of an orphan
+     * replacement. The marker's target id is a logical reference (no FK),
+     * so writing it one statement before the row exists is safe inside the
+     * transaction.
+     */
     @Transaction
     open suspend fun supersede(oldId: String, replacement: SoulFactEntity) {
-        insert(replacement)
-        markSuperseded(oldId, replacement.id)
+        if (markSuperseded(oldId, replacement.id) == 1) {
+            insert(replacement)
+        }
     }
 
     @Query("UPDATE soul_facts SET forgottenAtMillis = :atMillis WHERE id = :id AND forgottenAtMillis IS NULL")

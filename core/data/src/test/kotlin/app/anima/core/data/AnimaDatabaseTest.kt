@@ -57,16 +57,16 @@ class AnimaDatabaseTest {
     }
 
     @Test
-    fun `supersede marker cannot be overwritten`() = runTest {
+    fun `double supersede is a no-op - no marker overwrite, no orphan`() = runTest {
         val dao = db.soulFactDao()
         dao.insert(fact("fact-1"))
         dao.supersede("fact-1", fact("fact-2"))
-        dao.supersede("fact-1", fact("fact-3")) // second marker must not stick
+        dao.supersede("fact-1", fact("fact-3")) // must not stick NOR insert
 
         val original = dao.allIncludingDead().first { it.id == "fact-1" }
         assertThat(original.supersededById).isEqualTo("fact-2")
-        // fact-3 still exists (insert happened) but fact-1 points at fact-2.
-        assertThat(dao.live().first().map { it.id }).containsExactly("fact-2", "fact-3")
+        assertThat(dao.live().first().map { it.id }).containsExactly("fact-2")
+        assertThat(dao.allIncludingDead().map { it.id }).containsExactly("fact-1", "fact-2")
     }
 
     @Test
