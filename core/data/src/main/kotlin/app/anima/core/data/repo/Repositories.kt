@@ -163,6 +163,10 @@ class NotifEventsRepository
         suspend fun perAppToday(startOfDayMillis: Long): Map<String, Int> =
             dao.perAppSince(startOfDayMillis).associate { it.packageName to it.count }
 
+        /** v2 weekly trend (bounded by the 7-day retention horizon anyway). */
+        suspend fun perAppSince(sinceMillis: Long): Map<String, Int> =
+            dao.perAppSince(sinceMillis).associate { it.packageName to it.count }
+
         suspend fun insert(
             id: String,
             packageName: String,
@@ -223,6 +227,15 @@ class IdentityRepository
 
         suspend fun rename(name: String) {
             metaDao.put(MetaEntity(KEY_NAME, name.trim()))
+        }
+
+        /**
+         * Soul migration only: the imported soul keeps its ORIGINAL hatch
+         * date — the relationship's age travels with it (hatch() deliberately
+         * refuses to overwrite an existing date; this is the sanctioned path).
+         */
+        suspend fun restoreHatchedAt(hatchedAtMillis: Long) {
+            metaDao.put(MetaEntity(KEY_HATCHED_AT, hatchedAtMillis.toString()))
         }
 
         suspend fun switchConcept(concept: CreatureConcept) {

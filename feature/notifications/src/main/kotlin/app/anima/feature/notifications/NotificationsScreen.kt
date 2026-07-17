@@ -171,6 +171,20 @@ fun NotificationsScreen(
                 }
                 item {
                     SectionCard {
+                        ToggleRow(
+                            label = "Quiet hours (23:00–07:00)",
+                            checked = state.quietHours,
+                            onChange = viewModel::setQuietHours,
+                        )
+                        Text(
+                            "At night it simply doesn't hear — nothing is captured, " +
+                                "not even counts.",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                }
+                item {
+                    SectionCard {
                         SectionLabel("Today")
                         if (state.todayPerApp.isEmpty()) {
                             Text("Nothing heard today.", style = MaterialTheme.typography.bodyMedium)

@@ -16,6 +16,9 @@ dependencies {
     api(projects.core.model)
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.android)
+    // Backup payload assembly (JsonObject builders only — no @Serializable,
+    // so the compiler plugin isn't needed here).
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.sqlcipher.android)
     implementation(libs.androidx.sqlite.ktx)
     implementation(libs.androidx.datastore.preferences)

@@ -72,7 +72,10 @@ class AnimaPrefs
          * trigger, checked at first screen open (never in background).
          */
         suspend fun shouldGreetToday(epochDay: Long): Boolean {
-            val last = context.animaDataStore.data.map { it[lastGreetingDay] ?: 0L }.first()
+            val last =
+                context.animaDataStore.data
+                    .map { it[lastGreetingDay] ?: 0L }
+                    .first()
             return epochDay > last
         }
 

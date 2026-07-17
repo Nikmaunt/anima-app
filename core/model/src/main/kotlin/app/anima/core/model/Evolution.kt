@@ -119,7 +119,16 @@ object StoryTimeline {
             ?.let { moments += StoryMoment(it.atMillis, "My mind woke up", "You brought me a mind of my own.") }
         journal
             .firstOrNull { it.kind == JournalKind.NOTIF_STORM }
-            ?.let { moments += StoryMoment(it.atMillis, "First storm we weathered", it.detail?.let { d -> "$d notifications at once." }) }
+            ?.let {
+                moments +=
+                    StoryMoment(
+                        it.atMillis,
+                        "First storm we weathered",
+                        it.detail?.let { d ->
+                            "$d notifications at once."
+                        },
+                    )
+            }
 
         val liveOrdered = facts.filter { it.isLive }.sortedBy { it.createdAtMillis }
         liveOrdered.firstOrNull()?.let {

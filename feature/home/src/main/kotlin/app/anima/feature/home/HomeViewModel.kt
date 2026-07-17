@@ -14,10 +14,10 @@ import app.anima.core.model.BodyState
 import app.anima.core.model.ChatMessage
 import app.anima.core.model.ChatRole
 import app.anima.core.model.CreatureConcept
+import app.anima.core.model.Evolution
 import app.anima.core.model.FactCandidate
 import app.anima.core.model.FactSource
 import app.anima.core.model.JournalKind
-import app.anima.core.model.Evolution
 import app.anima.core.model.LifeStage
 import app.anima.core.model.MindEngine
 import app.anima.core.model.MindEvent
@@ -25,11 +25,11 @@ import app.anima.core.model.MindFailure
 import app.anima.core.model.MindInventory
 import app.anima.core.model.MindStatus
 import app.anima.core.model.MindTier
-import app.anima.core.model.Personality
-import app.anima.core.model.RelationshipStats
 import app.anima.core.model.Mood
 import app.anima.core.model.MoodEngine
+import app.anima.core.model.Personality
 import app.anima.core.model.PromptBuilder
+import app.anima.core.model.RelationshipStats
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -157,12 +157,20 @@ class HomeViewModel
         private suspend fun morningGreeting() {
             val now = System.currentTimeMillis()
             val zone = java.time.ZoneId.systemDefault()
-            val epochDay = java.time.Instant.ofEpochMilli(now).atZone(zone).toLocalDate().toEpochDay()
-            val hour = java.time.Instant.ofEpochMilli(now).atZone(zone).hour
+            val epochDay =
+                java.time.Instant
+                    .ofEpochMilli(now)
+                    .atZone(zone)
+                    .toLocalDate()
+                    .toEpochDay()
+            val hour =
+                java.time.Instant
+                    .ofEpochMilli(now)
+                    .atZone(zone)
+                    .hour
             if (hour !in MORNING_FROM until MORNING_UNTIL) return
             if (!prefs.shouldGreetToday(epochDay)) return
             prefs.markGreetedToday(epochDay)
-            val name = identity.name().orEmpty()
             val pool =
                 listOf(
                     "Good morning. I kept the night watch — all quiet in here.",
@@ -173,7 +181,7 @@ class HomeViewModel
                 )
             val seed = (identity.seed() ?: 0L) + epochDay
             val line = pool[(seed % pool.size).toInt().let { if (it < 0) it + pool.size else it }]
-            chat.append(ChatRole.CREATURE, if (name.isEmpty()) line else line, now)
+            chat.append(ChatRole.CREATURE, line, now)
         }
 
         /** Deterministic starters from the body diary — data, not inference. */

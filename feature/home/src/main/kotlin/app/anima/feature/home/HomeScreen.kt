@@ -66,6 +66,7 @@ import app.anima.core.ui.theme.LocalAnimaColors
 fun HomeScreen(
     onOpenSettings: () -> Unit,
     onOpenSoul: () -> Unit,
+    onOpenDiary: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -134,6 +135,7 @@ fun HomeScreen(
                 )
             }
             GhostButton("Soul", onClick = onOpenSoul)
+            GhostButton("Diary", onClick = onOpenDiary)
             GhostButton("Settings", onClick = onOpenSettings)
         }
 
@@ -145,6 +147,7 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .weight(0.95f),
             reducedMotionOverride = if (state.calmMotion) true else null,
+            contentDescription = creatureA11y(state),
         )
 
         // Fact candidates: nothing enters the soul without a tap.
@@ -247,6 +250,23 @@ private fun ChatPanel(
                 )
         }
     }
+}
+
+/** TalkBack sentence: "Lumi is dozing, battery 23%". */
+private fun creatureA11y(state: HomeUiState): String {
+    val name = state.creatureName.ifEmpty { "Your creature" }
+    val doing =
+        when (state.bodyState.mood) {
+            app.anima.core.model.Mood.ALERT -> "is awake and watching"
+            app.anima.core.model.Mood.BORED -> "is bored"
+            app.anima.core.model.Mood.SLEEPY -> "is dozing"
+            app.anima.core.model.Mood.EATING -> "is eating"
+            app.anima.core.model.Mood.ANXIOUS -> "is anxious"
+            app.anima.core.model.Mood.ASLEEP -> "is asleep"
+            app.anima.core.model.Mood.HOT -> "is running hot"
+        }
+    return "$name $doing, battery ${state.bodyState.signals.batteryPercent}%" +
+        if (state.bodyState.signals.charging) ", charging" else ""
 }
 
 @Composable

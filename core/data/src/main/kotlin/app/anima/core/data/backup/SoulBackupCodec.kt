@@ -56,29 +56,43 @@ object SoulBackupCodec {
         }
     }
 
-    fun open(
-        blob: ByteArray,
-        passphrase: CharArray,
-    ): ByteArray {
+    private class Header(
+        val salt: ByteArray,
+        val iterations: Int,
+        val iv: ByteArray,
+        val payloadOffset: Int,
+    )
+
+    /** null = not our format / tampered header; the caller throws once. */
+    private fun parseHeader(blob: ByteArray): Header? {
         var offset = 0
         val headerBytes = MAGIC.size + 1 + SALT_BYTES + INT_BYTES + IV_BYTES
-        if (blob.size <= headerBytes) throw WrongPassphraseOrCorrupt()
-        if (!blob.copyOfRange(0, MAGIC.size).contentEquals(MAGIC)) throw WrongPassphraseOrCorrupt()
+        if (blob.size <= headerBytes) return null
+        if (!blob.copyOfRange(0, MAGIC.size).contentEquals(MAGIC)) return null
         offset += MAGIC.size
-        if (blob[offset] != VERSION) throw WrongPassphraseOrCorrupt()
+        if (blob[offset] != VERSION) return null
         offset += 1
         val salt = blob.copyOfRange(offset, offset + SALT_BYTES)
         offset += SALT_BYTES
         val iterations = bytesToInt(blob, offset)
         offset += INT_BYTES
-        if (iterations < MIN_ACCEPTED_ITERATIONS) throw WrongPassphraseOrCorrupt()
+        // Downgrade guard: a tampered header cannot ask for 1 iteration.
+        if (iterations < MIN_ACCEPTED_ITERATIONS) return null
         val iv = blob.copyOfRange(offset, offset + IV_BYTES)
         offset += IV_BYTES
-        val key = deriveKey(passphrase, salt, iterations)
+        return Header(salt, iterations, iv, offset)
+    }
+
+    fun open(
+        blob: ByteArray,
+        passphrase: CharArray,
+    ): ByteArray {
+        val header = parseHeader(blob) ?: throw WrongPassphraseOrCorrupt()
+        val key = deriveKey(passphrase, header.salt, header.iterations)
         try {
             val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-            cipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(key, "AES"), GCMParameterSpec(TAG_BITS, iv))
-            return runCatching { cipher.doFinal(blob, offset, blob.size - offset) }
+            cipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(key, "AES"), GCMParameterSpec(TAG_BITS, header.iv))
+            return runCatching { cipher.doFinal(blob, header.payloadOffset, blob.size - header.payloadOffset) }
                 .getOrElse { throw WrongPassphraseOrCorrupt(it) }
         } finally {
             Arrays.fill(key, 0)

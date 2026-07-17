@@ -16,12 +16,14 @@ import androidx.navigation.compose.rememberNavController
 import app.anima.core.data.prefs.AnimaPrefs
 import app.anima.core.ui.theme.AnimaTheme
 import app.anima.core.ui.theme.LocalAnimaColors
+import app.anima.feature.home.BodyDiaryScreen
 import app.anima.feature.home.HomeScreen
 import app.anima.feature.notifications.NotificationsScreen
 import app.anima.feature.onboarding.OnboardingScreen
 import app.anima.feature.settings.MindScreen
 import app.anima.feature.settings.SettingsScreen
 import app.anima.feature.soul.SoulScreen
+import app.anima.feature.soul.StoryScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -71,7 +73,11 @@ private fun AnimaNavHost(startAtHome: Boolean) {
             HomeScreen(
                 onOpenSettings = { nav.navigate(Routes.SETTINGS) },
                 onOpenSoul = { nav.navigate(Routes.SOUL) },
+                onOpenDiary = { nav.navigate(Routes.DIARY) },
             )
+        }
+        composable(Routes.DIARY) {
+            BodyDiaryScreen(onBack = { nav.popBackStack() })
         }
         composable(Routes.SETTINGS) {
             SettingsScreen(
@@ -87,7 +93,13 @@ private fun AnimaNavHost(startAtHome: Boolean) {
             NotificationsScreen(onBack = { nav.popBackStack() })
         }
         composable(Routes.SOUL) {
-            SoulScreen(onBack = { nav.popBackStack() })
+            SoulScreen(
+                onBack = { nav.popBackStack() },
+                onOpenStory = { nav.navigate(Routes.STORY) },
+            )
+        }
+        composable(Routes.STORY) {
+            StoryScreen(onBack = { nav.popBackStack() })
         }
     }
 }
@@ -99,4 +111,6 @@ private object Routes {
     const val NOTIFICATIONS = "notifications"
     const val SOUL = "soul"
     const val MIND = "mind"
+    const val STORY = "story"
+    const val DIARY = "diary"
 }

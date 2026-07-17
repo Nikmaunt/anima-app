@@ -19,9 +19,12 @@ import org.robolectric.RobolectricTestRunner
 
 /**
  * Compose UI tests for the creature's key states (v0.1 debt). Robolectric on
- * the JVM: verifies every concept composes, the frame loop starts, and every
- * mood plus reduced-motion renders without crashing. Pixel truth stays with
- * the S24 manual checklist; these tests pin composition and state plumbing.
+ * the JVM: verifies every concept composes and every mood plus reduced-motion
+ * renders without crashing. The frame loop is disabled (runFrameLoop=false) —
+ * a composable that requests a frame every frame never reaches quiescence
+ * under ComposeTestRule; loop discipline itself is covered by
+ * CreatureEngineTest and the RESUMED gating is code-reviewed (ADR-001).
+ * Pixel truth stays with the S24 manual checklist.
  */
 @RunWith(RobolectricTestRunner::class)
 class CreatureSurfaceUiTest {
@@ -41,6 +44,7 @@ class CreatureSurfaceUiTest {
                     modifier = Modifier.size(120.dp).testTag("creature-${concept.name}"),
                     interactive = false,
                     reducedMotionOverride = false,
+                    runFrameLoop = false,
                 )
             }
         }
@@ -49,7 +53,6 @@ class CreatureSurfaceUiTest {
         }
         Mood.entries.forEach { mood ->
             controllers.forEach { it.setBodyState(bodyState(mood)) }
-            compose.mainClock.advanceTimeBy(64)
             compose.waitForIdle()
         }
     }
@@ -65,17 +68,16 @@ class CreatureSurfaceUiTest {
                 modifier = Modifier.size(160.dp).testTag("creature"),
                 interactive = false,
                 reducedMotionOverride = true,
+                runFrameLoop = false,
             )
         }
         compose.onNodeWithTag("creature").assertExists()
         Mood.entries.forEach { mood ->
             controller.setBodyState(bodyState(mood))
-            compose.mainClock.advanceTimeBy(300)
             compose.waitForIdle()
         }
         controller.onCelebrate()
         controller.onStartle()
-        compose.mainClock.advanceTimeBy(300)
         compose.waitForIdle()
     }
 
@@ -90,12 +92,12 @@ class CreatureSurfaceUiTest {
                 modifier = Modifier.size(120.dp).testTag("creature"),
                 interactive = false,
                 reducedMotionOverride = false,
+                runFrameLoop = false,
             )
         }
         listOf(0f, 0.5f, 1f).forEach { growth ->
             controller.setGrowth(growth)
             controller.setBodyState(bodyState(Mood.EATING, charging = true))
-            compose.mainClock.advanceTimeBy(48)
             compose.waitForIdle()
         }
         compose.onNodeWithTag("creature").assertExists()

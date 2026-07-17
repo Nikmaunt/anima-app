@@ -48,6 +48,12 @@ class AnimaNotificationListener : NotificationListenerService() {
 
     private fun capture(sbn: StatusBarNotification) {
         val config = configStore.read()
+        // Quiet hours (v2): at night the creature doesn't hear — the event is
+        // dropped BEFORE any field is read, not stored-and-hidden.
+        val calendar = java.util.Calendar.getInstance()
+        val minuteOfDay =
+            calendar.get(java.util.Calendar.HOUR_OF_DAY) * 60 + calendar.get(java.util.Calendar.MINUTE)
+        if (config.isQuietAt(minuteOfDay)) return
         val extras = sbn.notification?.extras
         val captured =
             NotifCaptureFilter.gate(

@@ -25,6 +25,10 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
@@ -50,6 +54,8 @@ fun CreatureSurface(
     modifier: Modifier = Modifier,
     interactive: Boolean = true,
     reducedMotionOverride: Boolean? = null,
+    contentDescription: String? = null,
+    runFrameLoop: Boolean = true,
 ) {
     val context = LocalContext.current
     val view = LocalView.current
@@ -70,7 +76,11 @@ fun CreatureSurface(
     var frameTimeNanos by remember { mutableLongStateOf(0L) }
     val currentReduced by rememberUpdatedState(reducedMotion)
 
-    LaunchedEffect(lifecycleOwner, engine) {
+    // runFrameLoop=false is a TEST hook only: a composable that requests a
+    // frame every frame never reaches quiescence under ComposeTestRule, so
+    // UI tests compose with the loop off and drive poses directly.
+    LaunchedEffect(lifecycleOwner, engine, runFrameLoop) {
+        if (!runFrameLoop) return@LaunchedEffect
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             engine.onResume()
             engine.setReducedMotion(currentReduced)
@@ -137,9 +147,22 @@ fun CreatureSurface(
             Modifier
         }
 
+    // TalkBack (v0.2): the creature is an image with a live state sentence,
+    // supplied by the screen that knows the name and vitals.
+    val a11y =
+        if (contentDescription != null) {
+            Modifier.semantics {
+                this.contentDescription = contentDescription
+                role = Role.Image
+            }
+        } else {
+            Modifier
+        }
+
     Spacer(
         modifier =
             modifier
+                .then(a11y)
                 .then(gestures)
                 .drawBehind {
                     // The only per-frame invalidation point.

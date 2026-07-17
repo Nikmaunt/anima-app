@@ -30,6 +30,7 @@ data class NotificationsUiState(
     val todayPerApp: Map<String, Int> = emptyMap(),
     val digest: String? = null,
     val digestBusy: Boolean = false,
+    val quietHours: Boolean = false,
 )
 
 @HiltViewModel
@@ -56,6 +57,7 @@ class NotificationsViewModel
                     enabled = config.enabled,
                     storeText = config.storeText,
                     allowlist = config.allowlist.sorted(),
+                    quietHours = config.quietHoursEnabled,
                 )
             viewModelScope.launch {
                 state.value = state.value.copy(todayPerApp = events.perAppToday(startOfToday()))
@@ -74,6 +76,9 @@ class NotificationsViewModel
         fun setEnabled(value: Boolean) = writeConfig { it.copy(enabled = value) }
 
         fun setStoreText(value: Boolean) = writeConfig { it.copy(storeText = value) }
+
+        /** v2: 23:00–07:00 local — the creature sleeps through the noise. */
+        fun setQuietHours(value: Boolean) = writeConfig { it.copy(quietHoursEnabled = value) }
 
         fun onPackageInput(value: String) {
             state.value =
