@@ -179,6 +179,7 @@ fun CreatureSurface(
                     renderContext.batteryPercent = controller.batteryPercent
                     renderContext.charging = controller.charging
                     renderContext.growth = controller.growth
+                    renderContext.paletteShiftDeg = controller.paletteShiftDeg
 
                     val squashY = 1f + pose.squash * 0.10f
                     val squashX = 1f / squashY

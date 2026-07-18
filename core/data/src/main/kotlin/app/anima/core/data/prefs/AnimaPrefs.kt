@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import app.anima.core.model.Personality
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -73,6 +74,15 @@ class AnimaPrefs
 
         suspend fun setSoulScreenshotsAllowed(value: Boolean) {
             context.animaDataStore.edit { it[soulScreenshotsAllowed] = value }
+        }
+
+        private val paletteVariant = stringPreferencesKey("palette_variant")
+
+        /** v0.4 milestones: chosen PaletteVariant wire; null = true self. */
+        fun paletteVariant(): Flow<String?> = context.animaDataStore.data.map { it[paletteVariant] }
+
+        suspend fun setPaletteVariant(wire: String) {
+            context.animaDataStore.edit { it[paletteVariant] = wire }
         }
 
         private val lastGreetingDay = longPreferencesKey("last_greeting_epoch_day")

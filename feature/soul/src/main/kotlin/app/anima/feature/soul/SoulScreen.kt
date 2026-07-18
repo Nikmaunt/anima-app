@@ -108,6 +108,9 @@ fun SoulScreen(
                                 viewModel.buildExportIntent { context.startActivity(it) }
                             })
                             GhostButton("Our story…", onClick = onOpenStory)
+                            GhostButton("Postcard", onClick = {
+                                viewModel.buildPostcardIntent { context.startActivity(it) }
+                            })
                         }
                         Text(
                             "The markdown export stays readable by any human or AI. " +

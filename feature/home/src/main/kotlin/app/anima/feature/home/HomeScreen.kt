@@ -109,6 +109,8 @@ fun HomeScreen(
             CreatureGenome.from(state.seed).tunedBy(state.personality)
         }
     val controller = rememberCreature(state.concept, state.seed, genome)
+    val paletteShift by viewModel.paletteShift.collectAsState()
+    controller.paletteShiftDeg = paletteShift
     controller.setBodyState(state.bodyState)
     controller.setGrowth(state.growth)
     controller.setStage(state.stage)

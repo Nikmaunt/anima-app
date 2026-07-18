@@ -120,11 +120,13 @@ fun RestScreen(
         }
     }
 
+    val paletteShift by viewModel.paletteShift.collectAsState()
     RestContent(
         ui = ui,
         phase = phase,
         nowMs = nowMs,
         charging = charging,
+        paletteShiftDeg = paletteShift,
         keepScreenOn = keepScreenOn,
         cameBackFromWait = cameBackFromWait,
         onPick = { viewModel.start(it) },
@@ -159,6 +161,7 @@ fun RestContent(
     onDone: () -> Unit,
     onBack: () -> Unit,
     frameLoop: Boolean = true,
+    paletteShiftDeg: Float = 0f,
 ) {
     val colors = LocalAnimaColors.current
     Box(
@@ -180,6 +183,7 @@ fun RestContent(
             Spacer(Modifier.height(8.dp))
 
             val controller = rememberCreature(ui.concept, ui.seed)
+            controller.paletteShiftDeg = paletteShiftDeg
             val restingMood = if (phase is RestPhase.Running) Mood.ASLEEP else Mood.ALERT
             LaunchedEffect(restingMood, charging) {
                 controller.setBodyState(

@@ -24,6 +24,13 @@ class RenderContext {
 
     /** 0..1, how much soul has accumulated (drives the sprout's growth). */
     var growth: Float = 0.3f
+
+    /**
+     * v0.4 milestones: the unlocked palette variant's hue rotation
+     * (Milestones/PaletteVariant), on top of the genome's ±18°. 0 = true
+     * self.
+     */
+    var paletteShiftDeg: Float = 0f
 }
 
 /** Hue helpers shared by renderers. */
@@ -48,7 +55,7 @@ object Hues {
         alpha: Float = 1f,
     ): Color {
         val pose = ctx.pose
-        val hue = baseHue + ctx.genome.hueShiftDeg - pose.flush * 18f
+        val hue = baseHue + ctx.genome.hueShiftDeg + ctx.paletteShiftDeg - pose.flush * 18f
         val s = sat * (0.55f + 0.45f * pose.energy)
         val l = light * (0.75f + 0.25f * pose.energy) + pose.flush * 0.05f
         return hsl(hue, s, l, alpha)

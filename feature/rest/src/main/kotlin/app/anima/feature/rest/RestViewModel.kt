@@ -37,8 +37,18 @@ class RestViewModel
         val manager: RestSessionManager,
         private val identity: IdentityRepository,
         private val journal: JournalRepository,
+        prefs: app.anima.core.data.prefs.AnimaPrefs,
         body: BodySensors,
     ) : ViewModel() {
+        /** v0.4 milestones: the worn palette rides along into the rest rig. */
+        val paletteShift: StateFlow<Float> =
+            prefs
+                .paletteVariant()
+                .map { wire ->
+                    val now = System.currentTimeMillis()
+                    app.anima.core.model.Milestones
+                        .effectiveShiftDeg(wire, identity.stats(now), now)
+                }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0f)
         private val mutableState = MutableStateFlow(RestUiState())
         val uiState: StateFlow<RestUiState> = mutableState.asStateFlow()
 

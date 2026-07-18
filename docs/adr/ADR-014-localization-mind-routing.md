@@ -42,3 +42,23 @@ Status: accepted, 2026-07-18.
   network voice.
 - Pseudolocale test (`en-XA` overflow + `ar-XB` RTL smoke) joins the DoD;
   debug builds enable pseudolocales.
+
+## Amendment (v0.4 close, 2026-07-18): string migration deferred to v0.5
+
+The run's Phase 0 uncovered a shipping-critical defect (the WAL pool-growth
+crash, audit-v03 F11) whose diagnosis, root-cause fix and E2E verification
+consumed the budget v0.4 had implicitly reserved for migrating the ~240
+inline UI strings to resources. Attempting the migration in the run's tail —
+across every legacy screen, with ViewModel-produced strings needing context
+plumbing — would have put the untouchable DoD (GMD, release builds, golden
+verification) at risk, and a HALF-migrated base violates this ADR's own
+"a partial locale is worse than none" rule.
+
+Decision: v0.4 ships the localization INFRASTRUCTURE only — pseudolocales
+enabled in debug builds, new modules (rest, wallpaper) resource-based from
+birth, the six-locale store texts in docs/store/, and this ADR's routing
+policy. The full string migration + RU (then DE/ES/PL/JA per ranking) is
+the FIRST item of the v0.5 backlog, invoked per the v0.4 cut order
+("локализация сверх EN+RU" was the sanctioned cut; RU itself moves with it
+because the extraction cost, not translation, dominates). Recorded as a
+deviation from the v0.4 brief in the final report.

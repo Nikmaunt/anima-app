@@ -54,7 +54,7 @@ class SoulViewModel
         private val identity: IdentityRepository,
         private val journal: JournalRepository,
         private val backup: SoulBackup,
-        prefs: AnimaPrefs,
+        private val prefs: AnimaPrefs,
     ) : ViewModel() {
         /** FLAG_SECURE gate for this screen (threat-model.md; default ON). */
         val screenshotsAllowed: StateFlow<Boolean> =
@@ -160,6 +160,84 @@ class SoulViewModel
                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     }
                 onReady(Intent.createChooser(intent, "Export soul"))
+            }
+        }
+
+        /**
+         * v0.4 postcard (reinstated from the v0.3 cut): one still frame of
+         * the creature + a caption, through the system share sheet. No
+         * social SDKs — ACTION_SEND and nothing else. The PNG lands in the
+         * same cache/exports dir the F2 sweep cleans.
+         */
+        fun buildPostcardIntent(onReady: (Intent) -> Unit) {
+            viewModelScope.launch {
+                val now = System.currentTimeMillis()
+                val name = identity.name() ?: "Anima"
+                val (concept, seed) = identityBits.value
+                val liveStats = identity.stats(now)
+                val shift =
+                    app.anima.core.model.Milestones.effectiveShiftDeg(
+                        prefs.paletteVariant().first(),
+                        liveStats,
+                        now,
+                    )
+                val hour =
+                    java.util.Calendar
+                        .getInstance()
+                        .get(java.util.Calendar.HOUR_OF_DAY)
+                val night = hour >= 22 || hour < 7
+                val tile =
+                    app.anima.core.creature.render.StillRender.tile(
+                        concept = concept,
+                        seed = seed,
+                        mood = app.anima.core.model.Mood.ALERT,
+                        batteryPercent = 80,
+                        charging = false,
+                        night = night,
+                        growth = 0.5f,
+                        sizePx = POSTCARD_TILE_PX,
+                        paletteShiftDeg = shift,
+                    )
+                val card =
+                    android.graphics.Bitmap
+                        .createBitmap(POSTCARD_W, POSTCARD_H, android.graphics.Bitmap.Config.ARGB_8888)
+                val canvas = android.graphics.Canvas(card)
+                canvas.drawColor(if (night) NIGHT_BG else DAY_BG)
+                canvas.drawBitmap(tile, (POSTCARD_W - POSTCARD_TILE_PX) / 2f, TILE_TOP, null)
+                val ink = if (night) INK_NIGHT else INK_DAY
+                val paint =
+                    android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
+                        color = ink
+                        textAlign = android.graphics.Paint.Align.CENTER
+                        textSize = NAME_TEXT_PX
+                    }
+                canvas.drawText(name, POSTCARD_W / 2f, NAME_Y, paint)
+                paint.textSize = CAPTION_TEXT_PX
+                paint.alpha = CAPTION_ALPHA
+                canvas.drawText(
+                    "${liveStats.daysTogether(now)} days together, all of them here",
+                    POSTCARD_W / 2f,
+                    CAPTION_Y,
+                    paint,
+                )
+                paint.textAlign = android.graphics.Paint.Align.RIGHT
+                paint.textSize = MARK_TEXT_PX
+                paint.alpha = MARK_ALPHA
+                canvas.drawText("Anima", POSTCARD_W - MARK_MARGIN, POSTCARD_H - MARK_MARGIN, paint)
+
+                val dir = File(context.cacheDir, "exports").apply { mkdirs() }
+                val file = File(dir, "postcard-of-${name.lowercase().replace(Regex("[^a-zа-яё0-9]+"), "-")}.png")
+                file.outputStream().use { out ->
+                    card.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, out)
+                }
+                val uri = FileProvider.getUriForFile(context, "${context.packageName}.files", file)
+                val intent =
+                    Intent(Intent.ACTION_SEND).apply {
+                        type = "image/png"
+                        putExtra(Intent.EXTRA_STREAM, uri)
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                onReady(Intent.createChooser(intent, "Share a postcard"))
             }
         }
 
@@ -284,5 +362,23 @@ class SoulViewModel
 
         private companion object {
             const val MIN_PASSPHRASE = 8
+
+            // Postcard geometry (v0.4): 4:5 portrait, creature centered.
+            const val POSTCARD_W = 1080
+            const val POSTCARD_H = 1350
+            const val POSTCARD_TILE_PX = 720
+            const val TILE_TOP = 180f
+            const val NAME_Y = 1060f
+            const val CAPTION_Y = 1130f
+            const val NAME_TEXT_PX = 72f
+            const val CAPTION_TEXT_PX = 44f
+            const val MARK_TEXT_PX = 36f
+            const val CAPTION_ALPHA = 170
+            const val MARK_ALPHA = 90
+            const val MARK_MARGIN = 40f
+            const val NIGHT_BG = 0xFF0B0E14.toInt()
+            const val DAY_BG = 0xFFF4F0E9.toInt()
+            const val INK_NIGHT = 0xFFE8E4DC.toInt()
+            const val INK_DAY = 0xFF23262E.toInt()
         }
     }

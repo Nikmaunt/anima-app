@@ -189,6 +189,7 @@ fun SettingsScreen(
     onOpenMind: () -> Unit,
     onOpenTrust: () -> Unit = {},
     onOpenCrashLog: () -> Unit = {},
+    onOpenWardrobe: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -250,6 +251,8 @@ fun SettingsScreen(
                     outline = colors.outline,
                     modifier = Modifier.height(660.dp),
                 )
+                // v0.4 milestones: palettes opened by the relationship.
+                GhostButton("Forms…", onClick = onOpenWardrobe)
             }
 
             SectionCard {

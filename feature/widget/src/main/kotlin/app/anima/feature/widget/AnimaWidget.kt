@@ -18,6 +18,7 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.first
 import java.util.Calendar
 
 /**
@@ -31,25 +32,41 @@ class AnimaWidget : GlanceAppWidget() {
     @InstallIn(SingletonComponent::class)
     interface WidgetEntryPoint {
         fun identity(): IdentityRepository
+
+        fun prefs(): app.anima.core.data.prefs.AnimaPrefs
     }
 
     override suspend fun provideGlance(
         context: Context,
         id: GlanceId,
     ) {
-        val identity =
-            EntryPointAccessors
-                .fromApplication(context, WidgetEntryPoint::class.java)
-                .identity()
+        val entry = EntryPointAccessors.fromApplication(context, WidgetEntryPoint::class.java)
+        val identity = entry.identity()
         val concept = runCatching { identity.concept() }.getOrNull() ?: CreatureConcept.SPIRIT_ORB
         val seed = runCatching { identity.seed() }.getOrNull() ?: 0L
         val name = runCatching { identity.name() }.getOrNull() ?: "Anima"
+        // v0.4 milestones: the worn palette follows onto the home screen.
+        val paletteShift =
+            runCatching {
+                val now = System.currentTimeMillis()
+                val wire = entry.prefs().paletteVariant().first()
+                app.anima.core.model.Milestones.effectiveShiftDeg(wire, identity.stats(now), now)
+            }.getOrDefault(0f)
 
         val vitals = WidgetSnapshot.readVitals(context)
         val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         val night = hour >= NIGHT_FROM || hour < NIGHT_UNTIL
         val mood = WidgetSnapshot.moodFor(vitals, night)
-        val bitmap = WidgetSnapshot.render(concept, seed, mood, vitals, night, growth = DEFAULT_GROWTH)
+        val bitmap =
+            WidgetSnapshot.render(
+                concept,
+                seed,
+                mood,
+                vitals,
+                night,
+                growth = DEFAULT_GROWTH,
+                paletteShiftDeg = paletteShift,
+            )
 
         val launch = context.packageManager.getLaunchIntentForPackage(context.packageName)
         provideContent {

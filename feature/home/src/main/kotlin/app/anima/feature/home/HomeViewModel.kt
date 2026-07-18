@@ -87,6 +87,16 @@ class HomeViewModel
         /** ADR-013: armed only after an offline voice was confirmed. */
         @Volatile
         private var voiceReady = false
+
+        /** v0.4 milestones: the worn palette's hue rotation (0 = true self). */
+        val paletteShift: StateFlow<Float> =
+            prefs
+                .paletteVariant()
+                .map { wire ->
+                    val now = System.currentTimeMillis()
+                    app.anima.core.model.Milestones
+                        .effectiveShiftDeg(wire, identity.stats(now), now)
+                }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0f)
         private val lastInteractionAt = MutableStateFlow(System.currentTimeMillis())
         private val streaming = MutableStateFlow<String?>(null)
         private val candidates = MutableStateFlow<List<FactCandidate>>(emptyList())

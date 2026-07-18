@@ -19,6 +19,7 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -41,6 +42,8 @@ class AnimaWallpaperService : WallpaperService() {
     @InstallIn(SingletonComponent::class)
     interface WallpaperEntryPoint {
         fun identity(): IdentityRepository
+
+        fun prefs(): app.anima.core.data.prefs.AnimaPrefs
     }
 
     override fun onCreateEngine(): Engine = StillEngine()
@@ -114,16 +117,28 @@ class AnimaWallpaperService : WallpaperService() {
         private fun drawOnce(battery: Intent?) {
             if (!isVisible) return
             val holder = surfaceHolder ?: return
-            val identity =
+            val entry =
                 EntryPointAccessors
                     .fromApplication(applicationContext, WallpaperEntryPoint::class.java)
-                    .identity()
+            val identity = entry.identity()
             val concept =
                 runCatching { kotlinx.coroutines.runBlocking { identity.concept() } }
                     .getOrNull() ?: CreatureConcept.SPIRIT_ORB
             val seed =
                 runCatching { kotlinx.coroutines.runBlocking { identity.seed() } }
                     .getOrNull() ?: 0L
+            // v0.4 milestones: the worn palette follows onto the wallpaper.
+            val paletteShift =
+                runCatching {
+                    kotlinx.coroutines.runBlocking {
+                        val now = System.currentTimeMillis()
+                        app.anima.core.model.Milestones.effectiveShiftDeg(
+                            entry.prefs().paletteVariant().first(),
+                            identity.stats(now),
+                            now,
+                        )
+                    }
+                }.getOrDefault(0f)
 
             val percent = batteryPercent(battery)
             val charging = batteryCharging(battery)
@@ -145,6 +160,7 @@ class AnimaWallpaperService : WallpaperService() {
                         night = night,
                         growth = DEFAULT_GROWTH,
                         sizePx = side.toInt().coerceAtLeast(MIN_TILE_PX),
+                        paletteShiftDeg = paletteShift,
                     )
                 val left = (canvas.width - bitmap.width) / 2f
                 val top = (canvas.height - bitmap.height) / 2f

@@ -21,6 +21,9 @@ class CreatureController(
 ) {
     internal val engine = CreatureEngine(seed, genome)
 
+    /** v0.4 milestones: unlocked palette rotation; 0 = true self. */
+    var paletteShiftDeg: Float = 0f
+
     internal var batteryPercent: Int = 80
         private set
     internal var charging: Boolean = false

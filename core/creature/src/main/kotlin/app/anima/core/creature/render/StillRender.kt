@@ -30,6 +30,7 @@ object StillRender {
         night: Boolean,
         growth: Float,
         sizePx: Int,
+        paletteShiftDeg: Float = 0f,
     ): Bitmap {
         val genome = CreatureGenome.from(seed)
         val engine = CreatureEngine(seed, genome)
@@ -50,6 +51,7 @@ object StillRender {
                 this.batteryPercent = batteryPercent
                 this.charging = charging
                 this.growth = growth
+                this.paletteShiftDeg = paletteShiftDeg
             }
         val renderer = Renderers.forConcept(concept)
         CanvasDrawScope().draw(

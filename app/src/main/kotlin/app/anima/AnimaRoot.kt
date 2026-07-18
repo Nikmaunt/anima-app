@@ -26,6 +26,7 @@ import app.anima.feature.settings.CrashLogScreen
 import app.anima.feature.settings.MindScreen
 import app.anima.feature.settings.SettingsScreen
 import app.anima.feature.settings.TrustScreen
+import app.anima.feature.settings.WardrobeScreen
 import app.anima.feature.soul.SoulScreen
 import app.anima.feature.soul.StoryScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -112,7 +113,11 @@ private fun AnimaNavHost(
                 onOpenMind = { nav.navigate(Routes.MIND) },
                 onOpenTrust = { nav.navigate(Routes.TRUST) },
                 onOpenCrashLog = { nav.navigate(Routes.CRASHLOG) },
+                onOpenWardrobe = { nav.navigate(Routes.WARDROBE) },
             )
+        }
+        composable(Routes.WARDROBE) {
+            WardrobeScreen(onBack = { nav.popBackStack() })
         }
         composable(Routes.MIND) {
             MindScreen(onBack = { nav.popBackStack() })
@@ -153,4 +158,5 @@ private object Routes {
     const val DIARY = "diary"
     const val TRUST = "trust"
     const val CRASHLOG = "crashlog"
+    const val WARDROBE = "wardrobe"
 }

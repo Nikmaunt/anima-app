@@ -53,6 +53,7 @@ object WidgetSnapshot {
         vitals: Vitals,
         night: Boolean,
         growth: Float,
+        paletteShiftDeg: Float = 0f,
     ): Bitmap =
         StillRender.tile(
             concept = concept,
@@ -63,6 +64,7 @@ object WidgetSnapshot {
             night = night,
             growth = growth,
             sizePx = SIZE_PX,
+            paletteShiftDeg = paletteShiftDeg,
         )
 
     private const val FALLBACK_BATTERY = 50

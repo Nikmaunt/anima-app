@@ -17,6 +17,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            // ADR-014: pseudolocale gate for the v0.5 string migration —
+            // en-XA (expansion) and ar-XB (RTL) selectable in system
+            // settings on debug builds.
+            isPseudoLocalesEnabled = true
+        }
         release {
             // v0.2: full R8 + resource shrinking. JNI/reflection keeps live
             // in proguard-rules.pro; everything else relies on consumer rules.
