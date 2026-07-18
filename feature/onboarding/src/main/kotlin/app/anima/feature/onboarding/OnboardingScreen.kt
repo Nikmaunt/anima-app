@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -118,6 +119,7 @@ private fun HatchStage(
     Column(
         Modifier
             .fillMaxSize()
+            .testTag("onboarding.hatch")
             .pointerInput(Unit) {
                 detectTapGestures {
                     skipped = true
@@ -190,7 +192,7 @@ private fun HatchStage(
         )
         Spacer(Modifier.height(20.dp))
         if (progress >= 0.999f) {
-            PillButton("Meet it", onClick = onHatched)
+            PillButton("Meet it", onClick = onHatched, modifier = Modifier.testTag("onboarding.meet"))
         } else {
             Text(
                 "tap to hurry the shell",
@@ -238,7 +240,8 @@ private fun ChooseStage(
             modifier =
                 Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(vertical = 14.dp),
+                    .padding(vertical = 14.dp)
+                    .testTag("onboarding.confirmConcept"),
         )
     }
 }
@@ -282,7 +285,8 @@ private fun NameStage(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(20.dp))
                     .background(colors.surface)
-                    .padding(vertical = 14.dp),
+                    .padding(vertical = 14.dp)
+                    .testTag("onboarding.name.input"),
         )
         Spacer(Modifier.height(14.dp))
         // The honest contract, compressed to what matters before the first
@@ -296,7 +300,12 @@ private fun NameStage(
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(14.dp))
-        PillButton("That's the name — begin", onClick = onConfirm, enabled = name.isNotBlank())
+        PillButton(
+            "That's the name — begin",
+            onClick = onConfirm,
+            enabled = name.isNotBlank(),
+            modifier = Modifier.testTag("onboarding.begin"),
+        )
         Spacer(Modifier.height(24.dp))
     }
 }

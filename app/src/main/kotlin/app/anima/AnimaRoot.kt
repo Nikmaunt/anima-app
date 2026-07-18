@@ -60,7 +60,14 @@ fun AnimaRoot(
         val colors = LocalAnimaColors.current
         when (done) {
             null -> Box(Modifier.fillMaxSize().background(colors.background))
-            else -> AnimaNavHost(startAtHome = done == true, actions = actions)
+            else -> {
+                // Frozen at first composition: when onboarding completes it
+                // NAVIGATES home; flipping startDestination here as well
+                // would rebuild the graph and cross-fade two Home screens
+                // at once (caught by DayInLifeTest's duplicate-tag failure).
+                val startAtHome = androidx.compose.runtime.remember { done == true }
+                AnimaNavHost(startAtHome = startAtHome, actions = actions)
+            }
         }
     }
 }

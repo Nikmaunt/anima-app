@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -178,7 +179,7 @@ fun RestContent(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row(Modifier.fillMaxWidth()) {
-                GhostButton("Back", onClick = onBack)
+                GhostButton("Back", onClick = onBack, modifier = Modifier.testTag("rest.back"))
             }
             Spacer(Modifier.height(8.dp))
 
@@ -211,6 +212,7 @@ fun RestContent(
                         "%d:%02d".format(java.util.Locale.US, mm, ss),
                         style = MaterialTheme.typography.displayMedium,
                         color = colors.text,
+                        modifier = Modifier.testTag("rest.timer"),
                     )
                     Spacer(Modifier.height(8.dp))
                     Text(
@@ -293,7 +295,8 @@ private fun PickPanel(
                     .clip(RoundedCornerShape(16.dp))
                     .background(colors.surfaceHigh)
                     .clickable { onPick(minutes) }
-                    .padding(horizontal = 18.dp, vertical = 12.dp),
+                    .padding(horizontal = 18.dp, vertical = 12.dp)
+                    .testTag("rest.start.$minutes"),
             ) {
                 Text(
                     "$minutes min",

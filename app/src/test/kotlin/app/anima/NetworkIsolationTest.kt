@@ -169,6 +169,22 @@ class NetworkIsolationTest {
     }
 
     @Test
+    fun `model registry and cloud presets stay data-only`() {
+        // v0.5 (ADR-017 / Phase 1E): the registry and the BYOK presets live
+        // in :core:model as pure data. URLs as strings are fine; the moment
+        // either file grows transport code, the network budget breaks.
+        listOf(
+            "core/model/src/main/kotlin/app/anima/core/model/MindModelRegistry.kt",
+            "core/model/src/main/kotlin/app/anima/core/model/CloudPresets.kt",
+        ).forEach { path ->
+            val text = File(repoRoot, path).readText()
+            assertWithMessage("$path must stay free of transport code")
+                .that(listOf("import java.net", "openConnection", "Socket", "URLConnection").any { text.contains(it) })
+                .isFalse()
+        }
+    }
+
+    @Test
     fun `version catalog carries no network stack`() {
         // Comments may mention forbidden stacks by name (to say they're
         // banned); only effective, non-comment content is checked.

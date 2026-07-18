@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.anima.core.model.BodyState
@@ -61,7 +62,8 @@ fun ConceptGallery(
                             color = if (isSelected) accent else outline.copy(alpha = 0.4f),
                             shape = RoundedCornerShape(20.dp),
                         ).clickable { onSelect(concept) }
-                        .padding(8.dp),
+                        .padding(8.dp)
+                        .testTag("concept.${concept.wire}"),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 val controller = rememberCreature(concept, seed)

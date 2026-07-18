@@ -13,7 +13,8 @@ android {
         applicationId = "app.anima"
         versionCode = 4
         versionName = "0.4.0"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // v0.5 day-in-life E2E: Hilt swaps the mind for a deterministic fake.
+        testInstrumentationRunner = "app.anima.HiltTestRunner"
     }
 
     buildTypes {
@@ -95,4 +96,21 @@ dependencies {
     testImplementation(libs.junit4)
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)
+
+    // GMD day-in-life suite (v0.5 Phase 0): full app on the ATD emulator with
+    // a deterministic fake mind installed through Hilt. Compose BOM +
+    // ui-test-junit4 already ride in via the compose convention plugin.
+    androidTestImplementation(projects.core.model)
+    androidTestImplementation(projects.core.data)
+    androidTestImplementation(projects.core.mind)
+    androidTestImplementation(projects.feature.widget)
+    androidTestImplementation(libs.androidx.glance.appwidget)
+    androidTestImplementation(libs.junit4)
+    androidTestImplementation(libs.truth)
+    androidTestImplementation(libs.kotlinx.coroutines.android)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.core.ktx)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
 }
