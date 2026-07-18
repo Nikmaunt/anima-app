@@ -108,7 +108,8 @@ exports. Assets → boundaries → threats → mitigations, with honest residues
 
 ## Standing mitigations (build-time)
 
-- NetworkIsolationTest v4 (11 tests) — the network world order.
+- NetworkIsolationTest v5 (12 tests, v0.5 adds the registry/presets
+  data-only tripwire) — the network world order.
 - GMD instrumented suite — real SQLCipher/Keystore behavior on device.
 - StrictMode (debug builds) — leaked closables/activities, disk/network
   on main thread.
@@ -117,8 +118,34 @@ exports. Assets → boundaries → threats → mitigations, with honest residues
   CVE range + export-name sanitization). ML Kit/Play SDKs are closed
   source — absence of advisories is the strongest available check.
 
+## Addendum v0.5 (2026-07-18) — triggered by "soul schema v2"
+
+Schema v2 landed (time_capsules) plus three surface changes; the pass:
+
+- **Time capsules** (information disclosure): letters live inside the same
+  SQLCipher envelope as the soul; they join the encrypted export (backup
+  payload v2, tolerant of v1). FLAG_SECURE screens still gate display. No
+  new storage location, no new component. Accepted.
+- **Barometer log** (information disclosure): pressure+timestamp pairs,
+  12 h window, DataStore (not the cipher DB — it is weather, not the
+  soul). Pressure correlates with altitude/weather, not identity or
+  location; it never enters prompts as raw numbers (only a trend word) and
+  never leaves the device. Accepted.
+- **Key probe** (spoofing/exfiltration): "check key" sends the Authorization
+  header to the CONFIGURED base URL on explicit tap. A user tricked into
+  pasting a hostile base-url hands that host their key — inherent to BYOK
+  and identical to the chat path that already existed; mitigations stand
+  (https required, presets prefill known-good URLs, key never exported).
+  No conversation content in the probe. Accepted.
+- **Model registry / multi-model store** (tampering): file-name matching
+  only selects METADATA (prompt format, stop tokens, budget) — a hostile
+  file name cannot execute anything and an unknown name degrades to the
+  conservative spec. Model files still enter only via staging+rename in
+  app-private noBackupFilesDir. The engine's load smoke test remains the
+  gate against malformed weights. Accepted.
+
 ## Review triggers
 
 Re-run this model when: a third network module is ever proposed (expect NO),
-any new exported component, soul schema v2, voice input (ADR-009 revisit),
+any new exported component, soul schema v3, voice input (ADR-009 revisit),
 or a change to the SQLCipher factory/keying path.

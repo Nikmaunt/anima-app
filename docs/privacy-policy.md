@@ -20,6 +20,13 @@ run no servers and cannot see anything you do.
 - Notification titles, only if you turn the notification sense on, only
   from apps you allowlist, pruned after 7 days, and never message bodies
   unless you separately opt in.
+- Time-capsule letters you write to your future self (v0.5) — same
+  encrypted database, delivered back to you by the creature, never sent
+  anywhere.
+- A sparse log of barometer readings (v0.5, phones that have the sensor):
+  timestamps and air-pressure values only, kept for 12 hours so the
+  creature can "feel the weather in its bones". Air pressure is not
+  location; the log never leaves the device.
 
 All of it is stored in a database encrypted with a key that is generated on
 your device and wrapped by your phone's hardware keystore. It is excluded
@@ -42,7 +49,10 @@ Settings, destroys it.
    leaves the device (it is never part of any export).
 
 There is no third thing. A build-time test fails our release if any other
-part of the app gains network capability.
+part of the app gains network capability. (v0.5 adds one detail to the
+second thing: a "check key" button that, when you press it, asks your
+chosen provider whether your key works — it sends the key header and no
+conversation content.)
 
 ## Permissions
 

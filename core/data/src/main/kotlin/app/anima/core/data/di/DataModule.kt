@@ -41,6 +41,7 @@ internal object DataModule {
         return Room
             .databaseBuilder(context, AnimaDatabase::class.java, AnimaDatabase.NAME)
             .openHelperFactory(SupportOpenHelperFactory(keyHolder.passphrase()))
+            .addMigrations(AnimaDatabase.MIGRATION_1_2)
             .build()
     }
 
@@ -58,4 +59,7 @@ internal object DataModule {
 
     @Provides
     fun metaDao(db: AnimaDatabase) = db.metaDao()
+
+    @Provides
+    fun timeCapsuleDao(db: AnimaDatabase) = db.timeCapsuleDao()
 }

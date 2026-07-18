@@ -54,3 +54,18 @@ data class MetaEntity(
     @PrimaryKey val key: String,
     val value: String,
 )
+
+/**
+ * v0.5 time capsule (ideation-v5 №3): a letter the owner writes to their
+ * future self; the creature holds it until [deliverAtMillis] and hands it
+ * over on the first visit after that. Append-only like the soul: opening
+ * stamps [openedAtMillis], nothing is ever physically deleted.
+ */
+@Entity(tableName = "time_capsules", indices = [Index("deliverAtMillis")])
+data class TimeCapsuleEntity(
+    @PrimaryKey val id: String,
+    val text: String,
+    val createdAtMillis: Long,
+    val deliverAtMillis: Long,
+    val openedAtMillis: Long?,
+)

@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -164,10 +165,10 @@ fun HomeScreen(
                     style = MaterialTheme.typography.labelMedium,
                 )
             }
-            GhostButton("Rest", onClick = onOpenRest)
-            GhostButton("Soul", onClick = onOpenSoul)
-            GhostButton("Diary", onClick = onOpenDiary)
-            GhostButton("Settings", onClick = onOpenSettings)
+            GhostButton("Rest", onClick = onOpenRest, modifier = Modifier.testTag("home.rest"))
+            GhostButton("Soul", onClick = onOpenSoul, modifier = Modifier.testTag("home.soul"))
+            GhostButton("Diary", onClick = onOpenDiary, modifier = Modifier.testTag("home.diary"))
+            GhostButton("Settings", onClick = onOpenSettings, modifier = Modifier.testTag("home.settings"))
         }
 
         CreatureSurface(
@@ -195,6 +196,61 @@ fun HomeScreen(
                     viewModel.rejectCandidate(it)
                 },
             )
+        }
+
+        // v0.5 capsule delivery (ideation-v5 №3): a letter from the past
+        // self came due — the creature hands it over, exactly once.
+        val dueCapsule by viewModel.dueCapsule.collectAsState()
+        dueCapsule?.let { capsule ->
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 4.dp),
+            ) {
+                Text(
+                    "I kept this letter for you. You wrote it to yourself.",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Text(
+                    capsule.text,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(vertical = 6.dp),
+                )
+                GhostButton(
+                    "Thank you, little one",
+                    onClick = {
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                        viewModel.openCapsule()
+                    },
+                    modifier = Modifier.testTag("home.capsule.keep"),
+                )
+            }
+        }
+
+        // v0.5 evening farewell (ideation-v5 №1): an offer, never a demand —
+        // skipping it records nothing and changes nothing.
+        val goodnightAvailable by viewModel.goodnightAvailable.collectAsState()
+        if (goodnightAvailable && state.streamingReply == null) {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    "The day is folding up.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                GhostButton(
+                    "Say goodnight",
+                    onClick = {
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                        viewModel.sayGoodnight()
+                    },
+                    modifier = Modifier.testTag("home.goodnight"),
+                )
+            }
         }
 
         // v0.3 dreams: at night, one gentle wake earns a told dream.
@@ -436,6 +492,7 @@ private fun MessageBubble(
             color = if (mine) colors.background else colors.text,
             modifier =
                 Modifier
+                    .testTag("home.chat.message")
                     .clip(shape)
                     .background(if (mine) colors.accent else colors.surface)
                     .let { base ->
@@ -499,7 +556,7 @@ private fun InputRow(
             onValueChange = { text = it },
             textStyle = MaterialTheme.typography.bodyLarge.copy(color = colors.text),
             cursorBrush = SolidColor(colors.accent),
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f).testTag("home.chat.input"),
             decorationBox = { inner ->
                 Box {
                     if (text.isEmpty()) {
@@ -520,6 +577,7 @@ private fun InputRow(
                     text = ""
                 }
             },
+            modifier = Modifier.testTag("home.chat.send"),
         ) {
             Icon(
                 imageVector = sendIcon(),

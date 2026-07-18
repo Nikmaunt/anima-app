@@ -113,6 +113,15 @@ enum class JournalKind(
      * abandoning a session leaves no trace, by covenant.
      */
     REST_SESSION("rest_session"),
+
+    /**
+     * v0.5: the owner said goodnight (ideation-v5 №1). Recording only —
+     * NOT saying goodnight records nothing and costs nothing, by covenant.
+     */
+    GOODNIGHT("goodnight"),
+
+    /** v0.5: a time capsule came due and the creature handed it over. */
+    CAPSULE_DELIVERED("capsule_delivered"),
     ;
 
     companion object {

@@ -12,13 +12,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Migration scaffold (GMD). Today the DB is at version 1, so there is no
- * migration to run — this suite pins the committed schema JSON to reality:
- * a database created from `schemas/1.json` must open under the current
- * entities with no validation error. When version 2 lands, its Migration
- * object gets exercised here (helper.runMigrationsAndValidate) BEFORE any
- * release. Cipher note: migrations are plain SQL; SQLCipher is transparent
- * to them, so the framework factory is the honest choice here.
+ * Migration suite (GMD). v0.5 brings the first REAL migration (1→2, time
+ * capsules): [AnimaDatabase.MIGRATION_1_2] is validated against the
+ * committed `schemas/2.json` and the upgraded database must serve both old
+ * rows and the new table. Cipher note: migrations are plain SQL; SQLCipher
+ * is transparent to them, so the framework factory is the honest choice
+ * here (the cipher-specific WAL behavior is pinned by WalPoolKeyDeviceTest).
  */
 @RunWith(AndroidJUnit4::class)
 class SchemaMigrationDeviceTest {
@@ -30,7 +29,7 @@ class SchemaMigrationDeviceTest {
         )
 
     @Test
-    fun schema_1_database_opens_under_current_entities() =
+    fun migrate_1_to_2_preserves_soul_and_adds_capsules() =
         runTest {
             helper.createDatabase(DB_NAME, 1).use { db ->
                 db.execSQL(
@@ -39,19 +38,30 @@ class SchemaMigrationDeviceTest {
                         "VALUES ('fact-1', 'preference', 'from schema 1', 'chat_confirmed', 1, NULL, NULL)",
                 )
             }
+            // Validates the migrated schema byte-for-byte against 2.json.
+            helper
+                .runMigrationsAndValidate(DB_NAME, 2, true, AnimaDatabase.MIGRATION_1_2)
+                .use { db ->
+                    db.execSQL(
+                        "INSERT INTO time_capsules (id, text, createdAtMillis, deliverAtMillis, openedAtMillis) " +
+                            "VALUES ('caps-1', 'hello future me', 1, 2, NULL)",
+                    )
+                }
+            // The full production open path: builder + migration + DAOs.
             val room =
                 Room
                     .databaseBuilder(
                         ApplicationProvider.getApplicationContext(),
                         AnimaDatabase::class.java,
                         DB_NAME,
-                    ).allowMainThreadQueries()
+                    ).addMigrations(AnimaDatabase.MIGRATION_1_2)
+                    .allowMainThreadQueries()
                     .build()
-            // Room validates the on-disk schema against the entities on first
-            // access; a drifted 1.json would throw IllegalStateException here.
-            val all = room.soulFactDao().allIncludingDead()
+            val facts = room.soulFactDao().allIncludingDead()
+            val capsules = room.timeCapsuleDao().all()
             room.close()
-            assertThat(all.single().text).isEqualTo("from schema 1")
+            assertThat(facts.single().text).isEqualTo("from schema 1")
+            assertThat(capsules.single().text).isEqualTo("hello future me")
         }
 
     private companion object {

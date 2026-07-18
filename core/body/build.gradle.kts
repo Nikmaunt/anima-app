@@ -15,6 +15,8 @@ dependencies {
     api(projects.core.model)
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.android)
+    // v0.5 weather feel: the sparse barometer log survives between visits.
+    implementation(libs.androidx.datastore.preferences)
 
     testImplementation(libs.junit4)
     testImplementation(libs.truth)

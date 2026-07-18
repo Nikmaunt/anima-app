@@ -10,6 +10,7 @@ import app.anima.core.data.entity.ChatMessageEntity
 import app.anima.core.data.entity.MetaEntity
 import app.anima.core.data.entity.NotifEventEntity
 import app.anima.core.data.entity.SoulFactEntity
+import app.anima.core.data.entity.TimeCapsuleEntity
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -158,4 +159,31 @@ interface MetaDao {
 
     @Query("SELECT value FROM meta WHERE `key` = :key")
     fun observe(key: String): Flow<String?>
+}
+
+@Dao
+interface TimeCapsuleDao {
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insert(capsule: TimeCapsuleEntity)
+
+    /** Ready to hand over: due and never opened. Oldest first. */
+    @Query(
+        "SELECT * FROM time_capsules WHERE openedAtMillis IS NULL AND deliverAtMillis <= :nowMillis " +
+            "ORDER BY deliverAtMillis ASC",
+    )
+    suspend fun due(nowMillis: Long): List<TimeCapsuleEntity>
+
+    /** Still in the creature's paws (not yet due, not opened). */
+    @Query("SELECT COUNT(*) FROM time_capsules WHERE openedAtMillis IS NULL AND deliverAtMillis > :nowMillis")
+    fun heldCount(nowMillis: Long): Flow<Int>
+
+    @Query("UPDATE time_capsules SET openedAtMillis = :nowMillis WHERE id = :id AND openedAtMillis IS NULL")
+    suspend fun markOpened(
+        id: String,
+        nowMillis: Long,
+    )
+
+    /** Everything, newest first — the story/export view. */
+    @Query("SELECT * FROM time_capsules ORDER BY createdAtMillis DESC")
+    suspend fun all(): List<TimeCapsuleEntity>
 }

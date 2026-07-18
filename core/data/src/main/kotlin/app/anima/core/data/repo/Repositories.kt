@@ -5,11 +5,13 @@ import app.anima.core.data.dao.ChatDao
 import app.anima.core.data.dao.MetaDao
 import app.anima.core.data.dao.NotifEventDao
 import app.anima.core.data.dao.SoulFactDao
+import app.anima.core.data.dao.TimeCapsuleDao
 import app.anima.core.data.entity.BodyJournalEntity
 import app.anima.core.data.entity.ChatMessageEntity
 import app.anima.core.data.entity.MetaEntity
 import app.anima.core.data.entity.NotifEventEntity
 import app.anima.core.data.entity.SoulFactEntity
+import app.anima.core.data.entity.TimeCapsuleEntity
 import app.anima.core.model.BodyJournalEntry
 import app.anima.core.model.ChatMessage
 import app.anima.core.model.ChatRole
@@ -20,6 +22,7 @@ import app.anima.core.model.Ids
 import app.anima.core.model.JournalKind
 import app.anima.core.model.RelationshipStats
 import app.anima.core.model.SoulFact
+import app.anima.core.model.TimeCapsule
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -272,4 +275,47 @@ class IdentityRepository
             const val KEY_SEED = "creature_seed"
             const val KEY_HATCHED_AT = "hatched_at"
         }
+    }
+
+@Singleton
+class TimeCapsuleRepository
+    @Inject
+    constructor(
+        private val dao: TimeCapsuleDao,
+    ) {
+        suspend fun write(
+            text: String,
+            deliverAtMillis: Long,
+            nowMillis: Long,
+        ): TimeCapsule {
+            val capsule =
+                TimeCapsule(
+                    id = Ids.new("caps"),
+                    text = text.take(TimeCapsule.MAX_TEXT_CHARS),
+                    createdAtMillis = nowMillis,
+                    deliverAtMillis = deliverAtMillis,
+                    openedAtMillis = null,
+                )
+            dao.insert(capsule.toEntity())
+            return capsule
+        }
+
+        /** Capsules the creature is ready to hand over right now. */
+        suspend fun due(nowMillis: Long): List<TimeCapsule> = dao.due(nowMillis).map { it.toModel() }
+
+        /** How many letters the creature is still holding (not yet due). */
+        fun heldCount(nowMillis: Long): Flow<Int> = dao.heldCount(nowMillis)
+
+        suspend fun markOpened(
+            id: String,
+            nowMillis: Long,
+        ) = dao.markOpened(id, nowMillis)
+
+        suspend fun all(): List<TimeCapsule> = dao.all().map { it.toModel() }
+
+        private fun TimeCapsuleEntity.toModel() =
+            TimeCapsule(id, text, createdAtMillis, deliverAtMillis, openedAtMillis)
+
+        private fun TimeCapsule.toEntity() =
+            TimeCapsuleEntity(id, text, createdAtMillis, deliverAtMillis, openedAtMillis)
     }

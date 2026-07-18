@@ -37,6 +37,8 @@ data class BodySignals(
     val sinceBootMillis: Long,
     val minuteOfDay: Int,
     val notifRecentCount: Int,
+    /** v0.5 weather feel — UNKNOWN until the barometer log has hours. */
+    val weather: WeatherSense = WeatherSense.UNKNOWN,
 ) {
     /** 0.0 (nothing free) .. 1.0 (empty burrow). */
     val diskFreeFraction: Float

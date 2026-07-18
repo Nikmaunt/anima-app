@@ -212,7 +212,34 @@ object MindVoice {
             appendLine("- ${l.burrow}: ${(s.diskFreeFraction * PERCENT).toInt()}% ${l.free}")
             appendLine("- ${l.hearing}: ${netWord(s.net, language)}")
             append("- ${l.warmth}: ${thermalWord(s.thermal, language)}")
+            // Weather feel (v0.5): only a clear trend speaks — anything
+            // else stays out of the prompt entirely.
+            weatherLine(s.weather, language)?.let {
+                appendLine()
+                append("- $it")
+            }
         }
+    }
+
+    /** "Bones" line for FALLING/RISING; null keeps the report quiet. */
+    private fun weatherLine(
+        weather: WeatherSense,
+        language: MindLanguage,
+    ): String? {
+        val index =
+            when (weather) {
+                WeatherSense.FALLING -> 0
+                WeatherSense.RISING -> 1
+                else -> return null
+            }
+        return when (language) {
+            MindLanguage.EN -> listOf("bones: aching — rain is coming", "bones: light — it's clearing up")
+            MindLanguage.RU -> listOf("кости: ноют — будет дождь", "кости: легко — распогодится")
+            MindLanguage.PL -> listOf("kości: łupie — będzie deszcz", "kości: lekko — przejaśnia się")
+            MindLanguage.DE -> listOf("Knochen: ziehen — Regen kommt", "Knochen: leicht — es klart auf")
+            MindLanguage.ES -> listOf("huesos: duelen — viene lluvia", "huesos: ligeros — va a despejar")
+            MindLanguage.JA -> listOf("ほね: ずきずき——雨が来そう", "ほね: かるい——晴れてきそう")
+        }[index]
     }
 
     fun recentConversation(language: MindLanguage): String =

@@ -2,8 +2,10 @@ package app.anima.core.data.backup
 
 import app.anima.core.data.dao.BodyJournalDao
 import app.anima.core.data.dao.SoulFactDao
+import app.anima.core.data.dao.TimeCapsuleDao
 import app.anima.core.data.entity.BodyJournalEntity
 import app.anima.core.data.entity.SoulFactEntity
+import app.anima.core.data.entity.TimeCapsuleEntity
 import app.anima.core.data.repo.IdentityRepository
 import app.anima.core.model.CreatureConcept
 import kotlinx.coroutines.flow.first
@@ -35,10 +37,12 @@ class SoulBackup
         private val identity: IdentityRepository,
         private val soulFactDao: SoulFactDao,
         private val journalDao: BodyJournalDao,
+        private val capsuleDao: TimeCapsuleDao,
     ) {
         suspend fun exportPayload(nowMillis: Long): ByteArray {
             val facts = soulFactDao.allIncludingDead()
             val journal = journalDao.recent(JOURNAL_EXPORT_CAP).first()
+            val capsules = capsuleDao.all()
             val json =
                 buildJsonObject {
                     put("format", FORMAT)
@@ -81,6 +85,24 @@ class SoulBackup
                                         put("kind", entry.kind)
                                         put("atMillis", entry.atMillis)
                                         entry.detail?.let { put("detail", it) }
+                                    },
+                                )
+                            }
+                        },
+                    )
+                    // v0.5 (backup version 2): the letters the creature holds
+                    // are part of the soul — they travel with it.
+                    put(
+                        "timeCapsules",
+                        buildJsonArray {
+                            capsules.forEach { capsule ->
+                                add(
+                                    buildJsonObject {
+                                        put("id", capsule.id)
+                                        put("text", capsule.text)
+                                        put("createdAtMillis", capsule.createdAtMillis)
+                                        put("deliverAtMillis", capsule.deliverAtMillis)
+                                        capsule.openedAtMillis?.let { put("openedAtMillis", it) }
                                     },
                                 )
                             }
@@ -142,6 +164,20 @@ class SoulBackup
                 runCatching { journalDao.insert(entity) }.onSuccess { journalImported++ }
             }
 
+            // Version-1 files simply have no capsules — tolerant absence.
+            root["timeCapsules"]?.jsonArray?.forEach { element ->
+                val obj = element.jsonObject
+                val entity =
+                    TimeCapsuleEntity(
+                        id = obj.getValue("id").jsonPrimitive.content,
+                        text = obj.getValue("text").jsonPrimitive.content,
+                        createdAtMillis = obj.getValue("createdAtMillis").jsonPrimitive.long,
+                        deliverAtMillis = obj.getValue("deliverAtMillis").jsonPrimitive.long,
+                        openedAtMillis = obj["openedAtMillis"]?.jsonPrimitive?.longOrNull,
+                    )
+                runCatching { capsuleDao.insert(entity) }
+            }
+
             return ImportSummary(
                 creatureName = name,
                 factsImported = imported,
@@ -152,7 +188,9 @@ class SoulBackup
 
         companion object {
             const val FORMAT = "anima-soul"
-            const val VERSION = 1
+
+            /** 2 = +timeCapsules (v0.5). Older readers reject newer files. */
+            const val VERSION = 2
             const val JOURNAL_EXPORT_CAP = 10_000
         }
     }

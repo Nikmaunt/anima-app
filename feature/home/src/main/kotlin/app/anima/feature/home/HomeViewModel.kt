@@ -34,6 +34,7 @@ import app.anima.core.model.MoodEngine
 import app.anima.core.model.Personality
 import app.anima.core.model.PromptBuilder
 import app.anima.core.model.RelationshipStats
+import app.anima.core.model.TimeCapsule
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -81,11 +82,13 @@ class HomeViewModel
     @Inject
     constructor(
         private val sensors: BodySensors,
+        private val weatherFeel: app.anima.core.body.WeatherFeel,
         private val identity: IdentityRepository,
         private val chat: ChatRepository,
         private val soul: SoulRepository,
         private val journal: JournalRepository,
         private val notifEvents: NotifEventsRepository,
+        private val capsules: app.anima.core.data.repo.TimeCapsuleRepository,
         private val mind: MindEngine,
         private val mindInventory: MindInventory,
         private val prefs: AnimaPrefs,
@@ -115,6 +118,12 @@ class HomeViewModel
         private val events = MutableStateFlow<BodyEvent?>(null)
         private val dreamAvailable = MutableStateFlow(false)
 
+        // Declared BEFORE init: the init coroutines touch these on
+        // Main.immediate, and Kotlin initializes properties in declaration
+        // order (the first GMD run of v0.5 caught exactly this NPE).
+        private val goodnight = MutableStateFlow(false)
+        private val dueCapsuleState = MutableStateFlow<TimeCapsule?>(null)
+
         /** The last user line — regeneration re-asks exactly this. */
         private var lastUserText: String? = null
 
@@ -135,9 +144,10 @@ class HomeViewModel
         private val bodyState: StateFlow<BodyState> =
             combine(
                 sensors.signals(notifEvents.countInWindow(System.currentTimeMillis())),
+                weatherFeel.weather(),
                 lastInteractionAt,
-            ) { signals, lastAt ->
-                deriveState(signals, lastAt)
+            ) { signals, weather, lastAt ->
+                deriveState(signals.copy(weather = weather), lastAt)
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), BodyState.Resting)
 
         private data class MindBits(
@@ -204,6 +214,99 @@ class HomeViewModel
             viewModelScope.launch { birthdayMoment() }
             viewModelScope.launch { computeStarters() }
             viewModelScope.launch { computeDreamAvailability() }
+            viewModelScope.launch { computeGoodnight() }
+            viewModelScope.launch { deliverDueCapsule() }
+        }
+
+        // --- v0.5 evening farewell (ideation-v5 №1) ---
+
+        /** Evening, not said yet — the moon gesture shows. Never a demand. */
+        val goodnightAvailable: StateFlow<Boolean> = goodnight.asStateFlow()
+
+        private suspend fun computeGoodnight() {
+            val zone = java.time.ZoneId.systemDefault()
+            val nowInstant =
+                java.time.Instant
+                    .ofEpochMilli(System.currentTimeMillis())
+                    .atZone(zone)
+            val evening = nowInstant.hour >= EVENING_FROM || nowInstant.hour < NIGHT_UNTIL
+            if (!evening) {
+                goodnight.value = false
+                return
+            }
+            // The evening began today at EVENING_FROM (or yesterday, if we're
+            // past midnight) — one farewell per evening, keyed by that start.
+            val eveningStart =
+                nowInstant
+                    .toLocalDate()
+                    .minusDays(if (nowInstant.hour < NIGHT_UNTIL) 1 else 0)
+                    .atTime(EVENING_FROM, 0)
+                    .atZone(zone)
+                    .toInstant()
+                    .toEpochMilli()
+            goodnight.value = journal.countOfSince(JournalKind.GOODNIGHT, eveningStart) == 0
+        }
+
+        /**
+         * The farewell ritual: a deterministic warm line, a journal moment,
+         * nothing else. NOT saying goodnight records nothing and costs
+         * nothing — no streaks, no guilt, by covenant (ideation-v5 №1).
+         */
+        fun sayGoodnight() {
+            if (!goodnight.value) return
+            goodnight.value = false
+            viewModelScope.launch {
+                val now = System.currentTimeMillis()
+                journal.record(JournalKind.GOODNIGHT, now)
+                val pool =
+                    listOf(
+                        "Goodnight. I'll curl up around the battery and keep it warm.",
+                        "Sleep well. I'll dim my glow and listen to the quiet.",
+                        "Night-night. Today was a good day to be a phone.",
+                        "Goodnight — I'll hold your day safe until morning.",
+                        "Rest now. I'll be here, breathing slowly in the dark.",
+                    )
+                val epochDay = now / RelationshipStats.DAY_MILLIS
+                val seed = (identity.seed() ?: 0L) + epochDay
+                val line = pool[(seed % pool.size).toInt().let { if (it < 0) it + pool.size else it }]
+                chat.append(ChatRole.CREATURE, line, now)
+                speakIfEnabled(line)
+                onInteraction()
+            }
+        }
+
+        // --- v0.5 time capsules (ideation-v5 №3) ---
+
+        /** A letter that came due — the creature offers it once visible. */
+        val dueCapsule: StateFlow<TimeCapsule?> = dueCapsuleState.asStateFlow()
+
+        private suspend fun deliverDueCapsule() {
+            dueCapsuleState.value = capsules.due(System.currentTimeMillis()).firstOrNull()
+        }
+
+        /** Owner read the letter: stamp it opened, offer the next if any. */
+        fun openCapsule() {
+            val capsule = dueCapsuleState.value ?: return
+            viewModelScope.launch {
+                val now = System.currentTimeMillis()
+                capsules.markOpened(capsule.id, now)
+                journal.record(JournalKind.CAPSULE_DELIVERED, now)
+                deliverDueCapsule()
+            }
+        }
+
+        /** Write a letter; the creature holds it for [horizonDays]. */
+        fun writeCapsule(
+            text: String,
+            horizonDays: Int,
+        ) {
+            val trimmed = text.trim()
+            if (trimmed.isEmpty()) return
+            viewModelScope.launch {
+                val now = System.currentTimeMillis()
+                capsules.write(trimmed, now + horizonDays * RelationshipStats.DAY_MILLIS, now)
+                onInteraction()
+            }
         }
 
         /** ADR-013: offline-voice check once per screen life, only if on. */
@@ -616,5 +719,7 @@ class HomeViewModel
             const val MAX_STARTERS = 3
             const val MINUTES_PER_HOUR = 60
             const val SAMPLE_EVERY_MILLIS = 10L * 60 * 1000
+            const val EVENING_FROM = 21
+            const val NIGHT_UNTIL = 3
         }
     }

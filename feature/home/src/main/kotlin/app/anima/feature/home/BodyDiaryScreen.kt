@@ -17,12 +17,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -31,6 +33,7 @@ import app.anima.core.data.prefs.NotifConfigStore
 import app.anima.core.data.repo.IdentityRepository
 import app.anima.core.data.repo.JournalRepository
 import app.anima.core.data.repo.NotifEventsRepository
+import app.anima.core.data.repo.TimeCapsuleRepository
 import app.anima.core.model.CareAnalyzer
 import app.anima.core.model.ChargeChart
 import app.anima.core.model.JournalKind
@@ -45,8 +48,10 @@ import app.anima.core.ui.components.SectionLabel
 import app.anima.core.ui.theme.LocalAnimaColors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -92,9 +97,29 @@ class BodyDiaryViewModel
         // journal-derived counters — ADR-011 data scope forbids the cloud.
         private val mind: LocalMindEngine,
         private val identity: IdentityRepository,
+        private val capsules: TimeCapsuleRepository,
     ) : ViewModel() {
         private val state = MutableStateFlow(BodyDiaryUiState())
         val uiState: StateFlow<BodyDiaryUiState> = state.asStateFlow()
+
+        /** v0.5: letters the creature is currently holding (not yet due). */
+        val heldLetters: StateFlow<Int> =
+            capsules
+                .heldCount(System.currentTimeMillis())
+                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+
+        /** Write a letter to the future self; the creature takes it. */
+        fun writeCapsule(
+            text: String,
+            horizonDays: Int,
+        ) {
+            val trimmed = text.trim()
+            if (trimmed.isEmpty()) return
+            viewModelScope.launch {
+                val now = System.currentTimeMillis()
+                capsules.write(trimmed, now + horizonDays * RelationshipStats.DAY_MILLIS, now)
+            }
+        }
 
         init {
             viewModelScope.launch {
@@ -336,6 +361,57 @@ fun BodyDiaryScreen(
                     )
                     Text(
                         careLine(care),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
+
+            // v0.5 time capsule (ideation-v5 №3): write, and the creature
+            // holds it — no alarms, no reminders; it arrives with a visit.
+            SectionCard {
+                SectionLabel("A letter to your future self")
+                var draft by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf("") }
+                androidx.compose.foundation.text.BasicTextField(
+                    value = draft,
+                    onValueChange = { draft = it.take(app.anima.core.model.TimeCapsule.MAX_TEXT_CHARS) },
+                    textStyle =
+                        MaterialTheme.typography.bodyLarge
+                            .copy(color = LocalAnimaColors.current.text),
+                    cursorBrush =
+                        androidx.compose.ui.graphics
+                            .SolidColor(LocalAnimaColors.current.accent),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .background(LocalAnimaColors.current.background)
+                            .padding(12.dp)
+                            .testTag("diary.capsule.input"),
+                )
+                if (draft.isBlank()) {
+                    Text(
+                        "Write something to the you of later. I'll keep it safe.",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                } else {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        GhostButton("In a week", onClick = {
+                            viewModel.writeCapsule(draft, 7)
+                            draft = ""
+                        }, modifier = Modifier.testTag("diary.capsule.week"))
+                        GhostButton("In a month", onClick = {
+                            viewModel.writeCapsule(draft, 30)
+                            draft = ""
+                        })
+                        GhostButton("In a season", onClick = {
+                            viewModel.writeCapsule(draft, 90)
+                            draft = ""
+                        })
+                    }
+                }
+                val held by viewModel.heldLetters.collectAsState()
+                if (held > 0) {
+                    Text(
+                        if (held == 1) "It is holding one letter for you." else "It is holding $held letters for you.",
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
