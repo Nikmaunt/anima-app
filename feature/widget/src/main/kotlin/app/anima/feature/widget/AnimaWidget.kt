@@ -50,7 +50,8 @@ class AnimaWidget : GlanceAppWidget() {
             runCatching {
                 val now = System.currentTimeMillis()
                 val wire = entry.prefs().paletteVariant().first()
-                app.anima.core.model.Milestones.effectiveShiftDeg(wire, identity.stats(now), now)
+                app.anima.core.model.Milestones
+                    .effectiveShiftDeg(wire, identity.stats(now), now)
             }.getOrDefault(0f)
 
         val vitals = WidgetSnapshot.readVitals(context)
