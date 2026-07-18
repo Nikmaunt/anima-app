@@ -111,9 +111,12 @@ const val SEASON_TINT = 0.06f
 @Composable
 fun AnimaTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    // Pinnable for screenshot goldens (Phase 0.4): the seasonal tint reads
+    // the wall clock, which would break goldens at season boundaries.
+    seasonOverride: Season? = null,
     content: @Composable () -> Unit,
 ) {
-    val season = remember { Season.fromMonth(LocalDate.now().monthValue) }
+    val season = seasonOverride ?: remember { Season.fromMonth(LocalDate.now().monthValue) }
     val colors = (if (darkTheme) animaDarkColors() else animaLightColors()).seasoned(season)
     val scheme =
         if (darkTheme) {

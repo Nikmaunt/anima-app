@@ -5,6 +5,9 @@
 plugins {
     alias(libs.plugins.anima.android.library)
     alias(libs.plugins.anima.android.compose)
+    // Screenshot goldens (Phase 0.4): record/verifyRoborazziDebug; goldens
+    // in src/test/screenshots, visual diff is part of the DoD.
+    alias(libs.plugins.roborazzi)
 }
 
 android {
@@ -26,4 +29,6 @@ dependencies {
     testImplementation(libs.androidx.ui.test.junit4)
     testImplementation(libs.androidx.ui.test.manifest)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
 }

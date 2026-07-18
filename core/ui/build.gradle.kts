@@ -4,6 +4,8 @@
 plugins {
     alias(libs.plugins.anima.android.library)
     alias(libs.plugins.anima.android.compose)
+    // Screenshot goldens (Phase 0.4): the design system in light AND dark.
+    alias(libs.plugins.roborazzi)
 }
 
 android {
@@ -15,4 +17,10 @@ dependencies {
 
     testImplementation(libs.junit4)
     testImplementation(libs.truth)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.ext.junit)
+    testImplementation(libs.androidx.ui.test.junit4)
+    testImplementation(libs.androidx.ui.test.manifest)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
 }

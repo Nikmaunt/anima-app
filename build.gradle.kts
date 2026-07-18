@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.baselineprofile) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.roborazzi) apply false
 }
 
 // Captured in root scope: the `libs` accessor does not resolve inside the
