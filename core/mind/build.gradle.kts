@@ -29,4 +29,14 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+
+    // Bake-off harness (v0.5 Phase 1C): instrumented prompt-set runs against
+    // whatever model files were pushed to the device — the artifact that
+    // makes S24 model comparisons a command instead of a ritual.
+    androidTestImplementation(libs.junit4)
+    androidTestImplementation(libs.truth)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.core.ktx)
 }

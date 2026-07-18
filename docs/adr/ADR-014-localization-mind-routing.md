@@ -62,3 +62,18 @@ the FIRST item of the v0.5 backlog, invoked per the v0.4 cut order
 ("локализация сверх EN+RU" was the sanctioned cut; RU itself moves with it
 because the extraction cost, not translation, dominates). Recorded as a
 deviation from the v0.4 brief in the final report.
+
+## Amendment (v0.5, 2026-07-18): routing implemented; GEMMA-tier clause superseded
+
+Audit-v04 recorded the honest gap: v0.4 shipped this ADR's routing as TEXT
+only (no `MindLanguage` type existed). v0.5 Phase 1D implements it — with
+one deliberate change against the original decision: the GEMMA tier is no
+longer "always English", because the tier is no longer hard-wired to Gemma 3
+1B. Routing now asks the ACTIVE model's registry spec
+(`MindLanguageRouting.decide(uiLanguage, tier, spec)`, ADR-017): a
+multilingual local model (Qwen2.5-1.5B default) answers natively; an
+English-only model (legacy Gemma) falls back to EN behind the badge this
+ADR promised. NANO stays EN-only-until-verified (stricter than the "Nano
+evidence" list here — the S24 has no Nano to verify against, and honesty
+beats optimism). The rest of this ADR (locale set, no-machine-translation,
+TTS, pseudolocales) stands and is executed by v0.5 Phase 2.

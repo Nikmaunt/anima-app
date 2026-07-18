@@ -6,10 +6,14 @@ import app.anima.core.model.FactJson
 import app.anima.core.model.MindEngine
 import app.anima.core.model.MindEvent
 import app.anima.core.model.MindFailure
+import app.anima.core.model.MindLanguage
 import app.anima.core.model.MindModelLocator
+import app.anima.core.model.MindModelRegistry
+import app.anima.core.model.MindModelSpec
 import app.anima.core.model.MindPrompt
 import app.anima.core.model.MindPrompts
 import app.anima.core.model.MindStatus
+import app.anima.core.model.StreamTrimmer
 import com.google.mediapipe.tasks.genai.llminference.LlmInference
 import com.google.mediapipe.tasks.genai.llminference.LlmInferenceSession
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -67,16 +71,28 @@ class GemmaMindEngine
                     close()
                     return@callbackFlow
                 }
+                // ADR-017: format, stop tokens and budget come from the
+                // registry spec of whatever model is actually installed.
+                val spec = currentSpec()
                 val session = chatSession(llm)
+                val trimmer = StreamTrimmer(spec.stopTokens)
                 val full = StringBuilder()
-                session.addQueryChunk(MindPrompts.combine(prompt))
+                session.addQueryChunk(MindPrompts.combine(prompt, spec.promptFormat))
                 session.generateResponseAsync { partial, done ->
                     if (partial.isNotEmpty()) {
-                        full.append(partial)
-                        trySend(MindEvent.Chunk(partial))
+                        val safe = trimmer.feed(partial)
+                        if (safe.isNotEmpty()) {
+                            full.append(safe)
+                            trySend(MindEvent.Chunk(safe))
+                        }
                     }
                     if (done) {
-                        trySend(MindEvent.Done(full.toString()))
+                        val rest = trimmer.flush()
+                        if (rest.isNotEmpty()) {
+                            full.append(rest)
+                            trySend(MindEvent.Chunk(rest))
+                        }
+                        trySend(MindEvent.Done(full.toString().trimEnd()))
                         close()
                     }
                 }
@@ -88,19 +104,26 @@ class GemmaMindEngine
         override suspend fun extractFactCandidates(
             userText: String,
             creatureText: String,
+            language: MindLanguage,
         ): List<FactCandidate> =
             runCatching {
                 val llm = engineOrNull() ?: return emptyList()
                 withContext(Dispatchers.IO) {
                     val session = extractionSession(llm)
                     try {
-                        session.addQueryChunk(MindPrompts.extraction(userText, creatureText))
+                        session.addQueryChunk(MindPrompts.extraction(userText, creatureText, language))
                         FactJson.parseCandidates(session.generateResponse())
                     } finally {
                         runCatching { session.close() }
                     }
                 }
             }.getOrDefault(emptyList())
+
+        /** Registry spec of the installed model; honest fallback otherwise. */
+        private fun currentSpec(): MindModelSpec =
+            locator.installed.value
+                ?.let(MindModelRegistry::specFor)
+                ?: MindModelRegistry.GEMMA3_1B
 
         /** Load (or reuse) the engine for the currently installed model file. */
         private suspend fun engineOrNull(): LlmInference? =
@@ -120,7 +143,7 @@ class GemmaMindEngine
                             LlmInference.LlmInferenceOptions
                                 .builder()
                                 .setModelPath(model.path)
-                                .setMaxTokens(MAX_TOKENS)
+                                .setMaxTokens(MindModelRegistry.specFor(model).maxTokens)
                                 .build()
                         LlmInference.createFromOptions(context, options)
                     }.getOrNull()

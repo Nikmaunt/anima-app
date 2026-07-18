@@ -38,5 +38,6 @@ class FakeMindEngine(
     override suspend fun extractFactCandidates(
         userText: String,
         creatureText: String,
+        language: app.anima.core.model.MindLanguage,
     ): List<FactCandidate> = extraction
 }

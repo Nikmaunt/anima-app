@@ -4,6 +4,9 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -19,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -34,14 +39,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.anima.core.model.CloudMindConfig
+import app.anima.core.model.CloudPresets
+import app.anima.core.model.InstalledMindModel
+import app.anima.core.model.MindModelSpec
 import app.anima.core.model.MindStatus
 import app.anima.core.model.MindTier
+import app.anima.core.model.ModelLicense
 import app.anima.core.modeldelivery.PackPhase
 import app.anima.core.ui.components.GhostButton
 import app.anima.core.ui.components.SectionCard
@@ -108,6 +118,23 @@ fun MindScreen(
                     },
                     style = MaterialTheme.typography.bodyLarge,
                 )
+                // Phase 1D honesty row: never pretend a language is spoken.
+                val routing = state.routing
+                if (routing != null && state.tier != MindTier.NONE) {
+                    if (routing.showBadge) {
+                        Text(
+                            "Answers in English — this mind doesn't speak " +
+                                "${state.uiLanguage.selfName}.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = colors.warn,
+                        )
+                    } else {
+                        Text(
+                            "Speaks ${routing.language.selfName} natively.",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                }
                 if (state.nano == MindStatus.DOWNLOADABLE || state.nano == MindStatus.DOWNLOADING) {
                     Text(
                         "Built-in mind: the system can fetch it from the home screen chat.",
@@ -119,42 +146,50 @@ fun MindScreen(
             PackCard(state, onFetch = viewModel::requestPackFetch, onForceGemma = viewModel::setForceGemma)
 
             SectionCard {
-                SectionLabel("Mind file")
-                val model = state.model
-                if (model != null) {
-                    Text(model.fileName, style = MaterialTheme.typography.bodyLarge)
+                SectionLabel("Installed minds")
+                if (state.models.isEmpty()) {
                     Text(
-                        "%.0f MB on disk · %.1f GB free".format(
-                            Locale.US,
-                            model.sizeBytes / MB,
-                            state.freeBytes / GB,
-                        ),
+                        "No mind file installed. A local mind (hundreds of MB, once) " +
+                            "lets the creature talk entirely on this phone. Bring a " +
+                            "file below, or download one by direct link.",
                         style = MaterialTheme.typography.bodyMedium,
                     )
-                    Spacer(Modifier.height(6.dp))
-                    if (model.fromPack) {
+                } else {
+                    state.models.forEach { (model, spec) ->
+                        MindModelRow(
+                            model = model,
+                            spec = spec,
+                            active = model.fileName == state.model?.fileName,
+                            onSelect = { viewModel.selectModel(model.fileName) },
+                            onDelete =
+                                if (model.fromPack) {
+                                    null
+                                } else {
+                                    { viewModel.deleteModel(model.fileName) }
+                                },
+                        )
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        GhostButton(
+                            "Auto",
+                            onClick = { viewModel.selectModel(null) },
+                            enabled = state.selected != null,
+                            modifier = Modifier.testTag("mind.model.auto"),
+                        )
                         Text(
-                            "Delivered with the app by Google Play (Gemma — see the " +
-                                "bundled license notice). It updates with the app and " +
-                                "cannot be deleted separately.",
+                            if (state.selected == null) {
+                                "Picking by itself — your files first, then the pack."
+                            } else {
+                                "Your pick stays until you press Auto."
+                            },
                             style = MaterialTheme.typography.bodyMedium,
                         )
-                    } else {
-                        GhostButton("Delete the mind file", onClick = viewModel::deleteModel)
                     }
-                } else {
-                    Text(
-                        "No mind file installed. Gemma 3 1B (~530 MB, once) lets the " +
-                            "creature talk entirely on this phone. Google gates the " +
-                            "official file behind a license page, so the honest path is: " +
-                            "download it in your browser, then bring it here.",
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    Text(
-                        "%.1f GB free on this phone".format(Locale.US, state.freeBytes / GB),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
                 }
+                Text(
+                    "%.1f GB free on this phone".format(Locale.US, state.freeBytes / GB),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
 
             if (state.busy) {
@@ -180,7 +215,9 @@ fun MindScreen(
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
-            } else if (state.model == null) {
+            } else {
+                // v0.5: both delivery paths stay open — new files land NEXT
+                // to installed minds (commit never deletes neighbors).
                 SectionCard {
                     SectionLabel("Bring the file")
                     Text(
@@ -321,6 +358,72 @@ private fun PackCard(
     }
 }
 
+/** ADR-017: one installed mind — spec-labeled, tappable, honestly licensed. */
+@Composable
+private fun MindModelRow(
+    model: InstalledMindModel,
+    spec: MindModelSpec,
+    active: Boolean,
+    onSelect: () -> Unit,
+    onDelete: (() -> Unit)?,
+) {
+    val colors = LocalAnimaColors.current
+    val shape = RoundedCornerShape(12.dp)
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(colors.surfaceHigh)
+            .border(1.dp, if (active) colors.accent else colors.outline.copy(alpha = 0.5f), shape)
+            .clickable(onClick = onSelect)
+            .testTag("mind.model.${model.fileName}")
+            .padding(horizontal = 14.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                spec.displayName,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f),
+            )
+            if (active) {
+                Text(
+                    "Active",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = colors.accent,
+                )
+            }
+        }
+        Text(
+            "%.0f MB · %s".format(
+                Locale.US,
+                model.sizeBytes / MB,
+                spec.languages.joinToString(" ") { it.selfName },
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Text(
+            listOfNotNull(
+                licenseShort(spec.license),
+                if (model.fromPack) "from pack" else null,
+                if (spec.displayName != model.fileName) model.fileName else null,
+            ).joinToString(" · "),
+            style = MaterialTheme.typography.bodySmall,
+            color = colors.textDim,
+        )
+        if (onDelete != null) {
+            GhostButton("Delete", onClick = onDelete)
+        }
+    }
+}
+
+private fun licenseShort(license: ModelLicense): String =
+    when (license) {
+        ModelLicense.APACHE_2 -> "Apache-2.0"
+        ModelLicense.GEMMA_TOU -> "Gemma ToU"
+        ModelLicense.UNKNOWN -> "unknown license"
+    }
+
 /** ADR-011: the optional user-keyed cloud mind — plain words, no dark corners. */
 @Composable
 private fun CloudCard(
@@ -362,6 +465,48 @@ private fun CloudCard(
                     ),
             )
         }
+        // Phase 1E: presets are convenience, not endorsement — a tap only
+        // fills the fields; the owner still brings the key and saves.
+        val matched = CloudPresets.match(state.cloudUrlDraft)
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.horizontalScroll(rememberScrollState()),
+        ) {
+            CloudPresets.all.forEach { preset ->
+                PresetChip(
+                    text = preset.displayName,
+                    selected = matched?.id == preset.id,
+                    onClick = { viewModel.applyPreset(preset) },
+                    modifier = Modifier.testTag("mind.preset.${preset.id}"),
+                )
+            }
+        }
+        if (matched != null) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                matched.keyPrefix?.let { prefix ->
+                    Text(
+                        "Keys usually start with $prefix…",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = colors.textDim,
+                    )
+                }
+                if (matched.freeTier) {
+                    Text(
+                        "free tier",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = colors.accent,
+                        modifier =
+                            Modifier
+                                .clip(RoundedCornerShape(50))
+                                .background(colors.accentSoft)
+                                .padding(horizontal = 8.dp, vertical = 2.dp),
+                    )
+                }
+            }
+        }
         MindTextField(
             value = state.cloudUrlDraft,
             onValueChange = viewModel::onCloudUrlChange,
@@ -380,7 +525,7 @@ private fun CloudCard(
             // password keyboard (no learning/autofill suggestion cache).
             secret = true,
         )
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             GhostButton("Save", onClick = {
                 viewModel.saveCloudSetup(keyDraft)
                 keyDraft = ""
@@ -388,6 +533,20 @@ private fun CloudCard(
             if (state.cloud.hasKey) {
                 Spacer(Modifier.width(8.dp))
                 GhostButton("Forget key", onClick = viewModel::forgetCloudKey)
+            }
+            Spacer(Modifier.width(8.dp))
+            GhostButton(
+                "Check key",
+                onClick = viewModel::checkKey,
+                enabled = !state.checkingKey,
+                modifier = Modifier.testTag("mind.checkKey"),
+            )
+            if (state.checkingKey) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp),
+                    color = colors.accent,
+                    strokeWidth = 2.dp,
+                )
             }
         }
         Text(
@@ -397,6 +556,32 @@ private fun CloudCard(
             style = MaterialTheme.typography.bodyMedium,
         )
     }
+}
+
+/** Phase 1E: one provider preset chip; selected = drafts match its URL. */
+@Composable
+private fun PresetChip(
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = LocalAnimaColors.current
+    Text(
+        text,
+        style = MaterialTheme.typography.labelLarge,
+        color = if (selected) colors.accent else colors.text,
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(50))
+                .background(if (selected) colors.accentSoft else colors.surfaceHigh)
+                .border(
+                    1.dp,
+                    if (selected) colors.accent else colors.outline.copy(alpha = 0.5f),
+                    RoundedCornerShape(50),
+                ).clickable(onClick = onClick)
+                .padding(horizontal = 14.dp, vertical = 8.dp),
+    )
 }
 
 private fun CloudMindConfig.host(): String =

@@ -12,7 +12,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class MindModule {
+abstract class MindModule {
     @Binds
     abstract fun mindEngine(impl: TieredMindEngine): MindEngine
 

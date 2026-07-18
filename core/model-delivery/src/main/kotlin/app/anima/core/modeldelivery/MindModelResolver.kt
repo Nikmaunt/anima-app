@@ -4,6 +4,7 @@ import android.app.ActivityManager
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import app.anima.core.model.InstalledMindModel
 import app.anima.core.model.MindModelLocator
@@ -49,8 +50,9 @@ class RamGate
     }
 
 /**
- * The one MindModelLocator the mind sees (ADR-010): a user-installed file
- * (download/SAF — an explicit choice) always wins; the Play pack is the
+ * The one MindModelLocator the mind sees (ADR-010, amended by ADR-017): the
+ * owner's explicit SELECTION wins; otherwise a user-installed file
+ * (download/SAF — an explicit choice) beats the Play pack, which stays the
  * zero-setup default behind the RAM gate + override.
  */
 @Singleton
@@ -65,6 +67,7 @@ class MindModelResolver
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
         private val forceGemmaKey = booleanPreferencesKey("force_gemma_below_ram_gate")
+        private val selectedModelKey = stringPreferencesKey("selected_model_file")
 
         val forceGemma: Flow<Boolean> =
             context.mindDeliveryDataStore.data.map { it[forceGemmaKey] ?: false }
@@ -73,10 +76,35 @@ class MindModelResolver
             context.mindDeliveryDataStore.edit { it[forceGemmaKey] = value }
         }
 
+        /** File name of the owner's chosen model; null = automatic order. */
+        val selectedModel: Flow<String?> =
+            context.mindDeliveryDataStore.data.map { it[selectedModelKey] }
+
+        suspend fun setSelectedModel(fileName: String?) {
+            context.mindDeliveryDataStore.edit { prefs ->
+                if (fileName == null) prefs.remove(selectedModelKey) else prefs[selectedModelKey] = fileName
+            }
+        }
+
+        /**
+         * Everything switchable on the Mind screen: user files plus the
+         * delivered pack model (when the RAM gate or override lets it speak).
+         */
+        val available: Flow<List<InstalledMindModel>> =
+            combine(store.models, pack.phase, forceGemma) { user, packPhase, force ->
+                user + listOfNotNull(packModelIfAllowed(packPhase, force))
+            }
+
         override val installed: StateFlow<InstalledMindModel?> =
-            combine(store.installed, pack.phase, forceGemma) { user, packPhase, force ->
-                user ?: packModelIfAllowed(packPhase, force)
-            }.stateIn(scope, SharingStarted.Eagerly, store.installed.value)
+            combine(store.models, selectedModel, pack.phase, forceGemma) { user, selected, packPhase, force ->
+                val packModel = packModelIfAllowed(packPhase, force)
+                val all = user + listOfNotNull(packModel)
+                // A selection that no longer exists (deleted file) falls
+                // through to the automatic order instead of muting the mind.
+                selected?.let { name -> all.firstOrNull { it.fileName == name } }
+                    ?: user.firstOrNull()
+                    ?: packModel
+            }.stateIn(scope, SharingStarted.Eagerly, store.models.value.firstOrNull())
 
         private fun packModelIfAllowed(
             phase: PackPhase,

@@ -4,12 +4,19 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.anima.core.cloudmind.CloudMindConfigStore
+import app.anima.core.cloudmind.CloudMindEngine
+import app.anima.core.cloudmind.KeyProbeResult
 import app.anima.core.data.repo.JournalRepository
 import app.anima.core.model.CloudMindConfig
+import app.anima.core.model.CloudPreset
 import app.anima.core.model.InstalledMindModel
 import app.anima.core.model.JournalKind
 import app.anima.core.model.MindEngine
 import app.anima.core.model.MindInventory
+import app.anima.core.model.MindLanguage
+import app.anima.core.model.MindLanguageRouting
+import app.anima.core.model.MindModelRegistry
+import app.anima.core.model.MindModelSpec
 import app.anima.core.model.MindStatus
 import app.anima.core.model.MindTier
 import app.anima.core.modeldelivery.DeliveryEvent
@@ -28,12 +35,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 
 data class MindUiState(
     val tier: MindTier = MindTier.NONE,
     val nano: MindStatus = MindStatus.ASLEEP,
     val model: InstalledMindModel? = null,
+    // v0.5 (ADR-017): everything switchable, each with its registry spec.
+    val models: List<Pair<InstalledMindModel, MindModelSpec>> = emptyList(),
+    /** The owner's explicit pick (file name); null = automatic order. */
+    val selected: String? = null,
+    /** Phase 1D honesty row: what language the active mind really speaks. */
+    val uiLanguage: MindLanguage = MindLanguage.EN,
+    val routing: MindLanguageRouting.Decision? = null,
     val freeBytes: Long = 0L,
     val busy: Boolean = false,
     val importing: Boolean = false,
@@ -50,6 +65,8 @@ data class MindUiState(
     val cloud: CloudMindConfig = CloudMindConfig.Disabled,
     val cloudUrlDraft: String = "",
     val cloudModelDraft: String = "",
+    /** Phase 1E: the "Check key" probe is in flight. */
+    val checkingKey: Boolean = false,
 )
 
 @HiltViewModel
@@ -66,6 +83,7 @@ class MindViewModel
         private val resolver: MindModelResolver,
         private val ramGate: RamGate,
         private val cloudStore: CloudMindConfigStore,
+        private val cloudMind: CloudMindEngine,
     ) : ViewModel() {
         private val state = MutableStateFlow(MindUiState())
         val uiState: StateFlow<MindUiState> = state.asStateFlow()
@@ -76,32 +94,57 @@ class MindViewModel
             pack.refresh()
             refresh()
             viewModelScope.launch {
-                combine(pack.phase, resolver.forceGemma, cloudStore.config, ::Triple)
-                    .collect { (phase, force, cloud) ->
-                        state.value =
-                            state.value.copy(
-                                packPhase = phase,
-                                ramGateAllows = ramGate.allowsSpontaneousGemma(),
-                                forceGemma = force,
-                                cloud = cloud,
-                                cloudUrlDraft = state.value.cloudUrlDraft.ifEmpty { cloud.baseUrl },
-                                cloudModelDraft = state.value.cloudModelDraft.ifEmpty { cloud.model },
-                            )
-                        refresh()
-                    }
+                combine(
+                    pack.phase,
+                    resolver.forceGemma,
+                    cloudStore.config,
+                    resolver.available,
+                    resolver.selectedModel,
+                ) { phase, force, cloud, available, selected ->
+                    state.value =
+                        state.value.copy(
+                            packPhase = phase,
+                            ramGateAllows = ramGate.allowsSpontaneousGemma(),
+                            forceGemma = force,
+                            cloud = cloud,
+                            cloudUrlDraft = state.value.cloudUrlDraft.ifEmpty { cloud.baseUrl },
+                            cloudModelDraft = state.value.cloudModelDraft.ifEmpty { cloud.model },
+                            models = available.map { it to MindModelRegistry.specFor(it) },
+                            selected = selected,
+                        )
+                    refresh()
+                }.collect {}
             }
         }
 
         fun refresh() {
             viewModelScope.launch {
                 val snapshot = inventory.snapshot()
+                val uiLanguage = MindLanguage.fromTag(Locale.getDefault().toLanguageTag())
                 state.value =
                     state.value.copy(
                         tier = snapshot.activeTier,
                         nano = snapshot.nano,
                         model = snapshot.gemmaModel,
+                        uiLanguage = uiLanguage,
+                        routing =
+                            MindLanguageRouting.decide(
+                                uiLanguage = uiLanguage,
+                                tier = snapshot.activeTier,
+                                localSpec = snapshot.gemmaModel?.let(MindModelRegistry::specFor),
+                            ),
                         freeBytes = store.freeBytes(),
                     )
+            }
+        }
+
+        // --- ADR-017: multi-model selection ---
+
+        /** Owner taps a mind card; null = back to the automatic order. */
+        fun selectModel(fileName: String?) {
+            viewModelScope.launch {
+                resolver.setSelectedModel(fileName)
+                refresh()
             }
         }
 
@@ -148,10 +191,11 @@ class MindViewModel
                 }
         }
 
-        fun deleteModel() {
+        /** Per-model deletion (v0.5). Pack models never reach this path. */
+        fun deleteModel(fileName: String) {
             viewModelScope.launch {
                 mind.releaseResources()
-                store.deleteInstalled()
+                store.deleteModel(fileName)
                 state.value = state.value.copy(notice = "The mind file is gone. The creature stays.")
                 refresh()
             }
@@ -181,6 +225,35 @@ class MindViewModel
 
         fun onCloudModelChange(value: String) {
             state.value = state.value.copy(cloudModelDraft = value)
+        }
+
+        /** Phase 1E: a preset chip fills the drafts — the owner still saves. */
+        fun applyPreset(preset: CloudPreset) {
+            state.value =
+                state.value.copy(
+                    cloudUrlDraft = preset.baseUrl,
+                    cloudModelDraft = preset.defaultModel,
+                )
+        }
+
+        /** Phase 1E: one explicit probe, no conversation content sent. */
+        fun checkKey() {
+            if (state.value.checkingKey) return
+            viewModelScope.launch {
+                state.value = state.value.copy(checkingKey = true)
+                val result = cloudMind.probeKey()
+                state.value =
+                    state.value.copy(
+                        checkingKey = false,
+                        notice =
+                            when (result) {
+                                KeyProbeResult.OK -> "The key works."
+                                KeyProbeResult.BAD_KEY -> "The provider rejected this key."
+                                KeyProbeResult.UNREACHABLE -> "Could not reach the provider."
+                                KeyProbeResult.NOT_CONFIGURED -> "Save the endpoint and key first."
+                            },
+                    )
+            }
         }
 
         /** Key comes through here once, straight into the Keystore wrap. */

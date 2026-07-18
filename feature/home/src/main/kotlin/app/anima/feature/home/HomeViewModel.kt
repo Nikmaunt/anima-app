@@ -24,6 +24,9 @@ import app.anima.core.model.MindEngine
 import app.anima.core.model.MindEvent
 import app.anima.core.model.MindFailure
 import app.anima.core.model.MindInventory
+import app.anima.core.model.MindLanguage
+import app.anima.core.model.MindLanguageRouting
+import app.anima.core.model.MindModelRegistry
 import app.anima.core.model.MindStatus
 import app.anima.core.model.MindTier
 import app.anima.core.model.Mood
@@ -66,6 +69,11 @@ data class HomeUiState(
     val activeTier: MindTier = MindTier.NONE,
     /** v0.3 dreams: asleep at night and not yet woken this night. */
     val dreamAvailable: Boolean = false,
+    /**
+     * Phase 1D honesty badge: the active mind can't speak the interface
+     * language, so the creature answers in English (never garbled).
+     */
+    val englishFallback: Boolean = false,
 )
 
 @HiltViewModel
@@ -103,11 +111,15 @@ class HomeViewModel
         private val mindStatus = MutableStateFlow(MindStatus.ASLEEP)
         private val mindTier = MutableStateFlow(MindTier.NONE)
         private val mindNotice = MutableStateFlow<String?>(null)
+        private val langFallback = MutableStateFlow(false)
         private val events = MutableStateFlow<BodyEvent?>(null)
         private val dreamAvailable = MutableStateFlow(false)
 
         /** The last user line — regeneration re-asks exactly this. */
         private var lastUserText: String? = null
+
+        /** Language of the last routed reply; extraction follows it. */
+        private var lastLanguage: MindLanguage = MindLanguage.EN
         private var lastSampleAtMillis = 0L
 
         /** Consumed by the screen; null after handling. */
@@ -133,6 +145,7 @@ class HomeViewModel
             val notice: String?,
             val tier: MindTier,
             val dream: Boolean,
+            val englishFallback: Boolean,
         )
 
         val uiState: StateFlow<HomeUiState> =
@@ -142,7 +155,7 @@ class HomeViewModel
                 chat.recent(CHAT_WINDOW),
                 combine(
                     combine(streaming, candidates, ::Pair),
-                    combine(mindStatus, mindNotice, mindTier, dreamAvailable, ::MindBits),
+                    combine(mindStatus, mindNotice, mindTier, dreamAvailable, langFallback, ::MindBits),
                     ::Pair,
                 ).map { (sc, bits) -> Quad(sc.first, sc.second, bits, Unit) },
                 combine(soul.liveCount(), prefs.calmMotion(), prefs.personality(), starters) { g, calm, p, st ->
@@ -178,6 +191,7 @@ class HomeViewModel
                     starters = extras.d,
                     activeTier = quad.c.tier,
                     dreamAvailable = quad.c.dream,
+                    englishFallback = quad.c.englishFallback,
                 )
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())
 
@@ -466,8 +480,15 @@ class HomeViewModel
                 // Budget follows the tier that will actually speak (ADR-005):
                 // Gemma's 2048-token window is much tighter than Nano's, and
                 // the cloud tier (ADR-011) gets real context room.
-                val tier = runCatching { mindInventory.snapshot().activeTier }.getOrDefault(MindTier.NONE)
+                val snapshot = runCatching { mindInventory.snapshot() }.getOrNull()
+                val tier = snapshot?.activeTier ?: MindTier.NONE
                 mindTier.value = tier
+                // Phase 1D: honest language choice — UI language when the
+                // active model genuinely speaks it, else English + badge.
+                val spec = snapshot?.gemmaModel?.let(MindModelRegistry::specFor)
+                val decision = MindLanguageRouting.decide(uiLanguage(), tier, spec)
+                langFallback.value = decision.showBadge
+                lastLanguage = decision.language
                 val prompt =
                     PromptBuilder.build(
                         creatureName = uiState.value.creatureName.ifEmpty { "Anima" },
@@ -475,8 +496,9 @@ class HomeViewModel
                         facts = soul.liveFacts().first(),
                         dialogue = uiState.value.messages,
                         userMessage = trimmed,
-                        budgetChars = PromptBuilder.budgetFor(tier),
+                        budgetChars = PromptBuilder.budgetFor(tier, spec),
                         personality = uiState.value.personality,
+                        language = decision.language,
                     )
                 streaming.value = ""
                 mind.reply(prompt).collect { event ->
@@ -507,9 +529,18 @@ class HomeViewModel
             userText: String,
             creatureText: String,
         ) {
-            val found = mind.extractFactCandidates(userText, creatureText)
+            // Facts come back for confirmation — they must read natively.
+            val found = mind.extractFactCandidates(userText, creatureText, lastLanguage)
             if (found.isNotEmpty()) candidates.value = found
         }
+
+        /** Interface language = the app's resolved locale (Phase 1D). */
+        private fun uiLanguage(): MindLanguage =
+            MindLanguage.fromTag(
+                java.util.Locale
+                    .getDefault()
+                    .toLanguageTag(),
+            )
 
         fun confirmCandidate(candidate: FactCandidate) {
             viewModelScope.launch {

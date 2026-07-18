@@ -17,10 +17,16 @@ enum class MindStatus {
     ASLEEP,
 }
 
-/** Everything the mind needs for one reply. Assembled by PromptBuilder. */
+/**
+ * Everything the mind needs for one reply. Assembled by PromptBuilder.
+ * [language] is the ROUTED reply language (Phase 1D) — backends use it only
+ * for format framing (e.g. the PLAIN-format "Me:" cue); the prompt text
+ * itself is already worded in that language.
+ */
 data class MindPrompt(
     val system: String,
     val user: String,
+    val language: MindLanguage = MindLanguage.EN,
 )
 
 sealed interface MindEvent {
@@ -71,11 +77,13 @@ interface MindEngine {
     /**
      * Separate structured call: extract fact candidates from a finished
      * exchange. Candidates are suggestions only — persistence requires the
-     * user's explicit confirmation in UI.
+     * user's explicit confirmation in UI. [language] is the user's language:
+     * extracted fact text must read natively (Phase 1D).
      */
     suspend fun extractFactCandidates(
         userText: String,
         creatureText: String,
+        language: MindLanguage = MindLanguage.EN,
     ): List<FactCandidate>
 }
 

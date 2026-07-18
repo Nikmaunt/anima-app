@@ -1,5 +1,6 @@
 package app.anima.core.cloudmind
 
+import app.anima.core.model.KeyProbe
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
@@ -98,6 +99,37 @@ object SseChat {
 
     /** `{base}/chat/completions`; the UI asks for a base ending in `/v1`. */
     fun completionsUrl(baseUrl: String): String = baseUrl.trimEnd('/') + "/chat/completions"
+
+    /** Where the key-check button knocks (Phase 1E, research-v5 §C). */
+    fun probeUrl(
+        baseUrl: String,
+        probe: KeyProbe,
+    ): String =
+        when (probe) {
+            KeyProbe.MODELS -> baseUrl.trimEnd('/') + "/models"
+            // OpenRouter serves /models without auth; /key is the real check.
+            KeyProbe.OPENROUTER_KEY -> "https://openrouter.ai/api/v1/key"
+            KeyProbe.COMPLETIONS_PING -> completionsUrl(baseUrl)
+        }
+
+    /** Cheapest possible completion for the COMPLETIONS_PING probe. */
+    fun probePingBody(model: String): String =
+        buildJsonObject {
+            put("model", model)
+            put("stream", false)
+            put("max_tokens", 1)
+            put(
+                "messages",
+                buildJsonArray {
+                    add(
+                        buildJsonObject {
+                            put("role", "user")
+                            put("content", "hi")
+                        },
+                    )
+                },
+            )
+        }.toString()
 
     private const val DATA_PREFIX = "data:"
     private const val DONE_MARKER = "[DONE]"

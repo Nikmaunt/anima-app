@@ -5,10 +5,13 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import app.anima.core.model.CloudMindBackend
 import app.anima.core.model.CloudMindConfig
+import app.anima.core.model.CloudPresets
 import app.anima.core.model.FactCandidate
 import app.anima.core.model.FactJson
+import app.anima.core.model.KeyProbe
 import app.anima.core.model.MindEvent
 import app.anima.core.model.MindFailure
+import app.anima.core.model.MindLanguage
 import app.anima.core.model.MindPrompt
 import app.anima.core.model.MindPrompts
 import app.anima.core.model.MindStatus
@@ -99,6 +102,7 @@ class CloudMindEngine
         override suspend fun extractFactCandidates(
             userText: String,
             creatureText: String,
+            language: MindLanguage,
         ): List<FactCandidate> =
             withContext(Dispatchers.IO) {
                 runCatching {
@@ -108,7 +112,7 @@ class CloudMindEngine
                         SseChat.requestBody(
                             model = cfg.model,
                             system = "",
-                            user = MindPrompts.extraction(userText, creatureText),
+                            user = MindPrompts.extraction(userText, creatureText, language),
                             stream = false,
                             temperature = EXTRACTION_TEMPERATURE,
                         )
@@ -119,6 +123,46 @@ class CloudMindEngine
                         is RequestResult.HttpError -> emptyList()
                     }
                 }.getOrDefault(emptyList())
+            }
+
+        /**
+         * Phase 1E key check, run only when the owner presses the button.
+         * Sends NO conversation content — a list call, or a 1-token "hi"
+         * ping where no list endpoint is verified (Anthropic compat).
+         */
+        suspend fun probeKey(): KeyProbeResult =
+            withContext(Dispatchers.IO) {
+                val cfg = store.current()
+                if (!cfg.hasKey || cfg.baseUrl.isBlank()) return@withContext KeyProbeResult.NOT_CONFIGURED
+                val probe = CloudPresets.probeFor(cfg.baseUrl)
+                val url = URL(SseChat.probeUrl(cfg.baseUrl, probe))
+                if (url.protocol != "https") return@withContext KeyProbeResult.NOT_CONFIGURED
+                val key = vault.read() ?: return@withContext KeyProbeResult.NOT_CONFIGURED
+                runCatching {
+                    val connection = url.openConnection() as HttpsURLConnection
+                    try {
+                        connection.connectTimeout = CONNECT_TIMEOUT_MS
+                        connection.readTimeout = CONNECT_TIMEOUT_MS
+                        connection.setRequestProperty("Authorization", "Bearer " + String(key, Charsets.UTF_8))
+                        if (probe == KeyProbe.COMPLETIONS_PING) {
+                            connection.requestMethod = "POST"
+                            connection.doOutput = true
+                            connection.setRequestProperty("Content-Type", "application/json")
+                            connection.outputStream.use { it.write(SseChat.probePingBody(cfg.model).toByteArray()) }
+                        } else {
+                            connection.requestMethod = "GET"
+                        }
+                        when (connection.responseCode) {
+                            in HTTP_OK_RANGE -> KeyProbeResult.OK
+                            // A rate-limited answer still proves the key.
+                            RATE_LIMITED -> KeyProbeResult.OK
+                            UNAUTHORIZED, FORBIDDEN -> KeyProbeResult.BAD_KEY
+                            else -> KeyProbeResult.UNREACHABLE
+                        }
+                    } finally {
+                        connection.disconnect()
+                    }
+                }.getOrDefault(KeyProbeResult.UNREACHABLE).also { key.fill(0) }
             }
 
         /**
@@ -173,8 +217,13 @@ class CloudMindEngine
             const val CONNECT_TIMEOUT_MS = 10_000
             const val READ_TIMEOUT_MS = 30_000
             const val RATE_LIMITED = 429
+            const val UNAUTHORIZED = 401
+            const val FORBIDDEN = 403
             const val NO_KEY = -1
             val HTTP_OK_RANGE = 200..299
             const val EXTRACTION_TEMPERATURE = 0.2
         }
     }
+
+/** Outcome of the Mind screen's "check key" button (Phase 1E). */
+enum class KeyProbeResult { OK, BAD_KEY, UNREACHABLE, NOT_CONFIGURED }

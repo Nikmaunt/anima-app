@@ -7,6 +7,7 @@ import app.anima.core.model.MindEngine
 import app.anima.core.model.MindEvent
 import app.anima.core.model.MindFailure
 import app.anima.core.model.MindInventory
+import app.anima.core.model.MindLanguage
 import app.anima.core.model.MindModelLocator
 import app.anima.core.model.MindPrompt
 import app.anima.core.model.MindSnapshot
@@ -77,7 +78,8 @@ class TieredMindEngine
         override suspend fun extractFactCandidates(
             userText: String,
             creatureText: String,
-        ): List<FactCandidate> = active()?.second?.extractFactCandidates(userText, creatureText).orEmpty()
+            language: MindLanguage,
+        ): List<FactCandidate> = active()?.second?.extractFactCandidates(userText, creatureText, language).orEmpty()
 
         override suspend fun snapshot(): MindSnapshot =
             MindSnapshot(
@@ -110,8 +112,12 @@ class TieredMindEngine
                 override suspend fun extractFactCandidates(
                     userText: String,
                     creatureText: String,
+                    language: MindLanguage,
                 ): List<FactCandidate> =
-                    active(includeCloud = false)?.second?.extractFactCandidates(userText, creatureText).orEmpty()
+                    active(includeCloud = false)
+                        ?.second
+                        ?.extractFactCandidates(userText, creatureText, language)
+                        .orEmpty()
             }
     }
 

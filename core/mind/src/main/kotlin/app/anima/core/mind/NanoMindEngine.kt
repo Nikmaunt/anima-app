@@ -5,6 +5,7 @@ import app.anima.core.model.FactJson
 import app.anima.core.model.MindEngine
 import app.anima.core.model.MindEvent
 import app.anima.core.model.MindFailure
+import app.anima.core.model.MindLanguage
 import app.anima.core.model.MindPrompt
 import app.anima.core.model.MindPrompts
 import app.anima.core.model.MindStatus
@@ -78,9 +79,11 @@ class NanoMindEngine
         override suspend fun extractFactCandidates(
             userText: String,
             creatureText: String,
+            language: MindLanguage,
         ): List<FactCandidate> =
             runCatching {
-                val request = generateContentRequest(TextPart(MindPrompts.extraction(userText, creatureText))) {}
+                val request =
+                    generateContentRequest(TextPart(MindPrompts.extraction(userText, creatureText, language))) {}
                 val text =
                     model
                         .generateContent(request)

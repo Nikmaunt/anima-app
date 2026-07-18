@@ -2,7 +2,6 @@ package app.anima.core.modeldelivery
 
 import android.content.Context
 import app.anima.core.model.InstalledMindModel
-import app.anima.core.model.MindModelLocator
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,24 +11,30 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Owns the model directory. One model at a time (the S24 doesn't have space
- * ambitions); files land here only through [commit], which is fed by the
- * downloader or the SAF importer — both finish into a `.part` staging file
- * first, so a torn write can never masquerade as an installed model.
+ * Owns the model directory. v0.5 (ADR-017): SEVERAL models may be installed
+ * side by side — the registry made models interchangeable data, so the Mind
+ * screen lets the owner keep e.g. a multilingual Qwen next to the legacy
+ * Gemma and switch between them. Which one speaks is [MindModelResolver]'s
+ * call; this class only keeps files honest. Files land here only through
+ * [commit], fed by the downloader or the SAF importer — both finish into a
+ * `.part` staging file first, so a torn write can never masquerade as an
+ * installed model.
  *
- * Lives in noBackupFilesDir: a 500 MB model must never ride device-to-device
- * transfer or any future backup config.
+ * Lives in noBackupFilesDir: gigabyte weights must never ride
+ * device-to-device transfer or any future backup config.
  */
 @Singleton
 class MindModelStore
     @Inject
     constructor(
         @ApplicationContext context: Context,
-    ) : MindModelLocator {
+    ) {
         val dir: File = File(context.noBackupFilesDir, "mind-models").apply { mkdirs() }
 
         private val state = MutableStateFlow(scan())
-        override val installed: StateFlow<InstalledMindModel?> = state.asStateFlow()
+
+        /** Every valid model file on disk, newest first. */
+        val models: StateFlow<List<InstalledMindModel>> = state.asStateFlow()
 
         /** Free bytes on the volume that hosts the model dir. */
         fun freeBytes(): Long = dir.usableSpace
@@ -37,26 +42,31 @@ class MindModelStore
         fun stagingFile(finalName: String): File = File(dir, "$finalName.part")
 
         /**
-         * Promote a finished staging file to the installed model. Any previous
-         * model (and stray staging leftovers for other names) is deleted —
-         * one mind per phone.
+         * Promote a finished staging file to an installed model. Other
+         * installed models SURVIVE (v0.5 multi-model); only stale staging
+         * leftovers are swept.
          */
         fun commit(staging: File): InstalledMindModel {
             require(staging.parentFile == dir && staging.name.endsWith(".part")) {
                 "commit expects a staging file inside the model dir"
             }
             val finalFile = File(dir, staging.name.removeSuffix(".part"))
+            // Re-importing the same name replaces that file, never neighbors.
+            finalFile.delete()
             dir.listFiles()?.forEach { existing ->
-                if (existing != staging) existing.delete()
+                if (existing != staging && existing.name.endsWith(".part")) existing.delete()
             }
             check(staging.renameTo(finalFile)) { "could not finalize ${finalFile.name}" }
             refresh()
-            return checkNotNull(state.value) { "committed model failed validation scan" }
+            return checkNotNull(state.value.firstOrNull { it.fileName == finalFile.name }) {
+                "committed model failed validation scan"
+            }
         }
 
-        /** Delete the installed model (Mind screen action). Staging survives. */
-        fun deleteInstalled() {
-            dir.listFiles()?.forEach { if (!it.name.endsWith(".part")) it.delete() }
+        /** Delete one installed model by file name (Mind screen action). */
+        fun deleteModel(fileName: String) {
+            val target = File(dir, File(fileName).name)
+            if (target.parentFile == dir && !target.name.endsWith(".part")) target.delete()
             refresh()
         }
 
@@ -64,12 +74,13 @@ class MindModelStore
             state.value = scan()
         }
 
-        private fun scan(): InstalledMindModel? =
+        private fun scan(): List<InstalledMindModel> =
             dir
                 .listFiles()
                 ?.filter { it.isFile && it.extension in MODEL_EXTENSIONS && it.length() >= MIN_MODEL_BYTES }
-                ?.maxByOrNull { it.lastModified() }
-                ?.let { InstalledMindModel(fileName = it.name, sizeBytes = it.length(), path = it.absolutePath) }
+                ?.sortedByDescending { it.lastModified() }
+                ?.map { InstalledMindModel(fileName = it.name, sizeBytes = it.length(), path = it.absolutePath) }
+                .orEmpty()
 
         companion object {
             val MODEL_EXTENSIONS = setOf("task", "litertlm")
