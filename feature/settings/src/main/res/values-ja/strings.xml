@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings screen -->
+    <string name="settings_back">戻る</string>
+    <string name="settings_title">設定</string>
+    <string name="settings_save">保存</string>
+    <string name="settings_name_label">名前</string>
+    <string name="settings_body_label">体</string>
+    <string name="settings_body_hint">同じたましいが、別の体でも生きられるよ。プレビューはぜんぶ生きてる — どのマスも本物のエンジンで動いてる。</string>
+    <string name="settings_forms_button">すがた…</string>
+    <string name="settings_calm_motion_title">しずかな動き</string>
+    <string name="settings_calm_motion_hint">じっとしたポーズ、まばたきは少なめ。システムの「アニメーションを減らす」設定に自動で合わせるよ。</string>
+    <string name="settings_character_label">性格</string>
+    <string name="settings_character_hint">2つのつまみ、どちらも正直。話し方も動き方も変わるよ（視線の動き、まばたきのテンポ）。</string>
+    <string name="settings_character_warmth">やさしい ↔ 生意気</string>
+    <string name="settings_character_chattiness">もの静か ↔ おしゃべり</string>
+    <string name="settings_character_reset">生まれつきの性格に戻す</string>
+    <string name="settings_senses_label">感覚</string>
+    <string name="settings_notification_sense">通知の感覚…</string>
+    <string name="settings_mind_label">あたま</string>
+    <string name="settings_mind_open">あたま…</string>
+    <string name="settings_mind_desc_cloud">メッセージはあなたのプロバイダーに送られるよ。オフにすれば、ぜんぶこのスマホの中だけ。</string>
+    <string name="settings_mind_desc_cloud_unconfigured">クラウドはオンだけど未設定 — いまはローカルのあたまが話してる。</string>
+    <string name="settings_mind_desc_local">ぜんぶこのスマホの中だけ。</string>
+    <string name="settings_voice_label">声</string>
+    <string name="settings_voice_title">いきものが話す</string>
+    <string name="settings_voice_off">オフ。オンにすると、オフラインで動く声だけを使うよ。</string>
+    <string name="settings_voice_checking">オフラインの声をさがし中…</string>
+    <string name="settings_voice_ready">オフラインの声で話してる — 言葉はスマホの外に出ないよ。</string>
+    <string name="settings_voice_no_offline">あなたの言語のオフライン声が入っていないから、いまは黙ってる。システムの音声設定でひとつ入れてあげてね。</string>
+    <string name="settings_voice_no_engine">このスマホには音声エンジンがないみたい。ここでは、いきものは話せないんだ。</string>
+    <string name="settings_voice_open_settings">音声設定を開く</string>
+    <string name="settings_privacy_label">プライバシー、正直に</string>
+    <string name="settings_privacy_cloud_on">いまはクラウドのあたまがオン。あなたのメッセージ、いきものの体のようす、返事に必要なおぼえたことは、あなたが設定したプロバイダーに送られるよ。それ以外 — たましいのデータベースも、通知の日記も — 暗号化されてこのスマホに残る。上のスイッチを切れば、Animaはまた完全オフラインだよ。</string>
+    <string name="settings_privacy_local">ネットを使うのは2つだけ。どちらもあなたの手の中にあるよ。あたまのファイルの配達（Google Playか、あなたが始めるダウンロード）と、任意のクラウドのあたま — いまはオフ。アカウントなし、分析なし、クラッシュ報告なし。ほかの部分がネットに触れたら、ビルド時のテストが落ちる仕組み。記憶は暗号化されたデータベースの中にいて、その鍵はこのスマホの安全なハードウェアから出ない。考えごとはこの端末の上だけ — それ以外では、しない。</string>
+    <string name="settings_more_label">その他</string>
+    <string name="settings_trust_open">どうしてインターネットなしなの…</string>
+    <string name="settings_crashlog_open">最後のクラッシュ（この中だけ）…</string>
+    <string name="settings_soul_screenshots_title">たましい画面のスクリーンショット</string>
+    <string name="settings_soul_screenshots_hint">オフ = 思い出の画面はスクリーンショットを断って、アプリ切り替え画面でも姿を隠すよ。</string>
+
+    <!-- Mind screen -->
+    <string name="mind_title">あたま</string>
+    <string name="mind_state_cloud">あたま：クラウド</string>
+    <string name="mind_state_local">あたま：ローカル</string>
+    <string name="mind_now_label">いまのようす</string>
+    <string name="mind_now_cloud">あなたのクラウドプロバイダー（%1$s）で考えてるよ。このモードでは、メッセージと返事に必要なことがスマホの外に出る。</string>
+    <string name="mind_now_nano">このスマホの内蔵のあたま（Gemini Nano）で考えてるよ。</string>
+    <string name="mind_now_gemma_pack">同梱のあたま（Gemma、アプリと一緒に届いた、ぜんぶこのスマホの中）で考えてるよ。</string>
+    <string name="mind_now_gemma_file">ダウンロードしたあたま（Gemma、ぜんぶこのスマホの中）で考えてるよ。</string>
+    <string name="mind_now_none">あたまはおやすみ中。このスマホにはアプリ用の内蔵のあたまがなくて、あたまのファイルもまだ入っていないんだ。それでも、いきもののほかのところはちゃんと動くよ。</string>
+    <string name="mind_language_native">%1$sを母語として話すよ。</string>
+    <string name="mind_language_english_only">返事は英語 — このあたまは%1$sを話せないんだ。</string>
+    <string name="mind_nano_fetchable">内蔵のあたま：ホーム画面のチャットからシステムが連れてこられるよ。</string>
+    <string name="mind_installed_label">入っているあたま</string>
+    <string name="mind_installed_empty">あたまのファイルがまだないよ。ローカルのあたま（数百MB、一度だけ）があれば、いきものはぜんぶこのスマホの中でおしゃべりできる。下からファイルを持ってくるか、直リンクでダウンロードしてね。</string>
+    <string name="mind_auto_button">おまかせ</string>
+    <string name="mind_auto_on">自分で選んでるよ — まずあなたのファイル、つぎに同梱のもの。</string>
+    <string name="mind_auto_off">「おまかせ」を押すまで、あなたの選択のままだよ。</string>
+    <string name="mind_free_space">このスマホの空きは %1$.1f GB</string>
+    <string name="mind_progress_import_label">あたまを運びこみ中…</string>
+    <string name="mind_progress_download_label">あたまをダウンロード中…</string>
+    <string name="mind_progress_mb">%1$.0f / %2$.0f MB</string>
+    <string name="mind_keep_open">この画面を開けたままにしてね — いきものはバックグラウンドのサービスを持たないから、離れると転送はひと休み（あとで続きから再開するよ）。</string>
+    <string name="mind_bring_label">ファイルを持ってくる</string>
+    <string name="mind_bring_hint">ダウンロード済みの .task か .litertlm ファイルを選んでね。いきものの巣にコピーして、ちゃんと確かめるよ。</string>
+    <string name="mind_choose_file">あたまのファイルを選ぶ…</string>
+    <string name="mind_direct_link_label">または直リンクでダウンロード</string>
+    <string name="mind_sha_placeholder">SHA-256（任意、ファイルを検証）</string>
+    <string name="mind_metered_title">モバイルデータを許可</string>
+    <string name="mind_metered_hint">オフ = Wi-Fiのみ（約530MBあるからね）</string>
+    <string name="mind_download_button">ダウンロード（約530MB、一度だけ）</string>
+    <string name="mind_pack_incoming_label">あたまが向かってるよ</string>
+    <string name="mind_pack_progress">%1$.0f / %2$.0f MB — Google Playがひとりで届けてくれる。ここで待たなくても大丈夫。</string>
+    <string name="mind_pack_packed_label">アプリにあたまが同梱されてるよ</string>
+    <string name="mind_pack_packed_hint">Google Playがこのいきもののためにあたまを運んでるけど、まだ届いてないんだ。声をかければ、ひとりでやって来るよ。</string>
+    <string name="mind_pack_fetch">おいで</string>
+    <string name="mind_pack_consent_label">あたまが許可を待ってるよ</string>
+    <string name="mind_pack_consent_hint">ダウンロードを許可するまで、Google Playが約660MBのあたまを預かってるよ（Wi-Fiのほうが好きみたい）。</string>
+    <string name="mind_ram_label">このスマホについて、ひとつ注意</string>
+    <string name="mind_ram_hint">同梱のあたまは届いてるけど、このスマホはメモリが少なめ（約6GB未満）。Gemmaを動かすと全体が重くなるかも。それでも試せるし、下のクラウドのあたまを使う手もあるよ。</string>
+    <string name="mind_ram_try">それでも試す</string>
+    <string name="mind_model_active">使用中</string>
+    <string name="mind_model_meta">%1$.0f MB · %2$s</string>
+    <string name="mind_model_from_pack">同梱</string>
+    <string name="mind_license_unknown">ライセンス不明</string>
+    <string name="mind_model_delete">削除</string>
+    <string name="mind_cloud_label">クラウドのあたま（任意）</string>
+    <string name="mind_cloud_intro">はじめはオフ。オンにすると、いきものは「あなたが」選んだAIプロバイダーで、「あなたの」キーを使って考えるよ。そのモードでは、あなたが送る一つひとつのメッセージ — それに返事に必要ないきもののおぼえたことと体のようす — がこのスマホを出て %1$s に届く。それ以外は何も出ない。たましいはここに残るよ。</string>
+    <string name="mind_cloud_unconfigured">オンだけど未設定 — いまはローカルのあたまが話してる。</string>
+    <string name="mind_cloud_key_prefix">キーはたいてい %1$s… で始まるよ</string>
+    <string name="mind_cloud_free_tier">無料枠</string>
+    <string name="mind_cloud_model_placeholder">モデル名（例：gpt-4.1-mini）</string>
+    <string name="mind_cloud_key_placeholder">APIキー</string>
+    <string name="mind_cloud_key_placeholder_stored">APIキー（保存済み — 貼り付けると置き換え）</string>
+    <string name="mind_cloud_forget_key">キーを忘れる</string>
+    <string name="mind_cloud_check_key">キーを確認</string>
+    <string name="mind_cloud_key_note">キーはこのスマホのハードウェアキーストアで暗号化されて、ログには残らず、たましいのエクスポートにも入らないよ。オフラインのとき？ いきものはひとりでローカルのあたまに戻るから大丈夫。</string>
+    <string name="mind_provider_fallback">あなたのプロバイダー</string>
+    <string name="mind_notice_label">何があったか</string>
+    <string name="mind_notice_ok">わかった</string>
+    <string name="mind_notice_arrived">あたまが届いたよ。あいさつしてみて。</string>
+    <string name="mind_notice_deleted">あたまのファイルはなくなったよ。いきものはここにいる。</string>
+    <string name="mind_notice_paste_link">まず、モデルファイルへの https の直リンクを貼ってね。</string>
+    <string name="mind_notice_https_required">クラウドのエンドポイントは https:// で始まる必要があるよ</string>
+    <string name="mind_notice_key_erased">クラウドのキーを消したよ。あたまはまたローカルだよ。</string>
+    <string name="mind_notice_key_ok">キーはちゃんと動くよ。</string>
+    <string name="mind_notice_key_bad">プロバイダーがこのキーを受け付けなかったよ。</string>
+    <string name="mind_notice_key_unreachable">プロバイダーにつながらなかったよ。</string>
+    <string name="mind_notice_key_unconfigured">先にエンドポイントとキーを保存してね。</string>
+    <string name="mind_failure_needs_wifi">Wi-Fiを待ってるよ — 大きなファイルだからね。モバイルデータを使うならスイッチをオンにしてね。</string>
+    <string name="mind_failure_not_https">ここで使えるのは https:// の直リンクだけだよ。</string>
+    <string name="mind_failure_http">サーバーに断られちゃった（%1$s）。Gemmaの公式リンクはライセンスへの同意が必要だから、ブラウザでダウンロードして「あたまのファイルを選ぶ」を使ってね。</string>
+    <string name="mind_failure_http_no_detail">詳細なし</string>
+    <string name="mind_failure_interrupted">転送が途切れちゃった。もう一度試してね — 止まったところから再開するよ。</string>
+    <string name="mind_failure_checksum">ファイルが整合性チェックに通らなかったから、捨てたよ。（受け取ったのは %1$s…）</string>
+    <string name="mind_failure_not_model">これはあたまのファイルじゃなさそう（.task / .litertlm、数百MB）。</string>
+    <string name="mind_failure_no_space">あたまのファイルを置く空きが足りないよ。</string>
+
+    <!-- Trust screen -->
+    <string name="trust_title">どうしてインターネットなしなの</string>
+    <string name="trust_hero_title">あなたのいきものは、ここに住んでる。ここだけに。</string>
+    <string name="trust_hero_body">Animaはぜんぶこのスマホの上で動くよ。アカウントなし、クラウドははじめからオフ、だれも見てない。</string>
+    <string name="trust_no_account">アカウントなし。登録するものが何もないんだ。</string>
+    <string name="trust_no_servers">わたしたちのサーバーもなし。会話はわたしたちに届かない。</string>
+    <string name="trust_no_trackers">トラッカーなし。広告も分析もなし。ほんとだよ。</string>
+    <string name="trust_cant_read_label">わたしたちはあなたの会話を読めない</string>
+    <string name="trust_cant_read_body">読まないと約束してるからじゃなくて、そもそも届かないから。こちら側には読むものが何もないんだ。あたまはこのスマホ自身のチップで動く言語モデルで、学んだことはぜんぶ暗号化されたデータベースの中。その鍵はスマホの安全なハードウェアから決して出ないよ。</string>
+    <string name="trust_prove_label">確かめてみて</string>
+    <string name="trust_prove_body">機内モードをオンにしてみて。ぜんぶ動き続けるよ — いきものは電波の変化を天気みたいに感じるだけで、ほかには何も起きない。ネットが必要な機能はひとつもないんだ。</string>
+    <string name="trust_network_label">ネットを「使う」もの — 全リスト</string>
+    <string name="trust_network_body">1. あたまのファイルの配達：Google Playがアプリと一緒に持ってくるか、あなたが「あたま」画面でダウンロードを始めるか。モデルのバイトが入ってくるだけで、あなたのことは何も出ていかない。\n\n2. クラウドのあたま — 「あなたが」オンにしたときだけ、あなたのプロバイダーとキーで。%1$s\n\nほかの部分がネットワークAPIに触れただけでも、ビルド時のテストが落ちるよ。</string>
+    <string name="trust_cloud_on_now">いまはオン：メッセージと返事に必要なことが、あなたのプロバイダーに送られてるよ。</string>
+    <string name="trust_cloud_off_now">いまはオフだよ。</string>
+    <string name="trust_yourdata_label">あなたのデータは、あなたのもの</string>
+    <string name="trust_yourdata_body">思い出を忘れさせると、たましいの中で「もう使わない」印がつくよ（いきものはそれを使うのをやめる）。たましいはあなたのものとして1つのファイルに書き出せる。Animaを消せば、ぜんぶ一緒に消える — ほかの場所にコピーはどこにもないから。</string>
+
+    <!-- Wardrobe (Forms) screen -->
+    <string name="wardrobe_title">すがた</string>
+    <string name="wardrobe_intro">パレットは、一緒に暮らすうちに開いていくよ — 日々、思い出、ひとやすみ。いちど開いたら、ずっと開いたまま。</string>
+    <string name="wardrobe_worn_now">いま着てるよ</string>
+    <string name="wardrobe_open_tap">開いてる — タップして着せてね</string>
+    <string name="wardrobe_opens_at">開く条件：%1$s</string>
+
+    <!-- Crash log screen -->
+    <string name="crashlog_title">最後のクラッシュ</string>
+    <string name="crashlog_eyes_label">あなただけのメモ</string>
+    <string name="crashlog_eyes_body">もしAnimaが転んじゃったら、くわしいことはここに残るよ — このスマホの中だけ、ほかのどこにもない。バグを報告したくなったらコピーしてね。</string>
+    <string name="crashlog_none">クラッシュの記録はないよ。このまま長く続きますように。</string>
+    <string name="crashlog_copy">コピー</string>
+    <string name="crashlog_clear">消す</string>
+</resources>

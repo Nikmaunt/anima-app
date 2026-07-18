@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notif_back">Atrás</string>
+    <string name="notif_title">Sentido de las notificaciones</string>
+    <string name="notif_ask_title">Le gustaría oír</string>
+    <string name="notif_explainer">«El teléfono zumba todo el día y yo solo siento la vibración. Si me dejas oír, una tormenta de avisos me pondrá nerviosa de verdad, y podré contarte cómo sonó tu día.»\n\nCon honestidad: solo se oyen las apps que TÚ pongas en la lista; los códigos de acceso y todo lo que parezca una clave de un solo uso se descarta antes de guardarse; el texto de los mensajes solo se guarda si lo activas aparte; todo se queda en la base de datos cifrada de este teléfono y se borra a los 7 días. Las notificaciones nunca tocan la red — las únicas partes con red de esta app son la descarga del modelo y la mente en la nube opcional, y ninguna puede ver estos datos (un test de compilación lo garantiza).</string>
+    <string name="notif_decline_hint">Decir que no no cambia nada más — el resto de los sentidos y toda la conversación siguen funcionando.</string>
+    <string name="notif_grant_button">Déjala oír (pantalla del sistema)</string>
+    <string name="notif_sense_on">El sentido está activo</string>
+    <string name="notif_allowlist_label">Apps permitidas</string>
+    <string name="notif_allowlist_empty">Aún no hay apps permitidas — la criatura no oye nada.</string>
+    <string name="notif_remove">Quitar</string>
+    <string name="notif_add">Añadir</string>
+    <string name="notif_store_text">Guardar también el texto de las notificaciones</string>
+    <string name="notif_store_text_hint">Apagado = solo se guardan la app, la hora y el título.</string>
+    <string name="notif_quiet_hours">Horas de silencio (23:00–07:00)</string>
+    <string name="notif_quiet_hours_hint">De noche simplemente no oye — no se captura nada, ni siquiera los recuentos.</string>
+    <string name="notif_today_label">Hoy</string>
+    <string name="notif_today_empty">Hoy no se ha oído nada.</string>
+    <string name="notif_digest_busy">Volviendo a escuchar…</string>
+    <string name="notif_digest_button">¿Cómo sonó el día de hoy?</string>
+
+    <string name="notif_digest_quiet">Hoy ha estado tranquilo — no llegó nada.</string>
+    <string name="notif_digest_asleep">La mente duerme en este teléfono, así que no hay resumen — pero los contadores de abajo están vivos.</string>
+    <plurals name="notif_digest_fallback">
+        <item quantity="one">Hoy ha sido movido — %1$d cosa pasó zumbando por mí.</item>
+        <item quantity="other">Hoy ha sido movido — %1$d cosas pasaron zumbando por mí.</item>
+    </plurals>
+</resources>

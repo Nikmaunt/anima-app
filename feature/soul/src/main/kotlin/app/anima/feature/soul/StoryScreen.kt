@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -108,9 +109,13 @@ fun StoryScreen(
             .padding(horizontal = 20.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
-            GhostButton("Back", onClick = onBack)
+            GhostButton(stringResource(R.string.story_back), onClick = onBack)
             Text(
-                if (state.creatureName.isEmpty()) "Our story" else "Me and ${state.creatureName}",
+                if (state.creatureName.isEmpty()) {
+                    stringResource(R.string.story_title)
+                } else {
+                    stringResource(R.string.story_title_named, state.creatureName)
+                },
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(start = 8.dp),
             )
@@ -122,7 +127,7 @@ fun StoryScreen(
                     app.anima.core.creature.CreatureEmptyState(
                         concept = state.concept,
                         seed = state.seed,
-                        line = "\"Our story hasn't written its first line yet. It will.\"",
+                        line = stringResource(R.string.story_empty),
                         night = colors.isNight,
                     )
                 }

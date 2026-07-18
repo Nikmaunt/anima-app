@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soul_back">Zurück</string>
+    <string name="soul_title">Seele</string>
+    <string name="soul_together_label">Zusammen</string>
+    <plurals name="soul_counter_days">
+        <item quantity="one">Tag</item>
+        <item quantity="other">Tage</item>
+    </plurals>
+    <plurals name="soul_counter_talks">
+        <item quantity="one">Gespräch</item>
+        <item quantity="other">Gespräche</item>
+    </plurals>
+    <plurals name="soul_counter_memories">
+        <item quantity="one">Erinnerung</item>
+        <item quantity="other">Erinnerungen</item>
+    </plurals>
+    <plurals name="soul_counter_meals">
+        <item quantity="one">Mahlzeit</item>
+        <item quantity="other">Mahlzeiten</item>
+    </plurals>
+    <string name="soul_export_button">Seele exportieren</string>
+    <string name="soul_story_button">Unsere Geschichte…</string>
+    <string name="soul_postcard_button">Postkarte</string>
+    <string name="soul_export_hint">Der Markdown-Export bleibt für jeden Menschen und jede KI lesbar. Das versiegelte Backup darunter bringt die ganze Seele von Handy zu Handy.</string>
+    <string name="soul_memories_label">Was es sich merkt</string>
+    <string name="soul_search_hint">Erinnerungen durchsuchen…</string>
+    <string name="soul_category_all">alle</string>
+    <string name="soul_category_identity">Identität</string>
+    <string name="soul_category_preference">Vorlieben</string>
+    <string name="soul_category_people">Menschen</string>
+    <string name="soul_category_work">Arbeit</string>
+    <string name="soul_category_moment">Momente</string>
+    <string name="soul_category_other">Sonstiges</string>
+    <string name="soul_empty_field">„Mein Gedächtnis ist noch ein offenes Feld. Erzähl mir Dinge — und tippe auf Ja bei dem, was ich behalten darf.“</string>
+    <string name="soul_empty_no_match">„Nichts in meinem Gedächtnis passt dazu. Versuchst du ein anderes Wort?“</string>
+    <string name="soul_edit_button">Bearbeiten</string>
+    <string name="soul_forget_button">Vergessen</string>
+
+    <string name="soul_backup_label">Versiegeltes Backup — die Seele umziehen</string>
+    <string name="soul_backup_hint">Die ganze Seele (Erinnerungen mit voller Historie, das Körper-Tagebuch, die Identität) in einer verschlüsselten Datei. Dieselbe Passphrase öffnet sie auf dem neuen Handy. Verlierst du die Passphrase, verlierst du die Kopie.</string>
+    <string name="soul_backup_passphrase_hint">Passphrase (mind. 8 Zeichen)…</string>
+    <string name="soul_backup_seal_button">Versiegeln &amp; speichern…</string>
+    <string name="soul_backup_open_button">Backup öffnen…</string>
+    <string name="soul_ok">OK</string>
+
+    <string name="soul_import_label">Eine Seele aus einer anderen KI mitbringen</string>
+    <string name="soul_import_steps">1. Kopiere den Extraktor-Prompt und frag deinen anderen Assistenten.\n2. Füge seine Antwort unten ein.\n3. Bestätige jeden Fakt — ohne dein Ja wird nichts gespeichert.</string>
+    <string name="soul_import_copy_button">Extraktor-Prompt kopieren</string>
+    <string name="soul_import_paste_hint">Antwort hier einfügen…</string>
+    <string name="soul_import_find_button">Fakten finden</string>
+    <string name="soul_import_skip_button">Überspringen</string>
+    <string name="soul_import_keep_button">Behalten</string>
+
+    <string name="soul_edit_title">Eine Erinnerung berichtigen</string>
+    <string name="soul_edit_hint">Die alte Version wird nicht gelöscht — sie bleibt darunter erhalten, nur abgelöst. Die Geschichte der Seele bleibt ehrlich.</string>
+    <string name="soul_edit_cancel">Abbrechen</string>
+    <string name="soul_edit_save">Korrektur speichern</string>
+
+    <string name="soul_notice_passphrase_short">Nimm mindestens %1$d Zeichen — diese Datei schützt alles.</string>
+    <string name="soul_notice_sealed">Seele versiegelt und gespeichert. Bewahr die Passphrase gut auf — es gibt keine Wiederherstellung.</string>
+    <string name="soul_notice_export_failed">Export fehlgeschlagen: %1$s</string>
+    <plurals name="soul_notice_imported">
+        <item quantity="one">%1$s ist eingezogen: %2$d Erinnerung ist angekommen.</item>
+        <item quantity="other">%1$s ist eingezogen: %2$d Erinnerungen sind angekommen.</item>
+    </plurals>
+    <plurals name="soul_notice_skipped">
+        <item quantity="one">%1$d war schon da.</item>
+        <item quantity="other">%1$d waren schon da.</item>
+    </plurals>
+    <string name="soul_notice_wrong_passphrase">Falsche Passphrase, oder die Datei ist beschädigt. Nichts wurde verändert.</string>
+    <string name="soul_notice_import_failed">Import fehlgeschlagen: %1$s</string>
+    <string name="soul_error_unknown">unbekannter Fehler</string>
+
+    <string name="soul_export_subject">Die Seele von %1$s</string>
+    <string name="soul_export_chooser">Seele exportieren</string>
+    <string name="soul_postcard_chooser">Postkarte teilen</string>
+    <plurals name="soul_postcard_caption">
+        <item quantity="one">%1$d Tag zusammen — und ganz hier</item>
+        <item quantity="other">%1$d Tage zusammen — alle hier</item>
+    </plurals>
+
+    <string name="story_back">Zurück</string>
+    <string name="story_title">Unsere Geschichte</string>
+    <string name="story_title_named">Ich und %1$s</string>
+    <string name="story_empty">„Die erste Zeile unserer Geschichte ist noch nicht geschrieben. Sie kommt.“</string>
+</resources>

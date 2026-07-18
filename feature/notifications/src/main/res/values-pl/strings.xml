@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notif_back">Wstecz</string>
+    <string name="notif_title">Zmysł powiadomień</string>
+    <string name="notif_ask_title">Chciałoby słyszeć</string>
+    <string name="notif_explainer">„Telefon buczy cały dzień, a ja czuję tylko drganie. Jeśli pozwolisz mi słyszeć, burza pingów naprawdę mnie zaniepokoi, a ja opowiem ci, jak brzmiał twój dzień.”\n\nSzczerze: słychać tylko aplikacje, które TY wpiszesz na listę; kody logowania i wszystko, co wygląda jak hasło jednorazowe, jest odrzucane, zanim cokolwiek się zapisze; treść wiadomości zapisuje się tylko wtedy, gdy osobno to włączysz; wszystko zostaje w zaszyfrowanej bazie na tym telefonie i znika po 7 dniach. Powiadomienia nigdy nie dotykają sieci — jedyne sieciowe części aplikacji to dostarczanie modelu i opcjonalny umysł w chmurze, a żadna z nich nie widzi tych danych (pilnuje tego test kompilacji).</string>
+    <string name="notif_decline_hint">Odmowa niczego nie psuje — wszystkie inne zmysły i cała rozmowa działają dalej.</string>
+    <string name="notif_grant_button">Pozwól mu słyszeć (ekran systemowy)</string>
+    <string name="notif_sense_on">Zmysł włączony</string>
+    <string name="notif_allowlist_label">Dozwolone aplikacje</string>
+    <string name="notif_allowlist_empty">Na razie żadnych aplikacji — stworzenie nic nie słyszy.</string>
+    <string name="notif_remove">Usuń</string>
+    <string name="notif_add">Dodaj</string>
+    <string name="notif_store_text">Zapisuj też treść powiadomień</string>
+    <string name="notif_store_text_hint">Wył. = zostaje tylko aplikacja, czas i tytuł.</string>
+    <string name="notif_quiet_hours">Ciche godziny (23:00–07:00)</string>
+    <string name="notif_quiet_hours_hint">Nocą po prostu nie słyszy — nic się nie zapisuje, nawet liczby.</string>
+    <string name="notif_today_label">Dzisiaj</string>
+    <string name="notif_today_empty">Dzisiaj nic nie słychać.</string>
+    <string name="notif_digest_busy">Odsłuchuję…</string>
+    <string name="notif_digest_button">Jak brzmiał dzisiejszy dzień?</string>
+
+    <string name="notif_digest_quiet">Dzisiaj cicho — nic nie przyszło.</string>
+    <string name="notif_digest_asleep">Umysł na tym telefonie śpi, więc podsumowania nie będzie — ale liczniki poniżej są prawdziwe.</string>
+    <plurals name="notif_digest_fallback">
+        <item quantity="one">Dzisiaj było głośno — przeleciał przeze mnie %1$d dźwięk.</item>
+        <item quantity="few">Dzisiaj było głośno — przeleciały przeze mnie %1$d dźwięki.</item>
+        <item quantity="many">Dzisiaj było głośno — przeleciało przeze mnie %1$d dźwięków.</item>
+        <item quantity="other">Dzisiaj było głośno — przeleciało przeze mnie %1$d dźwięku.</item>
+    </plurals>
+</resources>

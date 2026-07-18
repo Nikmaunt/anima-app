@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Soul screen -->
+    <string name="soul_back">Back</string>
+    <string name="soul_title">Soul</string>
+    <string name="soul_together_label">Together</string>
+    <plurals name="soul_counter_days">
+        <item quantity="one">day</item>
+        <item quantity="other">days</item>
+    </plurals>
+    <plurals name="soul_counter_talks">
+        <item quantity="one">talk</item>
+        <item quantity="other">talks</item>
+    </plurals>
+    <plurals name="soul_counter_memories">
+        <item quantity="one">memory</item>
+        <item quantity="other">memories</item>
+    </plurals>
+    <plurals name="soul_counter_meals">
+        <item quantity="one">meal</item>
+        <item quantity="other">meals</item>
+    </plurals>
+    <string name="soul_export_button">Export the soul</string>
+    <string name="soul_story_button">Our story…</string>
+    <string name="soul_postcard_button">Postcard</string>
+    <string name="soul_export_hint">The markdown export stays readable by any human or AI. The sealed backup below moves the whole soul between phones.</string>
+    <string name="soul_memories_label">What it remembers</string>
+    <string name="soul_search_hint">Search memories…</string>
+    <string name="soul_category_all">all</string>
+    <string name="soul_category_identity">identity</string>
+    <string name="soul_category_preference">preference</string>
+    <string name="soul_category_people">people</string>
+    <string name="soul_category_work">work</string>
+    <string name="soul_category_moment">moment</string>
+    <string name="soul_category_other">other</string>
+    <string name="soul_empty_field">\"My memory is an open field so far. Tell me things — and tap yes on what I may keep.\"</string>
+    <string name="soul_empty_no_match">\"Nothing in my memory matches that. Try another word?\"</string>
+    <string name="soul_edit_button">Edit</string>
+    <string name="soul_forget_button">Forget</string>
+
+    <!-- Sealed backup -->
+    <string name="soul_backup_label">Sealed backup — move the soul</string>
+    <string name="soul_backup_hint">The whole soul (memories with their full history, the body journal, identity) in one encrypted file. Same passphrase opens it on the new phone. Lose the passphrase — lose the copy.</string>
+    <string name="soul_backup_passphrase_hint">Passphrase (min 8 chars)…</string>
+    <string name="soul_backup_seal_button">Seal &amp; save…</string>
+    <string name="soul_backup_open_button">Open a backup…</string>
+    <string name="soul_ok">OK</string>
+
+    <!-- Import from another AI -->
+    <string name="soul_import_label">Bring a soul from another AI</string>
+    <string name="soul_import_steps">1. Copy the extractor prompt and ask your other assistant.\n2. Paste its answer below.\n3. Confirm each fact — nothing is saved without your yes.</string>
+    <string name="soul_import_copy_button">Copy extractor prompt</string>
+    <string name="soul_import_paste_hint">Paste the answer here…</string>
+    <string name="soul_import_find_button">Find facts</string>
+    <string name="soul_import_skip_button">Skip</string>
+    <string name="soul_import_keep_button">Keep</string>
+
+    <!-- Edit dialog -->
+    <string name="soul_edit_title">Correct a memory</string>
+    <string name="soul_edit_hint">The old version isn\'t erased — it\'s kept underneath, superseded. The soul\'s history stays honest.</string>
+    <string name="soul_edit_cancel">Cancel</string>
+    <string name="soul_edit_save">Save correction</string>
+
+    <!-- Backup notices (SoulViewModel.BackupNotice → UI) -->
+    <string name="soul_notice_passphrase_short">Use at least %1$d characters — this file protects everything.</string>
+    <string name="soul_notice_sealed">Soul sealed and saved. Keep the passphrase — there is no recovery.</string>
+    <string name="soul_notice_export_failed">Export failed: %1$s</string>
+    <plurals name="soul_notice_imported">
+        <item quantity="one">%1$s has moved in: %2$d memory arrived.</item>
+        <item quantity="other">%1$s has moved in: %2$d memories arrived.</item>
+    </plurals>
+    <plurals name="soul_notice_skipped">
+        <item quantity="one">%1$d was already here.</item>
+        <item quantity="other">%1$d were already here.</item>
+    </plurals>
+    <string name="soul_notice_wrong_passphrase">Wrong passphrase, or the file is damaged. Nothing was changed.</string>
+    <string name="soul_notice_import_failed">Import failed: %1$s</string>
+    <string name="soul_error_unknown">unknown error</string>
+
+    <!-- Share sheet / postcard (context-bound in SoulViewModel) -->
+    <string name="soul_export_subject">The soul of %1$s</string>
+    <string name="soul_export_chooser">Export soul</string>
+    <string name="soul_postcard_chooser">Share a postcard</string>
+    <plurals name="soul_postcard_caption">
+        <item quantity="one">%1$d day together, all of it here</item>
+        <item quantity="other">%1$d days together, all of them here</item>
+    </plurals>
+
+    <!-- Story screen -->
+    <string name="story_back">Back</string>
+    <string name="story_title">Our story</string>
+    <string name="story_title_named">Me and %1$s</string>
+    <string name="story_empty">\"Our story hasn\'t written its first line yet. It will.\"</string>
+</resources>

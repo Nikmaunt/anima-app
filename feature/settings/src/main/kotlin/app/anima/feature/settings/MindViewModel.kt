@@ -38,6 +38,39 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
 
+/**
+ * v0.5 l10n (glossary §3): every notice the Mind screen can show is a closed
+ * set — the UI maps each case to a string resource. Free text never leaves
+ * the ViewModel as English.
+ */
+sealed interface MindNotice {
+    /** Delivery finished — the "say hello" moment. */
+    data object MindArrived : MindNotice
+
+    /** A per-model delete completed; the creature itself is untouched. */
+    data object ModelDeleted : MindNotice
+
+    /** Download tapped with an empty URL field. */
+    data object PasteLinkFirst : MindNotice
+
+    /** Cloud endpoint draft is not https. */
+    data object HttpsRequired : MindNotice
+
+    /** Key wiped and cloud disabled. */
+    data object KeyErased : MindNotice
+
+    /** Phase 1E "Check key" probe outcome, verbatim from the engine. */
+    data class KeyProbe(
+        val result: KeyProbeResult,
+    ) : MindNotice
+
+    /** Import/download failed; [detail] is pre-trimmed where needed. */
+    data class DeliveryFailed(
+        val reason: DeliveryFailure,
+        val detail: String?,
+    ) : MindNotice
+}
+
 data class MindUiState(
     val tier: MindTier = MindTier.NONE,
     val nano: MindStatus = MindStatus.ASLEEP,
@@ -53,7 +86,7 @@ data class MindUiState(
     val busy: Boolean = false,
     val importing: Boolean = false,
     val progress: Pair<Long, Long?>? = null,
-    val notice: String? = null,
+    val notice: MindNotice? = null,
     val urlDraft: String = "",
     val shaDraft: String = "",
     val allowMetered: Boolean = false,
@@ -164,7 +197,7 @@ class MindViewModel
             if (transfer?.isActive == true) return
             val url = state.value.urlDraft.trim()
             if (url.isEmpty()) {
-                state.value = state.value.copy(notice = "Paste a direct https link to the model file first.")
+                state.value = state.value.copy(notice = MindNotice.PasteLinkFirst)
                 return
             }
             transfer =
@@ -196,7 +229,7 @@ class MindViewModel
             viewModelScope.launch {
                 mind.releaseResources()
                 store.deleteModel(fileName)
-                state.value = state.value.copy(notice = "The mind file is gone. The creature stays.")
+                state.value = state.value.copy(notice = MindNotice.ModelDeleted)
                 refresh()
             }
         }
@@ -245,13 +278,7 @@ class MindViewModel
                 state.value =
                     state.value.copy(
                         checkingKey = false,
-                        notice =
-                            when (result) {
-                                KeyProbeResult.OK -> "The key works."
-                                KeyProbeResult.BAD_KEY -> "The provider rejected this key."
-                                KeyProbeResult.UNREACHABLE -> "Could not reach the provider."
-                                KeyProbeResult.NOT_CONFIGURED -> "Save the endpoint and key first."
-                            },
+                        notice = MindNotice.KeyProbe(result),
                     )
             }
         }
@@ -261,7 +288,7 @@ class MindViewModel
             viewModelScope.launch {
                 val url = state.value.cloudUrlDraft.trim()
                 if (!url.startsWith("https://")) {
-                    state.value = state.value.copy(notice = "Cloud endpoints must start with https://")
+                    state.value = state.value.copy(notice = MindNotice.HttpsRequired)
                     return@launch
                 }
                 cloudStore.setEndpoint(url, state.value.cloudModelDraft)
@@ -280,7 +307,7 @@ class MindViewModel
         fun forgetCloudKey() {
             viewModelScope.launch {
                 cloudStore.clearKeyAndDisable()
-                state.value = state.value.copy(notice = "Cloud key erased. The mind is local again.")
+                state.value = state.value.copy(notice = MindNotice.KeyErased)
                 refresh()
             }
         }
@@ -295,7 +322,7 @@ class MindViewModel
                         state.value.copy(
                             busy = false,
                             progress = null,
-                            notice = "The mind is here. Say hello.",
+                            notice = MindNotice.MindArrived,
                         )
                     // "My mind woke up" — a moment on the Our-story timeline.
                     viewModelScope.launch {
@@ -309,31 +336,21 @@ class MindViewModel
                         state.value.copy(
                             busy = false,
                             progress = null,
-                            notice = failureText(event),
+                            notice =
+                                MindNotice.DeliveryFailed(
+                                    reason = event.reason,
+                                    detail =
+                                        if (event.reason == DeliveryFailure.CHECKSUM_MISMATCH) {
+                                            event.detail?.take(SHA_PREVIEW)
+                                        } else {
+                                            event.detail
+                                        },
+                                ),
                         )
                     refresh()
                 }
             }
         }
-
-        private fun failureText(event: DeliveryEvent.Failed): String =
-            when (event.reason) {
-                DeliveryFailure.NEEDS_WIFI ->
-                    "Waiting for Wi-Fi — it's a big file. Flip the switch to use mobile data."
-                DeliveryFailure.NOT_HTTPS -> "Only direct https:// links work here."
-                DeliveryFailure.HTTP_ERROR ->
-                    "The server refused (${event.detail ?: "no detail"}). Official Gemma links " +
-                        "need a license acceptance — download in the browser and use " +
-                        "\"Choose mind file\" instead."
-                DeliveryFailure.INTERRUPTED ->
-                    "The transfer broke off. Try again — it resumes where it stopped."
-                DeliveryFailure.CHECKSUM_MISMATCH ->
-                    "The file failed its integrity check and was discarded. " +
-                        "(got ${event.detail?.take(SHA_PREVIEW) ?: "?"}…)"
-                DeliveryFailure.NOT_A_MODEL ->
-                    "That doesn't look like a mind file (.task / .litertlm, hundreds of MB)."
-                DeliveryFailure.NO_SPACE -> "Not enough free space for the mind file."
-            }
 
         private companion object {
             const val SHA_PREVIEW = 12

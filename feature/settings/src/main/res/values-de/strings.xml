@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings screen -->
+    <string name="settings_back">Zurück</string>
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_save">Speichern</string>
+    <string name="settings_name_label">Name</string>
+    <string name="settings_body_label">Körper</string>
+    <string name="settings_body_hint">Dieselbe Seele kann in einem anderen Körper leben. Die Vorschauen sind live — in jeder Zelle läuft die echte Engine.</string>
+    <string name="settings_forms_button">Formen…</string>
+    <string name="settings_calm_motion_title">Ruhige Bewegungen</string>
+    <string name="settings_calm_motion_hint">Stille Pose, seltenes Blinzeln. Folgt automatisch der Systemeinstellung für reduzierte Animationen.</string>
+    <string name="settings_character_label">Charakter</string>
+    <string name="settings_character_hint">Zwei Regler, beide ehrlich: Sie ändern, wie es spricht, UND wie es sich bewegt (Blickzucken, Blinzeltempo).</string>
+    <string name="settings_character_warmth">Sanft ↔ Frech</string>
+    <string name="settings_character_chattiness">Still ↔ Gesprächig</string>
+    <string name="settings_character_reset">Zurück zu seiner Natur</string>
+    <string name="settings_senses_label">Sinne</string>
+    <string name="settings_notification_sense">Benachrichtigungssinn…</string>
+    <string name="settings_mind_label">Geist</string>
+    <string name="settings_mind_open">Geist…</string>
+    <string name="settings_mind_desc_cloud">Nachrichten gehen an deinen Anbieter. Schalte aus, und alles bleibt auf diesem Handy.</string>
+    <string name="settings_mind_desc_cloud_unconfigured">Cloud ist an, aber nicht eingerichtet — noch spricht der lokale Geist.</string>
+    <string name="settings_mind_desc_local">Alles bleibt auf diesem Handy.</string>
+    <string name="settings_voice_label">Stimme</string>
+    <string name="settings_voice_title">Das Wesen spricht</string>
+    <string name="settings_voice_off">Aus. Wenn an, nutzt es nur Stimmen, die offline funktionieren.</string>
+    <string name="settings_voice_checking">Lausche nach einer Offline-Stimme…</string>
+    <string name="settings_voice_ready">Spricht mit einer Offline-Stimme — Worte verlassen das Handy nie.</string>
+    <string name="settings_voice_no_offline">Für deine Sprache ist keine Offline-Stimme installiert, also bleibt es stumm. Installiere eine in den Sprachausgabe-Einstellungen des Systems.</string>
+    <string name="settings_voice_no_engine">Dieses Handy hat keine Sprach-Engine. Das Wesen kann hier nicht sprechen.</string>
+    <string name="settings_voice_open_settings">Sprachausgabe-Einstellungen öffnen</string>
+    <string name="settings_privacy_label">Privatsphäre, ehrlich</string>
+    <string name="settings_privacy_cloud_on">Gerade ist der CLOUD-Geist an: Deine Nachrichten, der Körperbericht des Wesens und die für eine Antwort nötigen Erinnerungen gehen an den Anbieter, den du eingerichtet hast. Alles andere — die Seelen-Datenbank, das Benachrichtigungstagebuch — bleibt verschlüsselt auf diesem Handy. Leg den Geist-Schalter oben um, und Anima ist wieder komplett offline.</string>
+    <string name="settings_privacy_local">Das Netz wird für genau zwei Dinge genutzt, beide unter deiner Kontrolle: die Lieferung der Geist-Datei (Google Play oder ein Download, den du startest) und den optionalen Cloud-Geist — der AUS ist. Keine Konten, keine Analytik, keine Absturzberichte; ein Test beim Bauen der App schlägt fehl, wenn irgendein anderer Teil das Netz anfasst. Die Erinnerung lebt in einer verschlüsselten Datenbank; ihr Schlüssel verlässt nie die sichere Hardware dieses Handys. Gedacht wird auf diesem Gerät — oder gar nicht.</string>
+    <string name="settings_more_label">Mehr</string>
+    <string name="settings_trust_open">Warum kein Internet…</string>
+    <string name="settings_crashlog_open">Letzter Absturz (nur lokal)…</string>
+    <string name="settings_soul_screenshots_title">Screenshots des Seelen-Bildschirms</string>
+    <string name="settings_soul_screenshots_hint">Aus = der Erinnerungsbildschirm verweigert Screenshots und versteckt sich in der App-Übersicht.</string>
+
+    <!-- Mind screen -->
+    <string name="mind_title">Geist</string>
+    <string name="mind_state_cloud">Geist: Cloud</string>
+    <string name="mind_state_local">Geist: lokal</string>
+    <string name="mind_now_label">Gerade jetzt</string>
+    <string name="mind_now_cloud">Denkt bei DEINEM Cloud-Anbieter (%1$s). In diesem Modus verlassen Nachrichten und die für eine Antwort nötigen Fakten dieses Handy.</string>
+    <string name="mind_now_nano">Denkt mit dem eingebauten Geist dieses Handys (Gemini Nano).</string>
+    <string name="mind_now_gemma_pack">Denkt mit dem mitgelieferten Geist (Gemma, kam mit der App, komplett auf diesem Handy).</string>
+    <string name="mind_now_gemma_file">Denkt mit dem heruntergeladenen Geist (Gemma, komplett auf diesem Handy).</string>
+    <string name="mind_now_none">Der Geist schläft. Dieses Handy hat keinen eingebauten Geist für Apps, und noch ist keine Geist-Datei installiert. Alles andere am Wesen funktioniert trotzdem.</string>
+    <string name="mind_language_native">%1$s ist seine Muttersprache.</string>
+    <string name="mind_language_english_only">Antwortet auf Englisch — %1$s spricht dieser Geist nicht.</string>
+    <string name="mind_nano_fetchable">Eingebauter Geist: Das System kann ihn über den Chat auf dem Startbildschirm holen.</string>
+    <string name="mind_installed_label">Installierte Geister</string>
+    <string name="mind_installed_empty">Keine Geist-Datei installiert. Ein lokaler Geist (einige hundert MB, einmalig) lässt das Wesen komplett auf diesem Handy sprechen. Bring unten eine Datei mit oder lade eine per Direktlink.</string>
+    <string name="mind_auto_button">Auto</string>
+    <string name="mind_auto_on">Wählt selbst — erst deine Dateien, dann das Paket.</string>
+    <string name="mind_auto_off">Deine Wahl bleibt, bis du Auto drückst.</string>
+    <string name="mind_free_space">%1$.1f GB frei auf diesem Handy</string>
+    <string name="mind_progress_import_label">Bringe den Geist herein…</string>
+    <string name="mind_progress_download_label">Lade den Geist herunter…</string>
+    <string name="mind_progress_mb">%1$.0f / %2$.0f MB</string>
+    <string name="mind_keep_open">Lass diesen Bildschirm offen — das Wesen trägt keine Hintergrunddienste, darum pausiert der Transfer beim Verlassen (er geht später weiter).</string>
+    <string name="mind_bring_label">Bring die Datei mit</string>
+    <string name="mind_bring_hint">Wähle eine heruntergeladene .task- oder .litertlm-Datei. Sie wird in den privaten Bau des Wesens kopiert und geprüft.</string>
+    <string name="mind_choose_file">Geist-Datei wählen…</string>
+    <string name="mind_direct_link_label">Oder per Direktlink laden</string>
+    <string name="mind_sha_placeholder">SHA-256 (optional, prüft die Datei)</string>
+    <string name="mind_metered_title">Mobile Daten erlauben</string>
+    <string name="mind_metered_hint">Aus = nur WLAN (es sind ~530 MB)</string>
+    <string name="mind_download_button">Herunterladen (~530 MB, einmalig)</string>
+    <string name="mind_pack_incoming_label">Der Geist ist unterwegs</string>
+    <string name="mind_pack_progress">%1$.0f / %2$.0f MB — Google Play liefert ihn von selbst; du musst hier nicht warten.</string>
+    <string name="mind_pack_packed_label">Ein Geist liegt der App bei</string>
+    <string name="mind_pack_packed_hint">Google Play trägt einen Geist für dieses Wesen, hat ihn aber noch nicht geliefert. Bitte darum, und er kommt von allein.</string>
+    <string name="mind_pack_fetch">Lass ihn kommen</string>
+    <string name="mind_pack_consent_label">Der Geist wartet auf Erlaubnis</string>
+    <string name="mind_pack_consent_hint">Google Play hält die ~660 MB des Geistes zurück, bis du den Download erlaubst (er bevorzugt WLAN).</string>
+    <string name="mind_ram_label">Eine Warnung zu diesem Handy</string>
+    <string name="mind_ram_hint">Der mitgelieferte Geist ist da, aber dieses Handy hat wenig Speicher (unter ~6 GB). Gemma laufen zu lassen kann alles langsam machen. Du kannst es trotzdem versuchen — oder unten den Cloud-Geist nutzen.</string>
+    <string name="mind_ram_try">Trotzdem versuchen</string>
+    <string name="mind_model_active">Aktiv</string>
+    <string name="mind_model_meta">%1$.0f MB · %2$s</string>
+    <string name="mind_model_from_pack">aus dem Paket</string>
+    <string name="mind_license_unknown">unbekannte Lizenz</string>
+    <string name="mind_model_delete">Löschen</string>
+    <string name="mind_cloud_label">Cloud-Geist (optional)</string>
+    <string name="mind_cloud_intro">Standardmäßig aus. Wenn du ihn einschaltest, denkt das Wesen bei einem KI-Anbieter, den DU wählst, mit DEINEM Schlüssel. In diesem Modus verlässt jede Nachricht von dir — plus die für die Antwort nötigen Erinnerungen des Wesens und sein Körperbericht — dieses Handy und geht an %1$s. Sonst nichts. Die Seele bleibt hier.</string>
+    <string name="mind_cloud_unconfigured">An, aber nicht eingerichtet — noch spricht der lokale Geist.</string>
+    <string name="mind_cloud_key_prefix">Schlüssel beginnen meist mit %1$s…</string>
+    <string name="mind_cloud_free_tier">Gratis-Kontingent</string>
+    <string name="mind_cloud_model_placeholder">Modellname (z. B. gpt-4.1-mini)</string>
+    <string name="mind_cloud_key_placeholder">API-Schlüssel</string>
+    <string name="mind_cloud_key_placeholder_stored">API-Schlüssel (gespeichert — zum Ersetzen einfügen)</string>
+    <string name="mind_cloud_forget_key">Schlüssel vergessen</string>
+    <string name="mind_cloud_check_key">Schlüssel prüfen</string>
+    <string name="mind_cloud_key_note">Der Schlüssel wird mit dem Hardware-Keystore dieses Handys verschlüsselt, nie geloggt und ist nie Teil des Seelen-Exports. Offline? Das Wesen kehrt von selbst zu seinem lokalen Geist zurück.</string>
+    <string name="mind_provider_fallback">dein Anbieter</string>
+    <string name="mind_notice_label">Was passiert ist</string>
+    <string name="mind_notice_ok">OK</string>
+    <string name="mind_notice_arrived">Der Geist ist da. Sag hallo.</string>
+    <string name="mind_notice_deleted">Die Geist-Datei ist weg. Das Wesen bleibt.</string>
+    <string name="mind_notice_paste_link">Füge zuerst einen direkten https-Link zur Modelldatei ein.</string>
+    <string name="mind_notice_https_required">Cloud-Endpunkte müssen mit https:// beginnen</string>
+    <string name="mind_notice_key_erased">Cloud-Schlüssel gelöscht. Der Geist ist wieder lokal.</string>
+    <string name="mind_notice_key_ok">Der Schlüssel funktioniert.</string>
+    <string name="mind_notice_key_bad">Der Anbieter hat diesen Schlüssel abgelehnt.</string>
+    <string name="mind_notice_key_unreachable">Der Anbieter war nicht erreichbar.</string>
+    <string name="mind_notice_key_unconfigured">Speichere zuerst Endpunkt und Schlüssel.</string>
+    <string name="mind_failure_needs_wifi">Warte auf WLAN — die Datei ist groß. Leg den Schalter um, um mobile Daten zu nutzen.</string>
+    <string name="mind_failure_not_https">Hier funktionieren nur direkte https://-Links.</string>
+    <string name="mind_failure_http">Der Server hat abgelehnt (%1$s). Offizielle Gemma-Links verlangen eine Lizenzannahme — lade die Datei im Browser herunter und nutze „Geist-Datei wählen".</string>
+    <string name="mind_failure_http_no_detail">keine Details</string>
+    <string name="mind_failure_interrupted">Der Transfer ist abgerissen. Versuch es nochmal — er macht dort weiter, wo er stehen blieb.</string>
+    <string name="mind_failure_checksum">Die Datei hat die Integritätsprüfung nicht bestanden und wurde verworfen. (erhalten: %1$s…)</string>
+    <string name="mind_failure_not_model">Das sieht nicht nach einer Geist-Datei aus (.task / .litertlm, einige hundert MB).</string>
+    <string name="mind_failure_no_space">Nicht genug freier Platz für die Geist-Datei.</string>
+
+    <!-- Trust screen -->
+    <string name="trust_title">Warum kein Internet</string>
+    <string name="trust_hero_title">Dein Wesen lebt hier. Nur hier.</string>
+    <string name="trust_hero_body">Anima läuft komplett auf diesem Handy. Kein Konto, keine Cloud als Standard, niemand, der zusieht.</string>
+    <string name="trust_no_account">Kein Konto. Es gibt nichts, wofür man sich anmelden müsste.</string>
+    <string name="trust_no_servers">Keine Server von uns. Gespräche erreichen uns nie.</string>
+    <string name="trust_no_trackers">Keine Tracker. Keine Werbung, keine Analytik — ehrlich.</string>
+    <string name="trust_cant_read_label">Wir können deine Gespräche nicht lesen</string>
+    <string name="trust_cant_read_body">Nicht, weil wir es versprechen — sondern weil sie uns nie erreichen. Auf unserer Seite gibt es nichts zu lesen. Der Geist ist ein Sprachmodell auf dem eigenen Chip dieses Handys; alles, was er lernt, lebt in einer verschlüsselten Datenbank, deren Schlüssel nie die sichere Hardware dieses Handys verlässt.</string>
+    <string name="trust_prove_label">Prüf es nach</string>
+    <string name="trust_prove_body">Schalte den Flugmodus ein. Alles funktioniert weiter — das Wesen spürt den Verbindungswechsel wie Wetter, und sonst passiert nichts. Keine Funktion braucht das Netz.</string>
+    <string name="trust_network_label">Was das Netz DOCH nutzt — die ganze Liste</string>
+    <string name="trust_network_body">1. Die Lieferung der Geist-Datei: Google Play bringt sie mit der App, oder du startest selbst einen Download auf dem Geist-Bildschirm. Modell-Bytes kommen herein; nichts über dich geht hinaus.\n\n2. Der Cloud-Geist — nur wenn DU ihn einschaltest, mit deinem eigenen Anbieter und Schlüssel. %1$s\n\nEin Test beim Bauen der App schlägt fehl, wenn irgendein anderer Teil auch nur eine Netzwerk-API erwähnt.</string>
+    <string name="trust_cloud_on_now">Er ist gerade AN: Nachrichten und die für eine Antwort nötigen Fakten gehen an deinen Anbieter.</string>
+    <string name="trust_cloud_off_now">Er ist gerade AUS.</string>
+    <string name="trust_yourdata_label">Deine Daten, deine Entscheidung</string>
+    <string name="trust_yourdata_body">Vergiss eine Erinnerung, und sie wird in der Seele als tot markiert (das Wesen nutzt sie nicht mehr). Exportiere die Seele in eine Datei, die dir gehört. Lösche Anima, und alles geht mit — es gibt nirgendwo eine andere Kopie.</string>
+
+    <!-- Wardrobe (Forms) screen -->
+    <string name="wardrobe_title">Formen</string>
+    <string name="wardrobe_intro">Paletten öffnen sich, während ihr zusammenlebt — Tage, Erinnerungen, Ruhepausen. Was sich öffnet, bleibt offen. Für immer.</string>
+    <string name="wardrobe_worn_now">wird gerade getragen</string>
+    <string name="wardrobe_open_tap">offen — tippe zum Anziehen</string>
+    <string name="wardrobe_opens_at">öffnet sich bei: %1$s</string>
+
+    <!-- Crash log screen -->
+    <string name="crashlog_title">Letzter Absturz</string>
+    <string name="crashlog_eyes_label">Nur für deine Augen</string>
+    <string name="crashlog_eyes_body">Falls Anima je hinfällt, landen die Details hier — auf diesem Handy, nirgendwo sonst. Kopiere sie, wenn du einen Fehler melden willst.</string>
+    <string name="crashlog_none">Keine Abstürze aufgezeichnet. Möge es so bleiben.</string>
+    <string name="crashlog_copy">Kopieren</string>
+    <string name="crashlog_clear">Leeren</string>
+</resources>

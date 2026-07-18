@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notif_back">戻る</string>
+    <string name="notif_title">通知の耳</string>
+    <string name="notif_ask_title">聞いてみたいって</string>
+    <string name="notif_explainer">「スマホは一日じゅうぶるぶるしてるのに、わたしにはふるえしか伝わらないの。聞かせてくれたら、通知のあらしにほんとうにそわそわするし、今日がどんな音だったか話せるようになるよ」\n\n正直に言うね: 聞こえるのは、あなたが許可したアプリだけ。ログインコードやワンタイムパスワードっぽいものは、保存される前に捨てられる。メッセージの本文は、別のスイッチを入れたときだけ保存。ぜんぶこのスマホの暗号化データベースの中にとどまって、7日たつと消えるよ。通知がネットワークに触れることはないの — このアプリでネットにつながるのはモデルのダウンロードと、使うかどうか選べるクラウドのあたまだけ。どちらもこのデータは見られないよ(ビルドテストで確かめてる)。</string>
+    <string name="notif_decline_hint">「いいえ」でもほかはなにも変わらないよ — ほかの感覚もおしゃべりも、ぜんぶそのまま。</string>
+    <string name="notif_grant_button">聞かせてあげる(システム画面へ)</string>
+    <string name="notif_sense_on">耳はオン</string>
+    <string name="notif_allowlist_label">許可したアプリ</string>
+    <string name="notif_allowlist_empty">まだアプリがないよ — いきものにはなにも聞こえない。</string>
+    <string name="notif_remove">はずす</string>
+    <string name="notif_add">追加</string>
+    <string name="notif_store_text">通知の本文も保存する</string>
+    <string name="notif_store_text_hint">オフ = アプリと時刻とタイトルだけ残るよ。</string>
+    <string name="notif_quiet_hours">しずかな時間(23:00–07:00)</string>
+    <string name="notif_quiet_hours_hint">夜はただ聞こえないだけ — なにも記録されないよ。数さえも。</string>
+    <string name="notif_today_label">今日</string>
+    <string name="notif_today_empty">今日はまだなにも聞こえてないよ。</string>
+    <string name="notif_digest_busy">聞き返してる…</string>
+    <string name="notif_digest_button">今日はどんな音だった?</string>
+
+    <string name="notif_digest_quiet">今日はしずかだったよ — なにも届かなかった。</string>
+    <string name="notif_digest_asleep">このスマホではあたまはおやすみ中だから、まとめは作れないの — でも下の数字はほんもの。</string>
+    <plurals name="notif_digest_fallback">
+        <item quantity="other">今日はにぎやかだったよ — %1$d件がわたしの中をぶんぶん通っていったよ。</item>
+    </plurals>
+</resources>

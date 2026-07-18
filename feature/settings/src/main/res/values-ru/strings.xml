@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings screen -->
+    <string name="settings_back">Назад</string>
+    <string name="settings_title">Настройки</string>
+    <string name="settings_save">Сохранить</string>
+    <string name="settings_name_label">Имя</string>
+    <string name="settings_body_label">Тело</string>
+    <string name="settings_body_hint">Одна и та же душа может жить в другом теле. Превью живые — в каждой клетке настоящий движок.</string>
+    <string name="settings_forms_button">Формы…</string>
+    <string name="settings_calm_motion_title">Спокойные движения</string>
+    <string name="settings_calm_motion_hint">Неподвижная поза, редкие моргания. Сам следует системной настройке «меньше анимаций».</string>
+    <string name="settings_character_label">Характер</string>
+    <string name="settings_character_hint">Два ползунка, оба честные: они меняют и то, как оно говорит, И то, как двигается (взгляд, темп морганий).</string>
+    <string name="settings_character_warmth">Ласковое ↔ Колкое</string>
+    <string name="settings_character_chattiness">Тихое ↔ Болтливое</string>
+    <string name="settings_character_reset">Вернуть его натуру</string>
+    <string name="settings_senses_label">Чувства</string>
+    <string name="settings_notification_sense">Чувство уведомлений…</string>
+    <string name="settings_mind_label">Разум</string>
+    <string name="settings_mind_open">Разум…</string>
+    <string name="settings_mind_desc_cloud">Сообщения уходят твоему провайдеру. Выключи — и всё останется на этом телефоне.</string>
+    <string name="settings_mind_desc_cloud_unconfigured">Облако включено, но не настроено — говорит по-прежнему локальный разум.</string>
+    <string name="settings_mind_desc_local">Всё остаётся на этом телефоне.</string>
+    <string name="settings_voice_label">Голос</string>
+    <string name="settings_voice_title">Существо говорит</string>
+    <string name="settings_voice_off">Выключено. Когда включишь, используются только голоса, работающие офлайн.</string>
+    <string name="settings_voice_checking">Ищу офлайн-голос…</string>
+    <string name="settings_voice_ready">Говорит офлайн-голосом — слова не покидают телефон.</string>
+    <string name="settings_voice_no_offline">Для твоего языка нет офлайн-голоса, поэтому оно молчит. Установи голос в системных настройках синтеза речи.</string>
+    <string name="settings_voice_no_engine">На этом телефоне нет движка речи. Здесь существо говорить не может.</string>
+    <string name="settings_voice_open_settings">Открыть настройки речи</string>
+    <string name="settings_privacy_label">Приватность, честно</string>
+    <string name="settings_privacy_cloud_on">Сейчас включён ОБЛАЧНЫЙ разум: твои сообщения, отчёт о теле существа и факты памяти, нужные для ответа, уходят выбранному тобой провайдеру. Всё остальное — база души, дневник уведомлений — остаётся на этом телефоне, в зашифрованном виде. Переключи разум выше — и Anima снова полностью офлайн.</string>
+    <string name="settings_privacy_local">Сеть используется ровно для двух вещей, обе под твоим контролем: доставка файла разума (Google Play или загрузка, которую запускаешь ты) и необязательный облачный разум — он ВЫКЛЮЧЕН. Ни аккаунтов, ни аналитики, ни отчётов о сбоях; сборочный тест падает, если любая другая часть приложения трогает сеть. Память живёт в зашифрованной базе; её ключ никогда не покидает защищённое железо этого телефона. Мысли рождаются на этом устройстве — или нигде.</string>
+    <string name="settings_more_label">Ещё</string>
+    <string name="settings_trust_open">Почему без интернета…</string>
+    <string name="settings_crashlog_open">Последний сбой (только локально)…</string>
+    <string name="settings_soul_screenshots_title">Скриншоты экрана души</string>
+    <string name="settings_soul_screenshots_hint">Выкл = экран воспоминаний не даёт делать скриншоты и прячется в списке недавних приложений.</string>
+
+    <!-- Mind screen -->
+    <string name="mind_title">Разум</string>
+    <string name="mind_state_cloud">Разум: облако</string>
+    <string name="mind_state_local">Разум: локальный</string>
+    <string name="mind_now_label">Прямо сейчас</string>
+    <string name="mind_now_cloud">Думает у ТВОЕГО облачного провайдера (%1$s). В этом режиме сообщения и факты, нужные для ответа, покидают этот телефон.</string>
+    <string name="mind_now_nano">Думает встроенным разумом этого телефона (Gemini Nano).</string>
+    <string name="mind_now_gemma_pack">Думает комплектным разумом (Gemma, приходит вместе с приложением, целиком на этом телефоне).</string>
+    <string name="mind_now_gemma_file">Думает загруженным разумом (Gemma, целиком на этом телефоне).</string>
+    <string name="mind_now_none">Разум спит. В этом телефоне нет встроенного разума для приложений, а файл разума пока не установлен. Всё остальное у существа работает.</string>
+    <string name="mind_language_native">%1$s — его родной язык.</string>
+    <string name="mind_language_english_only">Отвечает по-английски — %1$s этот разум не знает.</string>
+    <string name="mind_nano_fetchable">Встроенный разум: система может принести его из чата на главном экране.</string>
+    <string name="mind_installed_label">Установленные разумы</string>
+    <string name="mind_installed_empty">Файл разума не установлен. Локальный разум (сотни МБ, один раз) позволяет существу говорить целиком на этом телефоне. Принеси файл ниже или скачай по прямой ссылке.</string>
+    <string name="mind_auto_button">Авто</string>
+    <string name="mind_auto_on">Выбирает сам — сначала твои файлы, потом комплект.</string>
+    <string name="mind_auto_off">Твой выбор действует, пока не нажмёшь «Авто».</string>
+    <string name="mind_free_space">На телефоне свободно %1$.1f ГБ</string>
+    <string name="mind_progress_import_label">Приношу разум…</string>
+    <string name="mind_progress_download_label">Скачиваю разум…</string>
+    <string name="mind_progress_mb">%1$.0f / %2$.0f МБ</string>
+    <string name="mind_keep_open">Не закрывай этот экран — у существа нет фоновых служб, поэтому уход ставит передачу на паузу (потом она продолжится).</string>
+    <string name="mind_bring_label">Принеси файл</string>
+    <string name="mind_bring_hint">Выбери скачанный файл .task или .litertlm. Он копируется в личную норку существа и проверяется.</string>
+    <string name="mind_choose_file">Выбрать файл разума…</string>
+    <string name="mind_direct_link_label">Или скачай по прямой ссылке</string>
+    <string name="mind_sha_placeholder">SHA-256 (необязательно, проверяет файл)</string>
+    <string name="mind_metered_title">Разрешить мобильные данные</string>
+    <string name="mind_metered_hint">Выкл = только Wi-Fi (это ~530 МБ)</string>
+    <string name="mind_download_button">Скачать (~530 МБ, один раз)</string>
+    <string name="mind_pack_incoming_label">Разум уже в пути</string>
+    <string name="mind_pack_progress">%1$.0f / %2$.0f МБ — Google Play доставит его сам; ждать здесь не обязательно.</string>
+    <string name="mind_pack_packed_label">Разум упакован вместе с приложением</string>
+    <string name="mind_pack_packed_hint">Google Play несёт разум для этого существа, но пока не доставил. Попроси — и он придёт сам.</string>
+    <string name="mind_pack_fetch">Пусть придёт</string>
+    <string name="mind_pack_consent_label">Разум ждёт разрешения</string>
+    <string name="mind_pack_consent_hint">Google Play держит ~660 МБ разума, пока ты не разрешишь загрузку (он предпочитает Wi-Fi).</string>
+    <string name="mind_ram_label">Осторожность про этот телефон</string>
+    <string name="mind_ram_hint">Комплектный разум здесь, но памяти у телефона мало (меньше ~6 ГБ). Запуск Gemma может всё замедлить. Можно попробовать всё равно — или взять облачный разум ниже.</string>
+    <string name="mind_ram_try">Попробовать всё равно</string>
+    <string name="mind_model_active">Активен</string>
+    <string name="mind_model_meta">%1$.0f МБ · %2$s</string>
+    <string name="mind_model_from_pack">из комплекта</string>
+    <string name="mind_license_unknown">лицензия неизвестна</string>
+    <string name="mind_model_delete">Удалить</string>
+    <string name="mind_cloud_label">Облачный разум (необязательно)</string>
+    <string name="mind_cloud_intro">По умолчанию выключен. Если включишь, существо думает у ИИ-провайдера, которого выбираешь ТЫ, с ТВОИМ ключом. В этом режиме каждое твоё сообщение — плюс факты памяти существа, нужные для ответа, и отчёт о его теле — покидает этот телефон и уходит на %1$s. Больше ничего. Душа остаётся здесь.</string>
+    <string name="mind_cloud_unconfigured">Включён, но не настроен — говорит по-прежнему локальный разум.</string>
+    <string name="mind_cloud_key_prefix">Ключи обычно начинаются с %1$s…</string>
+    <string name="mind_cloud_free_tier">бесплатный тариф</string>
+    <string name="mind_cloud_model_placeholder">имя модели (напр. gpt-4.1-mini)</string>
+    <string name="mind_cloud_key_placeholder">API-ключ</string>
+    <string name="mind_cloud_key_placeholder_stored">API-ключ (сохранён — вставь новый, чтобы заменить)</string>
+    <string name="mind_cloud_forget_key">Забыть ключ</string>
+    <string name="mind_cloud_check_key">Проверить ключ</string>
+    <string name="mind_cloud_key_note">Ключ зашифрован аппаратным хранилищем этого телефона, никогда не попадает в логи и не входит в экспорт души. Нет сети? Существо само вернётся к локальному разуму.</string>
+    <string name="mind_provider_fallback">твой провайдер</string>
+    <string name="mind_notice_label">Что случилось</string>
+    <string name="mind_notice_ok">Хорошо</string>
+    <string name="mind_notice_arrived">Разум здесь. Поздоровайся.</string>
+    <string name="mind_notice_deleted">Файла разума больше нет. Существо остаётся.</string>
+    <string name="mind_notice_paste_link">Сначала вставь прямую https-ссылку на файл модели.</string>
+    <string name="mind_notice_https_required">Облачные адреса должны начинаться с https://</string>
+    <string name="mind_notice_key_erased">Облачный ключ стёрт. Разум снова локальный.</string>
+    <string name="mind_notice_key_ok">Ключ работает.</string>
+    <string name="mind_notice_key_bad">Провайдер не принял этот ключ.</string>
+    <string name="mind_notice_key_unreachable">Не получилось связаться с провайдером.</string>
+    <string name="mind_notice_key_unconfigured">Сначала сохрани адрес и ключ.</string>
+    <string name="mind_failure_needs_wifi">Жду Wi-Fi — файл большой. Включи переключатель, чтобы использовать мобильные данные.</string>
+    <string name="mind_failure_not_https">Здесь работают только прямые ссылки https://</string>
+    <string name="mind_failure_http">Сервер отказал (%1$s). Официальным ссылкам Gemma нужно принятие лицензии — скачай файл в браузере и используй «Выбрать файл разума».</string>
+    <string name="mind_failure_http_no_detail">без подробностей</string>
+    <string name="mind_failure_interrupted">Передача оборвалась. Попробуй ещё раз — она продолжится с того же места.</string>
+    <string name="mind_failure_checksum">Файл не прошёл проверку целостности и был удалён. (получено %1$s…)</string>
+    <string name="mind_failure_not_model">Это не похоже на файл разума (.task / .litertlm, сотни МБ).</string>
+    <string name="mind_failure_no_space">Не хватает свободного места для файла разума.</string>
+
+    <!-- Trust screen -->
+    <string name="trust_title">Почему без интернета</string>
+    <string name="trust_hero_title">Твоё существо живёт здесь. Только здесь.</string>
+    <string name="trust_hero_body">Anima работает целиком на этом телефоне. Без аккаунта, без облака по умолчанию, без наблюдателей.</string>
+    <string name="trust_no_account">Без аккаунта. Здесь не на что регистрироваться.</string>
+    <string name="trust_no_servers">Без наших серверов. Разговоры до нас не доходят.</string>
+    <string name="trust_no_trackers">Без трекеров. Ни рекламы, ни аналитики — без шуток.</string>
+    <string name="trust_cant_read_label">Мы не можем читать твои разговоры</string>
+    <string name="trust_cant_read_body">Не потому что обещаем не читать — потому что они до нас не доходят. На нашей стороне просто нечего читать. Разум — это языковая модель на собственном чипе этого телефона; всё, что она узнаёт, живёт в зашифрованной базе, ключ которой никогда не покидает защищённое железо телефона.</string>
+    <string name="trust_prove_label">Проверь сам</string>
+    <string name="trust_prove_body">Включи авиарежим. Всё продолжает работать — существо чувствует смену связи как погоду, и больше ничего не происходит. Сеть не нужна ни одной функции.</string>
+    <string name="trust_network_label">Что ВСЁ-ТАКИ использует сеть — весь список</string>
+    <string name="trust_network_body">1. Доставка файла разума: Google Play приносит его вместе с приложением, или ты сам запускаешь загрузку на экране «Разум». Байты модели приходят; о тебе не уходит ничего.\n\n2. Облачный разум — только если ТЫ его включишь, со своим провайдером и своим ключом. %1$s\n\nСборочный тест падает, если любая другая часть приложения хотя бы упоминает сетевой API.</string>
+    <string name="trust_cloud_on_now">Сейчас он ВКЛЮЧЁН: сообщения и факты, нужные для ответа, уходят твоему провайдеру.</string>
+    <string name="trust_cloud_off_now">Сейчас он ВЫКЛЮЧЕН.</string>
+    <string name="trust_yourdata_label">Твои данные — тебе решать</string>
+    <string name="trust_yourdata_body">Забудь воспоминание — и оно помечается в душе как мёртвое (существо перестаёт им пользоваться). Экспортируй душу в один файл, который принадлежит тебе. Удали Anima — и всё уйдёт вместе с ней: другой копии нет нигде.</string>
+
+    <!-- Wardrobe (Forms) screen -->
+    <string name="wardrobe_title">Формы</string>
+    <string name="wardrobe_intro">Палитры открываются, пока вы живёте вместе — дни, воспоминания, отдых. Что открылось — открыто навсегда.</string>
+    <string name="wardrobe_worn_now">надета сейчас</string>
+    <string name="wardrobe_open_tap">открыта — нажми, чтобы надеть</string>
+    <string name="wardrobe_opens_at">откроется: %1$s</string>
+
+    <!-- Crash log screen -->
+    <string name="crashlog_title">Последний сбой</string>
+    <string name="crashlog_eyes_label">Только для твоих глаз</string>
+    <string name="crashlog_eyes_body">Если Anima когда-нибудь упадёт, подробности окажутся здесь — на этом телефоне и больше нигде. Скопируй их, если захочешь сообщить об ошибке.</string>
+    <string name="crashlog_none">Сбоев не записано. Пусть так и будет подольше.</string>
+    <string name="crashlog_copy">Копировать</string>
+    <string name="crashlog_clear">Очистить</string>
+</resources>

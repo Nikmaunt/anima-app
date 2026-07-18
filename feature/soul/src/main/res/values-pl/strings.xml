@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soul_back">Wstecz</string>
+    <string name="soul_title">Dusza</string>
+    <string name="soul_together_label">Razem</string>
+    <plurals name="soul_counter_days">
+        <item quantity="one">dzień</item>
+        <item quantity="few">dni</item>
+        <item quantity="many">dni</item>
+        <item quantity="other">dnia</item>
+    </plurals>
+    <plurals name="soul_counter_talks">
+        <item quantity="one">rozmowa</item>
+        <item quantity="few">rozmowy</item>
+        <item quantity="many">rozmów</item>
+        <item quantity="other">rozmowy</item>
+    </plurals>
+    <plurals name="soul_counter_memories">
+        <item quantity="one">wspomnienie</item>
+        <item quantity="few">wspomnienia</item>
+        <item quantity="many">wspomnień</item>
+        <item quantity="other">wspomnienia</item>
+    </plurals>
+    <plurals name="soul_counter_meals">
+        <item quantity="one">posiłek</item>
+        <item quantity="few">posiłki</item>
+        <item quantity="many">posiłków</item>
+        <item quantity="other">posiłku</item>
+    </plurals>
+    <string name="soul_export_button">Eksport duszy</string>
+    <string name="soul_story_button">Nasza historia…</string>
+    <string name="soul_postcard_button">Pocztówka</string>
+    <string name="soul_export_hint">Eksport w markdownie pozostaje czytelny dla każdego człowieka i każdej AI. Zapieczętowana kopia poniżej przenosi całą duszę między telefonami.</string>
+    <string name="soul_memories_label">Co pamięta</string>
+    <string name="soul_search_hint">Szukaj we wspomnieniach…</string>
+    <string name="soul_category_all">wszystko</string>
+    <string name="soul_category_identity">tożsamość</string>
+    <string name="soul_category_preference">upodobania</string>
+    <string name="soul_category_people">ludzie</string>
+    <string name="soul_category_work">praca</string>
+    <string name="soul_category_moment">chwile</string>
+    <string name="soul_category_other">inne</string>
+    <string name="soul_empty_field">„Moja pamięć to na razie otwarte pole. Opowiadaj mi różne rzeczy — i zaznacz, co mogę zachować.”</string>
+    <string name="soul_empty_no_match">„Nic w mojej pamięci do tego nie pasuje. Spróbujesz innego słowa?”</string>
+    <string name="soul_edit_button">Edytuj</string>
+    <string name="soul_forget_button">Zapomnij</string>
+
+    <string name="soul_backup_label">Zapieczętowana kopia — przenieś duszę</string>
+    <string name="soul_backup_hint">Cała dusza (wspomnienia z pełną historią, dziennik ciała, tożsamość) w jednym zaszyfrowanym pliku. To samo hasło otworzy go na nowym telefonie. Zgubisz hasło — stracisz kopię.</string>
+    <string name="soul_backup_passphrase_hint">Hasło (min. 8 znaków)…</string>
+    <string name="soul_backup_seal_button">Zapieczętuj i zapisz…</string>
+    <string name="soul_backup_open_button">Otwórz kopię…</string>
+    <string name="soul_ok">OK</string>
+
+    <string name="soul_import_label">Przynieś duszę z innej AI</string>
+    <string name="soul_import_steps">1. Skopiuj prompt-ekstraktor i zapytaj swojego drugiego asystenta.\n2. Wklej jego odpowiedź poniżej.\n3. Potwierdź każdy fakt — bez twojego „tak” nic się nie zapisze.</string>
+    <string name="soul_import_copy_button">Skopiuj prompt-ekstraktor</string>
+    <string name="soul_import_paste_hint">Wklej odpowiedź tutaj…</string>
+    <string name="soul_import_find_button">Znajdź fakty</string>
+    <string name="soul_import_skip_button">Pomiń</string>
+    <string name="soul_import_keep_button">Zachowaj</string>
+
+    <string name="soul_edit_title">Popraw wspomnienie</string>
+    <string name="soul_edit_hint">Stara wersja nie znika — zostaje pod spodem, tylko ustępuje miejsca nowej. Historia duszy pozostaje szczera.</string>
+    <string name="soul_edit_cancel">Anuluj</string>
+    <string name="soul_edit_save">Zapisz poprawkę</string>
+
+    <string name="soul_notice_passphrase_short">Użyj co najmniej %1$d znaków — ten plik chroni wszystko.</string>
+    <string name="soul_notice_sealed">Dusza zapieczętowana i zapisana. Pilnuj hasła — nie da się go odzyskać.</string>
+    <string name="soul_notice_export_failed">Eksport nie powiódł się: %1$s</string>
+    <plurals name="soul_notice_imported">
+        <item quantity="one">%1$s już tu mieszka: przybyło %2$d wspomnienie.</item>
+        <item quantity="few">%1$s już tu mieszka: przybyły %2$d wspomnienia.</item>
+        <item quantity="many">%1$s już tu mieszka: przybyło %2$d wspomnień.</item>
+        <item quantity="other">%1$s już tu mieszka: przybyło %2$d wspomnienia.</item>
+    </plurals>
+    <plurals name="soul_notice_skipped">
+        <item quantity="one">%1$d już tu było.</item>
+        <item quantity="few">%1$d już tu były.</item>
+        <item quantity="many">%1$d już tu było.</item>
+        <item quantity="other">%1$d już tu było.</item>
+    </plurals>
+    <string name="soul_notice_wrong_passphrase">Złe hasło albo uszkodzony plik. Nic się nie zmieniło.</string>
+    <string name="soul_notice_import_failed">Import nie powiódł się: %1$s</string>
+    <string name="soul_error_unknown">nieznany błąd</string>
+
+    <string name="soul_export_subject">Dusza: %1$s</string>
+    <string name="soul_export_chooser">Eksport duszy</string>
+    <string name="soul_postcard_chooser">Udostępnij pocztówkę</string>
+    <plurals name="soul_postcard_caption">
+        <item quantity="one">%1$d dzień razem — cały tutaj</item>
+        <item quantity="few">%1$d dni razem — wszystkie tutaj</item>
+        <item quantity="many">%1$d dni razem — wszystkie tutaj</item>
+        <item quantity="other">%1$d dnia razem — wszystkie tutaj</item>
+    </plurals>
+
+    <string name="story_back">Wstecz</string>
+    <string name="story_title">Nasza historia</string>
+    <string name="story_title_named">Ja i %1$s</string>
+    <string name="story_empty">„Pierwsza linijka naszej historii jeszcze nie została napisana. Ale będzie.”</string>
+</resources>

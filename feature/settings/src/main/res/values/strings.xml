@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings screen -->
+    <string name="settings_back">Back</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_save">Save</string>
+    <string name="settings_name_label">Name</string>
+    <string name="settings_body_label">Body</string>
+    <string name="settings_body_hint">The same soul can live in another body. Live previews — every cell is the real engine.</string>
+    <string name="settings_forms_button">Forms…</string>
+    <string name="settings_calm_motion_title">Calm motion</string>
+    <string name="settings_calm_motion_hint">Still pose, rare blinks. Follows the system reduce-animations setting automatically.</string>
+    <string name="settings_character_label">Character</string>
+    <string name="settings_character_hint">Two dials, both honest: they change how it talks AND how it moves (gaze darts, blink pace).</string>
+    <string name="settings_character_warmth">Gentle ↔ Snarky</string>
+    <string name="settings_character_chattiness">Quiet ↔ Chatty</string>
+    <string name="settings_character_reset">Back to its nature</string>
+    <string name="settings_senses_label">Senses</string>
+    <string name="settings_notification_sense">Notification sense…</string>
+    <string name="settings_mind_label">Mind</string>
+    <string name="settings_mind_open">Mind…</string>
+    <string name="settings_mind_desc_cloud">Messages go to your provider. Flip off to keep everything on this phone.</string>
+    <string name="settings_mind_desc_cloud_unconfigured">Cloud is on but not set up — the local mind keeps speaking.</string>
+    <string name="settings_mind_desc_local">Everything stays on this phone.</string>
+    <string name="settings_voice_label">Voice</string>
+    <string name="settings_voice_title">The creature speaks</string>
+    <string name="settings_voice_off">Off. When on, it uses only voices that work offline.</string>
+    <string name="settings_voice_checking">Listening for an offline voice…</string>
+    <string name="settings_voice_ready">Speaks with an offline voice — words never leave the phone.</string>
+    <string name="settings_voice_no_offline">No offline voice for your language is installed, so it stays quiet. Install one in system speech settings.</string>
+    <string name="settings_voice_no_engine">This phone has no speech engine. The creature can\'t speak here.</string>
+    <string name="settings_voice_open_settings">Open speech settings</string>
+    <string name="settings_privacy_label">Privacy, honestly</string>
+    <string name="settings_privacy_cloud_on">Right now the CLOUD mind is on: your messages, the creature\'s body report and the memory facts needed for an answer go to the provider you configured. Everything else — the soul database, the notification diary — stays on this phone, encrypted. Flip the mind switch above and Anima is fully offline again.</string>
+    <string name="settings_privacy_local">The network is used for exactly two things, both under your control: delivering the mind file (Google Play or a download you start) and the optional cloud mind — which is OFF. No accounts, no analytics, no crash reporting; a build-time test fails if any other part of the app touches the network. Memory lives in an encrypted database; its key never leaves this phone\'s secure hardware. Thinking happens on this device or not at all.</string>
+    <string name="settings_more_label">More</string>
+    <string name="settings_trust_open">Why no internet…</string>
+    <string name="settings_crashlog_open">Last crash (local only)…</string>
+    <string name="settings_soul_screenshots_title">Soul screen screenshots</string>
+    <string name="settings_soul_screenshots_hint">Off = the memories screen refuses screenshots and hides itself in the app switcher.</string>
+
+    <!-- Mind screen -->
+    <string name="mind_title">Mind</string>
+    <string name="mind_state_cloud">Mind: cloud</string>
+    <string name="mind_state_local">Mind: local</string>
+    <string name="mind_now_label">Right now</string>
+    <string name="mind_now_cloud">Thinking with YOUR cloud provider (%1$s). In this mode messages and the facts needed for an answer leave this phone.</string>
+    <string name="mind_now_nano">Thinking with this phone\'s built-in mind (Gemini Nano).</string>
+    <string name="mind_now_gemma_pack">Thinking with the bundled mind (Gemma, delivered with the app, fully on this phone).</string>
+    <string name="mind_now_gemma_file">Thinking with the downloaded mind (Gemma, fully on this phone).</string>
+    <string name="mind_now_none">The mind sleeps. This phone has no built-in mind for apps, and no mind file is installed yet. Everything else about the creature still works.</string>
+    <string name="mind_language_native">Speaks %1$s natively.</string>
+    <string name="mind_language_english_only">Answers in English — this mind doesn\'t speak %1$s.</string>
+    <string name="mind_nano_fetchable">Built-in mind: the system can fetch it from the home screen chat.</string>
+    <string name="mind_installed_label">Installed minds</string>
+    <string name="mind_installed_empty">No mind file installed. A local mind (hundreds of MB, once) lets the creature talk entirely on this phone. Bring a file below, or download one by direct link.</string>
+    <string name="mind_auto_button">Auto</string>
+    <string name="mind_auto_on">Picking by itself — your files first, then the pack.</string>
+    <string name="mind_auto_off">Your pick stays until you press Auto.</string>
+    <string name="mind_free_space">%1$.1f GB free on this phone</string>
+    <string name="mind_progress_import_label">Bringing the mind in…</string>
+    <string name="mind_progress_download_label">Downloading the mind…</string>
+    <string name="mind_progress_mb">%1$.0f / %2$.0f MB</string>
+    <string name="mind_keep_open">Keep this screen open — the creature carries no background services, so leaving pauses the transfer (it resumes later).</string>
+    <string name="mind_bring_label">Bring the file</string>
+    <string name="mind_bring_hint">Pick a downloaded .task or .litertlm file. It is copied into the creature\'s private storage and verified.</string>
+    <string name="mind_choose_file">Choose mind file…</string>
+    <string name="mind_direct_link_label">Or download by direct link</string>
+    <string name="mind_url_placeholder" translatable="false">https://… (.task / .litertlm)</string>
+    <string name="mind_sha_placeholder">SHA-256 (optional, verifies the file)</string>
+    <string name="mind_metered_title">Allow mobile data</string>
+    <string name="mind_metered_hint">Off = Wi-Fi only (it\'s ~530 MB)</string>
+    <string name="mind_download_button">Download (~530 MB, once)</string>
+    <string name="mind_pack_incoming_label">The mind is on its way</string>
+    <string name="mind_pack_progress">%1$.0f / %2$.0f MB — Google Play delivers it by itself; no need to wait here.</string>
+    <string name="mind_pack_packed_label">A mind is packed with the app</string>
+    <string name="mind_pack_packed_hint">Google Play carries a mind for this creature but hasn\'t delivered it yet. Ask, and it comes on its own.</string>
+    <string name="mind_pack_fetch">Let it come</string>
+    <string name="mind_pack_consent_label">The mind waits for permission</string>
+    <string name="mind_pack_consent_hint">Google Play holds the ~660 MB mind until you allow the download (it prefers Wi-Fi).</string>
+    <string name="mind_ram_label">A caution about this phone</string>
+    <string name="mind_ram_hint">The bundled mind is here, but this phone has little memory (under ~6 GB). Running Gemma may make everything slow. You can try anyway, or use the cloud mind below.</string>
+    <string name="mind_ram_try">Try anyway</string>
+    <string name="mind_model_active">Active</string>
+    <string name="mind_model_meta">%1$.0f MB · %2$s</string>
+    <string name="mind_model_from_pack">from pack</string>
+    <string name="mind_license_unknown">unknown license</string>
+    <string name="mind_model_delete">Delete</string>
+    <string name="mind_cloud_label">Cloud mind (optional)</string>
+    <string name="mind_cloud_intro">Off by default. If you turn it on, the creature thinks with an AI provider YOU choose, using YOUR key. In that mode every message you send — plus the creature\'s memory facts needed for the answer and its body report — leaves this phone and goes to %1$s. Nothing else does. The soul stays here.</string>
+    <string name="mind_cloud_unconfigured">Enabled but not configured — the local mind keeps speaking.</string>
+    <string name="mind_cloud_key_prefix">Keys usually start with %1$s…</string>
+    <string name="mind_cloud_free_tier">free tier</string>
+    <string name="mind_cloud_url_placeholder" translatable="false">https://api.your-provider.com/v1</string>
+    <string name="mind_cloud_model_placeholder">model name (e.g. gpt-4.1-mini)</string>
+    <string name="mind_cloud_key_placeholder">API key</string>
+    <string name="mind_cloud_key_placeholder_stored">API key (stored — paste to replace)</string>
+    <string name="mind_cloud_forget_key">Forget key</string>
+    <string name="mind_cloud_check_key">Check key</string>
+    <string name="mind_cloud_key_note">The key is encrypted with this phone\'s hardware keystore, never logged, and never part of the soul export. Offline? The creature falls back to its local mind by itself.</string>
+    <string name="mind_provider_fallback">your provider</string>
+    <string name="mind_notice_label">What happened</string>
+    <string name="mind_notice_ok">OK</string>
+    <string name="mind_notice_arrived">The mind is here. Say hello.</string>
+    <string name="mind_notice_deleted">The mind file is gone. The creature stays.</string>
+    <string name="mind_notice_paste_link">Paste a direct https link to the model file first.</string>
+    <string name="mind_notice_https_required">Cloud endpoints must start with https://</string>
+    <string name="mind_notice_key_erased">Cloud key erased. The mind is local again.</string>
+    <string name="mind_notice_key_ok">The key works.</string>
+    <string name="mind_notice_key_bad">The provider rejected this key.</string>
+    <string name="mind_notice_key_unreachable">Could not reach the provider.</string>
+    <string name="mind_notice_key_unconfigured">Save the endpoint and key first.</string>
+    <string name="mind_failure_needs_wifi">Waiting for Wi-Fi — it\'s a big file. Flip the switch to use mobile data.</string>
+    <string name="mind_failure_not_https">Only direct https:// links work here.</string>
+    <string name="mind_failure_http">The server refused (%1$s). Official Gemma links need a license acceptance — download in the browser and use \"Choose mind file\" instead.</string>
+    <string name="mind_failure_http_no_detail">no detail</string>
+    <string name="mind_failure_interrupted">The transfer broke off. Try again — it resumes where it stopped.</string>
+    <string name="mind_failure_checksum">The file failed its integrity check and was discarded. (got %1$s…)</string>
+    <string name="mind_failure_not_model">That doesn\'t look like a mind file (.task / .litertlm, hundreds of MB).</string>
+    <string name="mind_failure_no_space">Not enough free space for the mind file.</string>
+
+    <!-- Trust screen -->
+    <string name="trust_title">Why no internet</string>
+    <string name="trust_hero_title">Your creature lives here. Only here.</string>
+    <string name="trust_hero_body">Anima runs entirely on this phone. No account, no cloud by default, no one watching.</string>
+    <string name="trust_no_account">No account. There\'s nothing to sign up for.</string>
+    <string name="trust_no_servers">No servers of ours. Conversations never reach us.</string>
+    <string name="trust_no_trackers">No trackers. No ads, no analytics, no kidding.</string>
+    <string name="trust_cant_read_label">We can\'t read your conversations</string>
+    <string name="trust_cant_read_body">Not because we promise not to — because they never reach us. There is nothing on our side to read. The mind is a language model running on this phone\'s own chip; everything it learns lives in an encrypted database whose key never leaves this phone\'s secure hardware.</string>
+    <string name="trust_prove_label">Prove it</string>
+    <string name="trust_prove_body">Turn on airplane mode. Everything keeps working — the creature senses the connection change like weather, and nothing else happens. No feature needs the network.</string>
+    <string name="trust_network_label">What DOES use the network — the whole list</string>
+    <string name="trust_network_body">1. Delivering the mind file: Google Play brings it with the app, or you start a download yourself on the Mind screen. Model bytes come in; nothing about you goes out.\n\n2. The cloud mind — only if YOU turn it on, with your own provider and key. %1$s\n\nA build-time test fails if any other part of the app so much as mentions a network API.</string>
+    <string name="trust_cloud_on_now">It is ON right now: messages and the facts needed for an answer go to your provider.</string>
+    <string name="trust_cloud_off_now">It is OFF right now.</string>
+    <string name="trust_yourdata_label">Your data, your call</string>
+    <string name="trust_yourdata_body">Forget a memory and it\'s marked dead in the soul (the creature stops using it). Export the soul to one file you own. Delete Anima and everything goes with it — there is no copy anywhere else.</string>
+
+    <!-- Wardrobe (Forms) screen -->
+    <string name="wardrobe_title">Forms</string>
+    <string name="wardrobe_intro">Palettes open as you live together — days, memories, rests. Whatever opens stays open, forever.</string>
+    <string name="wardrobe_worn_now">worn now</string>
+    <string name="wardrobe_open_tap">open — tap to wear</string>
+    <string name="wardrobe_opens_at">opens at %1$s</string>
+
+    <!-- Crash log screen -->
+    <string name="crashlog_title">Last crash</string>
+    <string name="crashlog_eyes_label">For your eyes only</string>
+    <string name="crashlog_eyes_body">If Anima ever falls over, the details land here — on this phone, nowhere else. Copy them if you want to report a bug.</string>
+    <string name="crashlog_none">No crashes recorded. Long may it last.</string>
+    <string name="crashlog_copy">Copy</string>
+    <string name="crashlog_clear">Clear</string>
+</resources>

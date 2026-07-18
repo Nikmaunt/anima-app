@@ -28,10 +28,28 @@ data class NotificationsUiState(
     val packageInput: String = "",
     val packageInputValid: Boolean = false,
     val todayPerApp: Map<String, Int> = emptyMap(),
-    val digest: String? = null,
+    val digest: DigestResult? = null,
     val digestBusy: Boolean = false,
     val quietHours: Boolean = false,
 )
+
+/**
+ * Closed set of digest outcomes; the UI maps the canned cases onto localized
+ * resources, while free text from the local mind rides in [Composed] as-is.
+ */
+sealed interface DigestResult {
+    data object QuietToday : DigestResult
+
+    data object MindAsleep : DigestResult
+
+    data class BusyFallback(
+        val count: Int,
+    ) : DigestResult
+
+    data class Composed(
+        val text: String,
+    ) : DigestResult
+}
 
 @HiltViewModel
 class NotificationsViewModel
@@ -107,28 +125,23 @@ class NotificationsViewModel
                 val digest =
                     try {
                         if (mind.status() != MindStatus.READY) {
-                            null
+                            DigestResult.MindAsleep
                         } else {
                             val today = events.eventsToday(startOfToday())
                             if (today.isEmpty()) {
-                                "Quiet today — nothing came through."
+                                DigestResult.QuietToday
                             } else {
                                 summarize(today.take(MAX_DIGEST_EVENTS))
                             }
                         }
                     } catch (t: Throwable) {
-                        null
+                        DigestResult.MindAsleep
                     }
-                state.value =
-                    state.value.copy(
-                        digestBusy = false,
-                        digest =
-                            digest ?: "The mind sleeps on this phone, so no digest — but the counters below are live.",
-                    )
+                state.value = state.value.copy(digestBusy = false, digest = digest)
             }
         }
 
-        private suspend fun summarize(events: List<app.anima.core.model.NotifEvent>): String {
+        private suspend fun summarize(events: List<app.anima.core.model.NotifEvent>): DigestResult {
             val lines = events.joinToString("\n") { "- [${it.packageName}] ${it.title}" }
             val prompt =
                 app.anima.core.model.MindPrompt(
@@ -146,7 +159,7 @@ class NotificationsViewModel
                     is MindEvent.Chunk -> Unit
                 }
             }
-            return result.ifBlank { "Today was busy — ${events.size} things buzzed through me." }
+            return if (result.isBlank()) DigestResult.BusyFallback(events.size) else DigestResult.Composed(result)
         }
 
         fun openAccessSettings(): android.content.Intent =

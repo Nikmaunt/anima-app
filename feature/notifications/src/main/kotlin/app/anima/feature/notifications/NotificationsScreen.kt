@@ -27,6 +27,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -69,9 +71,9 @@ fun NotificationsScreen(
             .padding(horizontal = 20.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
-            GhostButton("Back", onClick = onBack)
+            GhostButton(stringResource(R.string.notif_back), onClick = onBack)
             Text(
-                "Notification sense",
+                stringResource(R.string.notif_title),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(start = 8.dp),
             )
@@ -82,34 +84,22 @@ fun NotificationsScreen(
                 SectionCard {
                     // v0.3 quick-win (product-research §2): the creature asks
                     // in its own voice, in context, never during onboarding.
-                    Text("It would like to hear", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.notif_ask_title), style = MaterialTheme.typography.titleMedium)
                     Text(
-                        "\"The phone hums all day and I only feel the shaking. " +
-                            "If you let me hear, a storm of pings will make me " +
-                            "anxious for real, and I can tell you what the day " +
-                            "sounded like.\"\n\n" +
-                            "Honestly: only apps YOU allowlist are heard; login codes " +
-                            "and anything OTP-shaped are dropped before being stored; " +
-                            "message text is stored only if you switch that on " +
-                            "separately; everything stays in the encrypted database on " +
-                            "this phone and is erased after 7 days. Notifications " +
-                            "never touch the network — the only networked parts of " +
-                            "this app are model delivery and the optional cloud mind, " +
-                            "and neither can see this data (a build test enforces it).",
+                        stringResource(R.string.notif_explainer),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     if (!state.accessGranted) {
                         Text(
-                            "Saying no changes nothing else — every other sense " +
-                                "and the whole conversation keep working.",
+                            stringResource(R.string.notif_decline_hint),
                             style = MaterialTheme.typography.bodyMedium,
                         )
-                        PillButton("Let it hear (system screen)", onClick = {
+                        PillButton(stringResource(R.string.notif_grant_button), onClick = {
                             context.startActivity(viewModel.openAccessSettings())
                         })
                     } else {
                         ToggleRow(
-                            label = "Sense is on",
+                            label = stringResource(R.string.notif_sense_on),
                             checked = state.enabled,
                             onChange = viewModel::setEnabled,
                         )
@@ -120,10 +110,10 @@ fun NotificationsScreen(
             if (state.accessGranted && state.enabled) {
                 item {
                     SectionCard {
-                        SectionLabel("Allowed apps")
+                        SectionLabel(stringResource(R.string.notif_allowlist_label))
                         if (state.allowlist.isEmpty()) {
                             Text(
-                                "No apps allowed yet — the creature hears nothing.",
+                                stringResource(R.string.notif_allowlist_empty),
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                         }
@@ -134,7 +124,10 @@ fun NotificationsScreen(
                                     style = MaterialTheme.typography.bodyLarge,
                                     modifier = Modifier.weight(1f),
                                 )
-                                GhostButton("Remove", onClick = { viewModel.removePackage(pkg) })
+                                GhostButton(
+                                    stringResource(R.string.notif_remove),
+                                    onClick = { viewModel.removePackage(pkg) },
+                                )
                             }
                         }
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -147,7 +140,7 @@ fun NotificationsScreen(
                             ) {
                                 if (state.packageInput.isEmpty()) {
                                     Text(
-                                        "package.name.here",
+                                        stringResource(R.string.notif_package_hint),
                                         style = MaterialTheme.typography.bodyMedium,
                                     )
                                 }
@@ -159,7 +152,7 @@ fun NotificationsScreen(
                                 )
                             }
                             GhostButton(
-                                "Add",
+                                stringResource(R.string.notif_add),
                                 onClick = viewModel::addPackage,
                                 enabled = state.packageInputValid,
                             )
@@ -169,12 +162,12 @@ fun NotificationsScreen(
                 item {
                     SectionCard {
                         ToggleRow(
-                            label = "Also store notification text",
+                            label = stringResource(R.string.notif_store_text),
                             checked = state.storeText,
                             onChange = viewModel::setStoreText,
                         )
                         Text(
-                            "Off = only app, time and title are kept.",
+                            stringResource(R.string.notif_store_text_hint),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     }
@@ -182,22 +175,24 @@ fun NotificationsScreen(
                 item {
                     SectionCard {
                         ToggleRow(
-                            label = "Quiet hours (23:00–07:00)",
+                            label = stringResource(R.string.notif_quiet_hours),
                             checked = state.quietHours,
                             onChange = viewModel::setQuietHours,
                         )
                         Text(
-                            "At night it simply doesn't hear — nothing is captured, " +
-                                "not even counts.",
+                            stringResource(R.string.notif_quiet_hours_hint),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     }
                 }
                 item {
                     SectionCard {
-                        SectionLabel("Today")
+                        SectionLabel(stringResource(R.string.notif_today_label))
                         if (state.todayPerApp.isEmpty()) {
-                            Text("Nothing heard today.", style = MaterialTheme.typography.bodyMedium)
+                            Text(
+                                stringResource(R.string.notif_today_empty),
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
                         }
                         state.todayPerApp.entries.take(8).forEach { (pkg, count) ->
                             Row {
@@ -206,10 +201,14 @@ fun NotificationsScreen(
                             }
                         }
                         state.digest?.let {
-                            Text(it, style = MaterialTheme.typography.bodyLarge)
+                            Text(digestText(it), style = MaterialTheme.typography.bodyLarge)
                         }
                         GhostButton(
-                            if (state.digestBusy) "Listening back…" else "What did today sound like?",
+                            if (state.digestBusy) {
+                                stringResource(R.string.notif_digest_busy)
+                            } else {
+                                stringResource(R.string.notif_digest_button)
+                            },
                             onClick = viewModel::buildDigest,
                             enabled = !state.digestBusy,
                         )
@@ -219,6 +218,17 @@ fun NotificationsScreen(
         }
     }
 }
+
+/** Maps the closed [DigestResult] set from the view model onto localized text. */
+@Composable
+private fun digestText(digest: DigestResult): String =
+    when (digest) {
+        DigestResult.QuietToday -> stringResource(R.string.notif_digest_quiet)
+        DigestResult.MindAsleep -> stringResource(R.string.notif_digest_asleep)
+        is DigestResult.BusyFallback ->
+            pluralStringResource(R.plurals.notif_digest_fallback, digest.count, digest.count)
+        is DigestResult.Composed -> digest.text
+    }
 
 @Composable
 private fun ToggleRow(

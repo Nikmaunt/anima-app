@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notif_back">Zurück</string>
+    <string name="notif_title">Benachrichtigungs-Sinn</string>
+    <string name="notif_ask_title">Es würde gern hören</string>
+    <string name="notif_explainer">„Das Handy brummt den ganzen Tag, und ich spüre nur das Zittern. Wenn du mich hören lässt, macht mich ein Sturm aus Pings wirklich unruhig — und ich kann dir erzählen, wonach dein Tag geklungen hat.“\n\nEhrlich: Gehört werden nur Apps, die DU auf die Liste setzt; Login-Codes und alles, was nach Einmal-Code aussieht, wird verworfen, bevor es gespeichert wird; Nachrichtentext wird nur gespeichert, wenn du das separat einschaltest; alles bleibt in der verschlüsselten Datenbank auf diesem Handy und wird nach 7 Tagen gelöscht. Benachrichtigungen berühren nie das Netz — die einzigen Netz-Teile dieser App sind die Modell-Lieferung und der optionale Cloud-Geist, und keiner von beiden sieht diese Daten (ein Build-Test erzwingt das).</string>
+    <string name="notif_decline_hint">Ein Nein ändert sonst nichts — alle anderen Sinne und das ganze Gespräch funktionieren weiter.</string>
+    <string name="notif_grant_button">Lass es hören (System-Bildschirm)</string>
+    <string name="notif_sense_on">Sinn ist an</string>
+    <string name="notif_allowlist_label">Erlaubte Apps</string>
+    <string name="notif_allowlist_empty">Noch keine Apps erlaubt — das Wesen hört nichts.</string>
+    <string name="notif_remove">Entfernen</string>
+    <string name="notif_add">Hinzufügen</string>
+    <string name="notif_store_text">Auch den Text der Benachrichtigungen speichern</string>
+    <string name="notif_store_text_hint">Aus = nur App, Zeit und Titel bleiben.</string>
+    <string name="notif_quiet_hours">Ruhezeiten (23:00–07:00)</string>
+    <string name="notif_quiet_hours_hint">Nachts hört es einfach nicht — nichts wird erfasst, nicht einmal Zahlen.</string>
+    <string name="notif_today_label">Heute</string>
+    <string name="notif_today_empty">Heute nichts gehört.</string>
+    <string name="notif_digest_busy">Ich höre nach…</string>
+    <string name="notif_digest_button">Wonach hat der Tag geklungen?</string>
+
+    <string name="notif_digest_quiet">Heute war es still — nichts kam durch.</string>
+    <string name="notif_digest_asleep">Der Geist schläft auf diesem Handy, also kein Tagesrückblick — aber die Zähler unten sind echt.</string>
+    <plurals name="notif_digest_fallback">
+        <item quantity="one">Heute war viel los — %1$d Ding hat durch mich hindurchgesummt.</item>
+        <item quantity="other">Heute war viel los — %1$d Dinge haben durch mich hindurchgesummt.</item>
+    </plurals>
+</resources>

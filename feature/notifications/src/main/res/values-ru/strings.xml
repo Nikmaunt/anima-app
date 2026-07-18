@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notif_back">Назад</string>
+    <string name="notif_title">Чувство уведомлений</string>
+    <string name="notif_ask_title">Оно хочет слышать</string>
+    <string name="notif_explainer">«Телефон гудит весь день, а я чувствую только дрожь. Если разрешишь мне слышать, шторм пингов будет тревожить меня по-настоящему, а я смогу рассказать, как звучал твой день.»\n\nЧестно: слышны только приложения, которые ТЫ внёс в список; коды входа и всё похожее на одноразовые пароли отбрасываются ещё до сохранения; текст сообщений хранится, только если ты отдельно это включишь; всё лежит в зашифрованной базе на этом телефоне и стирается через 7 дней. Уведомления никогда не касаются сети — сетевые части приложения только доставка модели и необязательный облачный разум, и ни один из них не видит эти данные (это закреплено тестом сборки).</string>
+    <string name="notif_decline_hint">Сказать «нет» ничего не сломает — все остальные чувства и весь разговор продолжат работать.</string>
+    <string name="notif_grant_button">Разрешить слышать (экран системы)</string>
+    <string name="notif_sense_on">Чувство включено</string>
+    <string name="notif_allowlist_label">Разрешённые приложения</string>
+    <string name="notif_allowlist_empty">Пока ни одного приложения — существо ничего не слышит.</string>
+    <string name="notif_remove">Убрать</string>
+    <string name="notif_add">Добавить</string>
+    <string name="notif_store_text">Хранить и текст уведомлений</string>
+    <string name="notif_store_text_hint">Выкл. = хранятся только приложение, время и заголовок.</string>
+    <string name="notif_quiet_hours">Тихие часы (23:00–07:00)</string>
+    <string name="notif_quiet_hours_hint">Ночью оно просто не слышит — ничего не записывается, даже счётчики.</string>
+    <string name="notif_today_label">Сегодня</string>
+    <string name="notif_today_empty">Сегодня ничего не слышно.</string>
+    <string name="notif_digest_busy">Переслушиваю…</string>
+    <string name="notif_digest_button">Как звучал сегодняшний день?</string>
+
+    <string name="notif_digest_quiet">Сегодня тихо — ничего не долетело.</string>
+    <string name="notif_digest_asleep">Разум на этом телефоне спит, так что пересказа нет — но счётчики ниже живые.</string>
+    <plurals name="notif_digest_fallback">
+        <item quantity="one">Сегодня было шумно — сквозь меня прожужжала %1$d весточка.</item>
+        <item quantity="few">Сегодня было шумно — сквозь меня прожужжали %1$d весточки.</item>
+        <item quantity="many">Сегодня было шумно — сквозь меня прожужжало %1$d весточек.</item>
+        <item quantity="other">Сегодня было шумно — сквозь меня прожужжало %1$d весточки.</item>
+    </plurals>
+</resources>

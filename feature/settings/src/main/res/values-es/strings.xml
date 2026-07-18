@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings screen -->
+    <string name="settings_back">Atrás</string>
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_save">Guardar</string>
+    <string name="settings_name_label">Nombre</string>
+    <string name="settings_body_label">Cuerpo</string>
+    <string name="settings_body_hint">La misma alma puede vivir en otro cuerpo. Las vistas previas están vivas: cada celda es el motor real.</string>
+    <string name="settings_forms_button">Formas…</string>
+    <string name="settings_calm_motion_title">Movimiento tranquilo</string>
+    <string name="settings_calm_motion_hint">Pose quieta, parpadeos escasos. Sigue automáticamente el ajuste del sistema de reducir animaciones.</string>
+    <string name="settings_character_label">Carácter</string>
+    <string name="settings_character_hint">Dos diales, ambos honestos: cambian cómo habla Y cómo se mueve (miradas rápidas, ritmo de parpadeo).</string>
+    <string name="settings_character_warmth">Tierna ↔ Pícara</string>
+    <string name="settings_character_chattiness">Callada ↔ Parlanchina</string>
+    <string name="settings_character_reset">Volver a su naturaleza</string>
+    <string name="settings_senses_label">Sentidos</string>
+    <string name="settings_notification_sense">Sentido de notificaciones…</string>
+    <string name="settings_mind_label">Mente</string>
+    <string name="settings_mind_open">Mente…</string>
+    <string name="settings_mind_desc_cloud">Los mensajes van a tu proveedor. Apágalo y todo se queda en este teléfono.</string>
+    <string name="settings_mind_desc_cloud_unconfigured">La nube está activada pero sin configurar: sigue hablando la mente local.</string>
+    <string name="settings_mind_desc_local">Todo se queda en este teléfono.</string>
+    <string name="settings_voice_label">Voz</string>
+    <string name="settings_voice_title">La criatura habla</string>
+    <string name="settings_voice_off">Apagado. Al activarlo, solo usa voces que funcionan sin conexión.</string>
+    <string name="settings_voice_checking">Buscando una voz sin conexión…</string>
+    <string name="settings_voice_ready">Habla con una voz sin conexión: las palabras nunca salen del teléfono.</string>
+    <string name="settings_voice_no_offline">No hay ninguna voz sin conexión instalada para tu idioma, así que se queda callada. Instala una en los ajustes de voz del sistema.</string>
+    <string name="settings_voice_no_engine">Este teléfono no tiene motor de voz. La criatura no puede hablar aquí.</string>
+    <string name="settings_voice_open_settings">Abrir ajustes de voz</string>
+    <string name="settings_privacy_label">Privacidad, con honestidad</string>
+    <string name="settings_privacy_cloud_on">Ahora mismo la mente en la NUBE está activada: tus mensajes, el informe del cuerpo de la criatura y los datos de memoria necesarios para una respuesta van al proveedor que configuraste. Todo lo demás —la base de datos del alma, el diario de notificaciones— se queda en este teléfono, cifrado. Apaga el interruptor de la mente arriba y Anima vuelve a estar totalmente sin conexión.</string>
+    <string name="settings_privacy_local">La red se usa exactamente para dos cosas, ambas bajo tu control: entregar el archivo de mente (Google Play o una descarga que tú inicias) y la mente en la nube opcional, que está APAGADA. Sin cuentas, sin analítica, sin informes de fallos; una prueba en tiempo de compilación falla si cualquier otra parte de la app toca la red. La memoria vive en una base de datos cifrada; su clave nunca sale del hardware seguro de este teléfono. Pensar ocurre en este dispositivo o no ocurre.</string>
+    <string name="settings_more_label">Más</string>
+    <string name="settings_trust_open">Por qué sin internet…</string>
+    <string name="settings_crashlog_open">Último fallo (solo local)…</string>
+    <string name="settings_soul_screenshots_title">Capturas de la pantalla del alma</string>
+    <string name="settings_soul_screenshots_hint">Apagado = la pantalla de recuerdos rechaza capturas y se esconde en el selector de apps.</string>
+
+    <!-- Mind screen -->
+    <string name="mind_title">Mente</string>
+    <string name="mind_state_cloud">Mente: nube</string>
+    <string name="mind_state_local">Mente: local</string>
+    <string name="mind_now_label">Ahora mismo</string>
+    <string name="mind_now_cloud">Piensa con TU proveedor de nube (%1$s). En este modo, los mensajes y los datos necesarios para una respuesta salen de este teléfono.</string>
+    <string name="mind_now_nano">Piensa con la mente integrada de este teléfono (Gemini Nano).</string>
+    <string name="mind_now_gemma_pack">Piensa con la mente incluida (Gemma, entregada con la app, totalmente en este teléfono).</string>
+    <string name="mind_now_gemma_file">Piensa con la mente descargada (Gemma, totalmente en este teléfono).</string>
+    <string name="mind_now_none">La mente duerme. Este teléfono no tiene mente integrada para apps y aún no hay archivo de mente instalado. Todo lo demás de la criatura sigue funcionando.</string>
+    <string name="mind_language_native">%1$s es su lengua materna.</string>
+    <string name="mind_language_english_only">Responde en inglés: esta mente no habla %1$s.</string>
+    <string name="mind_nano_fetchable">Mente integrada: el sistema puede traerla desde el chat de la pantalla de inicio.</string>
+    <string name="mind_installed_label">Mentes instaladas</string>
+    <string name="mind_installed_empty">No hay archivo de mente instalado. Una mente local (cientos de MB, una sola vez) deja que la criatura hable enteramente en este teléfono. Trae un archivo abajo o descarga uno por enlace directo.</string>
+    <string name="mind_auto_button">Auto</string>
+    <string name="mind_auto_on">Elige por sí sola: primero tus archivos, luego el paquete.</string>
+    <string name="mind_auto_off">Tu elección se mantiene hasta que pulses Auto.</string>
+    <string name="mind_free_space">%1$.1f GB libres en este teléfono</string>
+    <string name="mind_progress_import_label">Trayendo la mente…</string>
+    <string name="mind_progress_download_label">Descargando la mente…</string>
+    <string name="mind_progress_mb">%1$.0f / %2$.0f MB</string>
+    <string name="mind_keep_open">Mantén esta pantalla abierta: la criatura no lleva servicios en segundo plano, así que salir pausa la transferencia (se reanuda después).</string>
+    <string name="mind_bring_label">Trae el archivo</string>
+    <string name="mind_bring_hint">Elige un archivo .task o .litertlm descargado. Se copia a la madriguera privada de la criatura y se verifica.</string>
+    <string name="mind_choose_file">Elegir archivo de mente…</string>
+    <string name="mind_direct_link_label">O descarga por enlace directo</string>
+    <string name="mind_sha_placeholder">SHA-256 (opcional, verifica el archivo)</string>
+    <string name="mind_metered_title">Permitir datos móviles</string>
+    <string name="mind_metered_hint">Apagado = solo Wi-Fi (son ~530 MB)</string>
+    <string name="mind_download_button">Descargar (~530 MB, una sola vez)</string>
+    <string name="mind_pack_incoming_label">La mente viene de camino</string>
+    <string name="mind_pack_progress">%1$.0f / %2$.0f MB — Google Play la entrega por sí solo; no hace falta esperar aquí.</string>
+    <string name="mind_pack_packed_label">Una mente viene empaquetada con la app</string>
+    <string name="mind_pack_packed_hint">Google Play trae una mente para esta criatura, pero aún no la ha entregado. Pídela y llegará sola.</string>
+    <string name="mind_pack_fetch">Que venga</string>
+    <string name="mind_pack_consent_label">La mente espera permiso</string>
+    <string name="mind_pack_consent_hint">Google Play retiene los ~660 MB de la mente hasta que permitas la descarga (prefiere Wi-Fi).</string>
+    <string name="mind_ram_label">Una advertencia sobre este teléfono</string>
+    <string name="mind_ram_hint">La mente incluida ya está aquí, pero este teléfono tiene poca memoria (menos de ~6 GB). Ejecutar Gemma puede ralentizarlo todo. Puedes intentarlo igualmente o usar la mente en la nube de abajo.</string>
+    <string name="mind_ram_try">Intentarlo igualmente</string>
+    <string name="mind_model_active">Activa</string>
+    <string name="mind_model_meta">%1$.0f MB · %2$s</string>
+    <string name="mind_model_from_pack">del paquete</string>
+    <string name="mind_license_unknown">licencia desconocida</string>
+    <string name="mind_model_delete">Eliminar</string>
+    <string name="mind_cloud_label">Mente en la nube (opcional)</string>
+    <string name="mind_cloud_intro">Apagada por defecto. Si la activas, la criatura piensa con un proveedor de IA que TÚ eliges, con TU clave. En ese modo, cada mensaje que envías —más los datos de memoria de la criatura necesarios para la respuesta y su informe del cuerpo— sale de este teléfono y va a %1$s. Nada más. El alma se queda aquí.</string>
+    <string name="mind_cloud_unconfigured">Activada pero sin configurar: sigue hablando la mente local.</string>
+    <string name="mind_cloud_key_prefix">Las claves suelen empezar por %1$s…</string>
+    <string name="mind_cloud_free_tier">plan gratuito</string>
+    <string name="mind_cloud_model_placeholder">nombre del modelo (p. ej. gpt-4.1-mini)</string>
+    <string name="mind_cloud_key_placeholder">Clave API</string>
+    <string name="mind_cloud_key_placeholder_stored">Clave API (guardada — pega otra para reemplazarla)</string>
+    <string name="mind_cloud_forget_key">Olvidar clave</string>
+    <string name="mind_cloud_check_key">Comprobar clave</string>
+    <string name="mind_cloud_key_note">La clave se cifra con el almacén de claves por hardware de este teléfono, nunca se registra y nunca forma parte de la exportación del alma. ¿Sin conexión? La criatura vuelve sola a su mente local.</string>
+    <string name="mind_provider_fallback">tu proveedor</string>
+    <string name="mind_notice_label">Qué ha pasado</string>
+    <string name="mind_notice_ok">Vale</string>
+    <string name="mind_notice_arrived">La mente ya está aquí. Salúdala.</string>
+    <string name="mind_notice_deleted">El archivo de mente ya no está. La criatura se queda.</string>
+    <string name="mind_notice_paste_link">Primero pega un enlace https directo al archivo del modelo.</string>
+    <string name="mind_notice_https_required">Los endpoints de nube deben empezar por https://</string>
+    <string name="mind_notice_key_erased">Clave de nube borrada. La mente vuelve a ser local.</string>
+    <string name="mind_notice_key_ok">La clave funciona.</string>
+    <string name="mind_notice_key_bad">El proveedor rechazó esta clave.</string>
+    <string name="mind_notice_key_unreachable">No se pudo contactar con el proveedor.</string>
+    <string name="mind_notice_key_unconfigured">Guarda primero el endpoint y la clave.</string>
+    <string name="mind_failure_needs_wifi">Esperando Wi-Fi: es un archivo grande. Activa el interruptor para usar datos móviles.</string>
+    <string name="mind_failure_not_https">Aquí solo funcionan enlaces https:// directos.</string>
+    <string name="mind_failure_http">El servidor lo rechazó (%1$s). Los enlaces oficiales de Gemma requieren aceptar la licencia: descarga el archivo en el navegador y usa «Elegir archivo de mente».</string>
+    <string name="mind_failure_http_no_detail">sin detalles</string>
+    <string name="mind_failure_interrupted">La transferencia se cortó. Inténtalo otra vez: se reanuda donde se detuvo.</string>
+    <string name="mind_failure_checksum">El archivo no pasó la comprobación de integridad y fue descartado. (recibido %1$s…)</string>
+    <string name="mind_failure_not_model">Eso no parece un archivo de mente (.task / .litertlm, cientos de MB).</string>
+    <string name="mind_failure_no_space">No hay espacio libre suficiente para el archivo de mente.</string>
+
+    <!-- Trust screen -->
+    <string name="trust_title">Por qué sin internet</string>
+    <string name="trust_hero_title">Tu criatura vive aquí. Solo aquí.</string>
+    <string name="trust_hero_body">Anima funciona enteramente en este teléfono. Sin cuenta, sin nube por defecto, sin nadie mirando.</string>
+    <string name="trust_no_account">Sin cuenta. No hay nada en que registrarse.</string>
+    <string name="trust_no_servers">Sin servidores nuestros. Las conversaciones nunca nos llegan.</string>
+    <string name="trust_no_trackers">Sin rastreadores. Sin anuncios, sin analítica, en serio.</string>
+    <string name="trust_cant_read_label">No podemos leer tus conversaciones</string>
+    <string name="trust_cant_read_body">No porque prometamos no hacerlo, sino porque nunca nos llegan. En nuestro lado no hay nada que leer. La mente es un modelo de lenguaje que corre en el propio chip de este teléfono; todo lo que aprende vive en una base de datos cifrada cuya clave nunca sale del hardware seguro del teléfono.</string>
+    <string name="trust_prove_label">Compruébalo</string>
+    <string name="trust_prove_body">Activa el modo avión. Todo sigue funcionando: la criatura siente el cambio de conexión como el clima, y no pasa nada más. Ninguna función necesita la red.</string>
+    <string name="trust_network_label">Qué SÍ usa la red: la lista completa</string>
+    <string name="trust_network_body">1. Entregar el archivo de mente: Google Play lo trae con la app, o tú mismo inicias una descarga en la pantalla Mente. Entran bytes del modelo; nada sobre ti sale.\n\n2. La mente en la nube — solo si TÚ la activas, con tu propio proveedor y tu clave. %1$s\n\nUna prueba en tiempo de compilación falla si cualquier otra parte de la app siquiera menciona una API de red.</string>
+    <string name="trust_cloud_on_now">Ahora mismo está ENCENDIDA: los mensajes y los datos necesarios para una respuesta van a tu proveedor.</string>
+    <string name="trust_cloud_off_now">Ahora mismo está APAGADA.</string>
+    <string name="trust_yourdata_label">Tus datos, tú decides</string>
+    <string name="trust_yourdata_body">Olvida un recuerdo y queda marcado como muerto en el alma (la criatura deja de usarlo). Exporta el alma a un único archivo que es tuyo. Borra Anima y todo se va con ella: no hay copia en ningún otro sitio.</string>
+
+    <!-- Wardrobe (Forms) screen -->
+    <string name="wardrobe_title">Formas</string>
+    <string name="wardrobe_intro">Las paletas se abren mientras vivís juntos: días, recuerdos, descansos. Lo que se abre, queda abierto para siempre.</string>
+    <string name="wardrobe_worn_now">puesta ahora</string>
+    <string name="wardrobe_open_tap">abierta — toca para ponerla</string>
+    <string name="wardrobe_opens_at">se abre con: %1$s</string>
+
+    <!-- Crash log screen -->
+    <string name="crashlog_title">Último fallo</string>
+    <string name="crashlog_eyes_label">Solo para tus ojos</string>
+    <string name="crashlog_eyes_body">Si Anima alguna vez se cae, los detalles aterrizan aquí: en este teléfono y en ningún otro sitio. Cópialos si quieres informar de un error.</string>
+    <string name="crashlog_none">Ningún fallo registrado. Que dure mucho.</string>
+    <string name="crashlog_copy">Copiar</string>
+    <string name="crashlog_clear">Borrar</string>
+</resources>

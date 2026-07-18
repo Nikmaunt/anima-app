@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.anima.core.ui.components.GhostButton
 import app.anima.core.ui.components.SectionCard
@@ -56,18 +57,17 @@ fun CrashLogScreen(onBack: () -> Unit) {
             .verticalScroll(rememberScrollState()),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
-            GhostButton("Back", onClick = onBack)
+            GhostButton(stringResource(R.string.settings_back), onClick = onBack)
             Text(
-                "Last crash",
+                stringResource(R.string.crashlog_title),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(start = 8.dp),
             )
         }
         SectionCard {
-            SectionLabel("For your eyes only")
+            SectionLabel(stringResource(R.string.crashlog_eyes_label))
             Text(
-                "If Anima ever falls over, the details land here — on this " +
-                    "phone, nowhere else. Copy them if you want to report a bug.",
+                stringResource(R.string.crashlog_eyes_body),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -75,12 +75,12 @@ fun CrashLogScreen(onBack: () -> Unit) {
         SectionCard {
             val crash = text.value
             if (crash == null) {
-                Text("No crashes recorded. Long may it last.", style = MaterialTheme.typography.bodyLarge)
+                Text(stringResource(R.string.crashlog_none), style = MaterialTheme.typography.bodyLarge)
             } else {
                 Row {
-                    GhostButton("Copy", onClick = { copy(context, crash) })
+                    GhostButton(stringResource(R.string.crashlog_copy), onClick = { copy(context, crash) })
                     Spacer(Modifier.height(0.dp))
-                    GhostButton("Clear", onClick = {
+                    GhostButton(stringResource(R.string.crashlog_clear), onClick = {
                         CrashLog.file(context).delete()
                         text.value = null
                     })

@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -204,9 +205,9 @@ fun SettingsScreen(
             .verticalScroll(rememberScrollState()),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
-            GhostButton("Back", onClick = onBack)
+            GhostButton(stringResource(R.string.settings_back), onClick = onBack)
             Text(
-                "Settings",
+                stringResource(R.string.settings_title),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(start = 8.dp),
             )
@@ -214,7 +215,7 @@ fun SettingsScreen(
 
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             SectionCard {
-                SectionLabel("Name")
+                SectionLabel(stringResource(R.string.settings_name_label))
                 var draft by androidx.compose.runtime.remember(state.name) {
                     androidx.compose.runtime.mutableStateOf(state.name)
                 }
@@ -231,15 +232,14 @@ fun SettingsScreen(
                                 .background(colors.surfaceHigh)
                                 .padding(horizontal = 14.dp, vertical = 10.dp),
                     )
-                    GhostButton("Save", onClick = { viewModel.rename(draft) })
+                    GhostButton(stringResource(R.string.settings_save), onClick = { viewModel.rename(draft) })
                 }
             }
 
             SectionCard {
-                SectionLabel("Body")
+                SectionLabel(stringResource(R.string.settings_body_label))
                 Text(
-                    "The same soul can live in another body. Live previews — " +
-                        "every cell is the real engine.",
+                    stringResource(R.string.settings_body_hint),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 ConceptGallery(
@@ -252,16 +252,18 @@ fun SettingsScreen(
                     modifier = Modifier.height(660.dp),
                 )
                 // v0.4 milestones: palettes opened by the relationship.
-                GhostButton("Forms…", onClick = onOpenWardrobe)
+                GhostButton(stringResource(R.string.settings_forms_button), onClick = onOpenWardrobe)
             }
 
             SectionCard {
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                     Column(Modifier.weight(1f)) {
-                        Text("Calm motion", style = MaterialTheme.typography.bodyLarge)
                         Text(
-                            "Still pose, rare blinks. Follows the system " +
-                                "reduce-animations setting automatically.",
+                            stringResource(R.string.settings_calm_motion_title),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                        Text(
+                            stringResource(R.string.settings_calm_motion_hint),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     }
@@ -278,47 +280,53 @@ fun SettingsScreen(
             }
 
             SectionCard {
-                SectionLabel("Character")
+                SectionLabel(stringResource(R.string.settings_character_label))
                 Text(
-                    "Two dials, both honest: they change how it talks AND how it " +
-                        "moves (gaze darts, blink pace).",
+                    stringResource(R.string.settings_character_hint),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 PersonalitySlider(
-                    label = "Gentle ↔ Snarky",
+                    label = stringResource(R.string.settings_character_warmth),
                     value = state.personality.warmth,
                     onChange = { viewModel.setPersonality(state.personality.copy(warmth = it)) },
                 )
                 PersonalitySlider(
-                    label = "Quiet ↔ Chatty",
+                    label = stringResource(R.string.settings_character_chattiness),
                     value = state.personality.chattiness,
                     onChange = { viewModel.setPersonality(state.personality.copy(chattiness = it)) },
                 )
                 if (state.personalityCustomised) {
-                    GhostButton("Back to its nature", onClick = viewModel::resetPersonality)
+                    GhostButton(
+                        stringResource(R.string.settings_character_reset),
+                        onClick = viewModel::resetPersonality,
+                    )
                 }
             }
 
             SectionCard {
-                SectionLabel("Senses")
-                GhostButton("Notification sense…", onClick = onOpenNotifications)
+                SectionLabel(stringResource(R.string.settings_senses_label))
+                GhostButton(stringResource(R.string.settings_notification_sense), onClick = onOpenNotifications)
             }
 
             SectionCard {
-                SectionLabel("Mind")
+                SectionLabel(stringResource(R.string.settings_mind_label))
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                     Column(Modifier.weight(1f)) {
                         Text(
-                            if (state.cloud.enabled) "Mind: cloud" else "Mind: local",
+                            if (state.cloud.enabled) {
+                                stringResource(R.string.mind_state_cloud)
+                            } else {
+                                stringResource(R.string.mind_state_local)
+                            },
                             style = MaterialTheme.typography.bodyLarge,
                         )
                         Text(
                             when {
                                 state.cloud.enabled && state.cloud.usable ->
-                                    "Messages go to your provider. Flip off to keep everything on this phone."
+                                    stringResource(R.string.settings_mind_desc_cloud)
                                 state.cloud.enabled ->
-                                    "Cloud is on but not set up — the local mind keeps speaking."
-                                else -> "Everything stays on this phone."
+                                    stringResource(R.string.settings_mind_desc_cloud_unconfigured)
+                                else -> stringResource(R.string.settings_mind_desc_local)
                             },
                             style = MaterialTheme.typography.bodyMedium,
                         )
@@ -333,7 +341,7 @@ fun SettingsScreen(
                             ),
                     )
                 }
-                GhostButton("Mind…", onClick = onOpenMind)
+                GhostButton(stringResource(R.string.settings_mind_open), onClick = onOpenMind)
             }
 
             VoiceCard(viewModel)
@@ -341,15 +349,17 @@ fun SettingsScreen(
             PrivacyCard(cloudEnabled = state.cloud.enabled)
 
             SectionCard {
-                SectionLabel("More")
-                GhostButton("Why no internet…", onClick = onOpenTrust)
-                GhostButton("Last crash (local only)…", onClick = onOpenCrashLog)
+                SectionLabel(stringResource(R.string.settings_more_label))
+                GhostButton(stringResource(R.string.settings_trust_open), onClick = onOpenTrust)
+                GhostButton(stringResource(R.string.settings_crashlog_open), onClick = onOpenCrashLog)
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                     Column(Modifier.weight(1f)) {
-                        Text("Soul screen screenshots", style = MaterialTheme.typography.bodyLarge)
                         Text(
-                            "Off = the memories screen refuses screenshots and " +
-                                "hides itself in the app switcher.",
+                            stringResource(R.string.settings_soul_screenshots_title),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                        Text(
+                            stringResource(R.string.settings_soul_screenshots_hint),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     }
@@ -398,21 +408,22 @@ private fun VoiceCard(viewModel: SettingsViewModel) {
     val status by viewModel.voiceStatus.collectAsState()
     val context = androidx.compose.ui.platform.LocalContext.current
     SectionCard {
-        SectionLabel("Voice")
+        SectionLabel(stringResource(R.string.settings_voice_label))
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.weight(1f)) {
-                Text("The creature speaks", style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    stringResource(R.string.settings_voice_title),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
                 Text(
                     when (status) {
-                        VoiceUiStatus.OFF -> "Off. When on, it uses only voices that work offline."
-                        VoiceUiStatus.CHECKING -> "Listening for an offline voice…"
-                        VoiceUiStatus.READY ->
-                            "Speaks with an offline voice — words never leave the phone."
+                        VoiceUiStatus.OFF -> stringResource(R.string.settings_voice_off)
+                        VoiceUiStatus.CHECKING -> stringResource(R.string.settings_voice_checking)
+                        VoiceUiStatus.READY -> stringResource(R.string.settings_voice_ready)
                         VoiceUiStatus.NO_OFFLINE_VOICE ->
-                            "No offline voice for your language is installed, so it stays " +
-                                "quiet. Install one in system speech settings."
+                            stringResource(R.string.settings_voice_no_offline)
                         VoiceUiStatus.ENGINE_UNAVAILABLE ->
-                            "This phone has no speech engine. The creature can't speak here."
+                            stringResource(R.string.settings_voice_no_engine)
                     },
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -428,7 +439,7 @@ private fun VoiceCard(viewModel: SettingsViewModel) {
             )
         }
         if (status == VoiceUiStatus.NO_OFFLINE_VOICE) {
-            GhostButton("Open speech settings", onClick = {
+            GhostButton(stringResource(R.string.settings_voice_open_settings), onClick = {
                 runCatching { context.startActivity(viewModel.ttsSettingsIntent()) }
             })
         }
@@ -438,24 +449,12 @@ private fun VoiceCard(viewModel: SettingsViewModel) {
 @Composable
 private fun PrivacyCard(cloudEnabled: Boolean) {
     SectionCard {
-        SectionLabel("Privacy, honestly")
+        SectionLabel(stringResource(R.string.settings_privacy_label))
         Text(
             if (cloudEnabled) {
-                "Right now the CLOUD mind is on: your messages, the creature's " +
-                    "body report and the memory facts needed for an answer go " +
-                    "to the provider you configured. Everything else — the " +
-                    "soul database, the notification diary — stays on this " +
-                    "phone, encrypted. Flip the mind switch above and Anima " +
-                    "is fully offline again."
+                stringResource(R.string.settings_privacy_cloud_on)
             } else {
-                "The network is used for exactly two things, both under your " +
-                    "control: delivering the mind file (Google Play or a " +
-                    "download you start) and the optional cloud mind — which " +
-                    "is OFF. No accounts, no analytics, no crash reporting; " +
-                    "a build-time test fails if any other part of the app " +
-                    "touches the network. Memory lives in an encrypted " +
-                    "database; its key never leaves this phone's secure " +
-                    "hardware. Thinking happens on this device or not at all."
+                stringResource(R.string.settings_privacy_local)
             },
             style = MaterialTheme.typography.bodyMedium,
         )

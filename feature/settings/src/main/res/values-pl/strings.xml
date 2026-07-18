@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings screen -->
+    <string name="settings_back">Wstecz</string>
+    <string name="settings_title">Ustawienia</string>
+    <string name="settings_save">Zapisz</string>
+    <string name="settings_name_label">Imię</string>
+    <string name="settings_body_label">Ciało</string>
+    <string name="settings_body_hint">Ta sama dusza może zamieszkać w innym ciele. Podglądy są żywe — w każdej komórce pracuje prawdziwy silnik.</string>
+    <string name="settings_forms_button">Formy…</string>
+    <string name="settings_calm_motion_title">Spokojne ruchy</string>
+    <string name="settings_calm_motion_hint">Nieruchoma poza, rzadkie mrugnięcia. Samo podąża za systemowym ustawieniem ograniczenia animacji.</string>
+    <string name="settings_character_label">Charakter</string>
+    <string name="settings_character_hint">Dwa suwaki, oba szczere: zmieniają i to, jak mówi, I to, jak się rusza (spojrzenia, tempo mrugania).</string>
+    <string name="settings_character_warmth">Łagodne ↔ Zaczepne</string>
+    <string name="settings_character_chattiness">Ciche ↔ Gadatliwe</string>
+    <string name="settings_character_reset">Wróć do jego natury</string>
+    <string name="settings_senses_label">Zmysły</string>
+    <string name="settings_notification_sense">Zmysł powiadomień…</string>
+    <string name="settings_mind_label">Umysł</string>
+    <string name="settings_mind_open">Umysł…</string>
+    <string name="settings_mind_desc_cloud">Wiadomości idą do twojego dostawcy. Wyłącz — i wszystko zostanie na tym telefonie.</string>
+    <string name="settings_mind_desc_cloud_unconfigured">Chmura jest włączona, ale nieustawiona — wciąż mówi umysł lokalny.</string>
+    <string name="settings_mind_desc_local">Wszystko zostaje na tym telefonie.</string>
+    <string name="settings_voice_label">Głos</string>
+    <string name="settings_voice_title">Stworzenie mówi</string>
+    <string name="settings_voice_off">Wyłączone. Po włączeniu używa tylko głosów działających offline.</string>
+    <string name="settings_voice_checking">Nasłuchuję głosu offline…</string>
+    <string name="settings_voice_ready">Mówi głosem offline — słowa nie opuszczają telefonu.</string>
+    <string name="settings_voice_no_offline">Brak zainstalowanego głosu offline dla twojego języka, więc milczy. Zainstaluj głos w systemowych ustawieniach mowy.</string>
+    <string name="settings_voice_no_engine">Ten telefon nie ma silnika mowy. Stworzenie nie może tu mówić.</string>
+    <string name="settings_voice_open_settings">Otwórz ustawienia mowy</string>
+    <string name="settings_privacy_label">Prywatność, szczerze</string>
+    <string name="settings_privacy_cloud_on">Teraz działa umysł w CHMURZE: twoje wiadomości, raport o ciele stworzenia i fakty z pamięci potrzebne do odpowiedzi idą do dostawcy, którego skonfigurowano. Cała reszta — baza duszy, dziennik powiadomień — zostaje na tym telefonie, zaszyfrowana. Przestaw przełącznik umysłu powyżej, a Anima znów będzie w pełni offline.</string>
+    <string name="settings_privacy_local">Sieć służy dokładnie do dwóch rzeczy, obu pod twoją kontrolą: dostarczenia pliku umysłu (Google Play albo pobieranie, które sam uruchamiasz) i opcjonalnego umysłu w chmurze — który jest WYŁĄCZONY. Żadnych kont, analityki, raportów o awariach; test podczas budowania aplikacji nie przechodzi, jeśli jakakolwiek inna jej część dotyka sieci. Pamięć mieszka w zaszyfrowanej bazie; jej klucz nigdy nie opuszcza bezpiecznego sprzętu tego telefonu. Myślenie dzieje się na tym urządzeniu albo wcale.</string>
+    <string name="settings_more_label">Więcej</string>
+    <string name="settings_trust_open">Dlaczego bez internetu…</string>
+    <string name="settings_crashlog_open">Ostatnia awaria (tylko lokalnie)…</string>
+    <string name="settings_soul_screenshots_title">Zrzuty ekranu duszy</string>
+    <string name="settings_soul_screenshots_hint">Wył = ekran wspomnień odmawia zrzutów i ukrywa się na liście ostatnich aplikacji.</string>
+
+    <!-- Mind screen -->
+    <string name="mind_title">Umysł</string>
+    <string name="mind_state_cloud">Umysł: chmura</string>
+    <string name="mind_state_local">Umysł: lokalny</string>
+    <string name="mind_now_label">Właśnie teraz</string>
+    <string name="mind_now_cloud">Myśli u TWOJEGO dostawcy chmury (%1$s). W tym trybie wiadomości i fakty potrzebne do odpowiedzi opuszczają ten telefon.</string>
+    <string name="mind_now_nano">Myśli wbudowanym umysłem tego telefonu (Gemini Nano).</string>
+    <string name="mind_now_gemma_pack">Myśli umysłem z pakietu (Gemma, dostarczona z aplikacją, w całości na tym telefonie).</string>
+    <string name="mind_now_gemma_file">Myśli pobranym umysłem (Gemma, w całości na tym telefonie).</string>
+    <string name="mind_now_none">Umysł śpi. Ten telefon nie ma wbudowanego umysłu dla aplikacji, a plik umysłu nie jest jeszcze zainstalowany. Cała reszta stworzenia działa.</string>
+    <string name="mind_language_native">%1$s to jego ojczysty język.</string>
+    <string name="mind_language_english_only">Odpowiada po angielsku — ten umysł nie zna języka: %1$s.</string>
+    <string name="mind_nano_fetchable">Wbudowany umysł: system może go pobrać z czatu na ekranie głównym.</string>
+    <string name="mind_installed_label">Zainstalowane umysły</string>
+    <string name="mind_installed_empty">Brak pliku umysłu. Lokalny umysł (setki MB, jednorazowo) pozwala stworzeniu rozmawiać w całości na tym telefonie. Przynieś plik poniżej albo pobierz go z bezpośredniego linku.</string>
+    <string name="mind_auto_button">Auto</string>
+    <string name="mind_auto_on">Wybiera samo — najpierw twoje pliki, potem pakiet.</string>
+    <string name="mind_auto_off">Twój wybór obowiązuje, aż naciśniesz Auto.</string>
+    <string name="mind_free_space">%1$.1f GB wolnego na tym telefonie</string>
+    <string name="mind_progress_import_label">Wnoszę umysł…</string>
+    <string name="mind_progress_download_label">Pobieram umysł…</string>
+    <string name="mind_progress_mb">%1$.0f / %2$.0f MB</string>
+    <string name="mind_keep_open">Nie zamykaj tego ekranu — stworzenie nie ma usług w tle, więc wyjście wstrzymuje transfer (wznowi się później).</string>
+    <string name="mind_bring_label">Przynieś plik</string>
+    <string name="mind_bring_hint">Wybierz pobrany plik .task lub .litertlm. Zostanie skopiowany do prywatnej norki stworzenia i sprawdzony.</string>
+    <string name="mind_choose_file">Wybierz plik umysłu…</string>
+    <string name="mind_direct_link_label">Albo pobierz z bezpośredniego linku</string>
+    <string name="mind_sha_placeholder">SHA-256 (opcjonalnie, weryfikuje plik)</string>
+    <string name="mind_metered_title">Zezwól na dane komórkowe</string>
+    <string name="mind_metered_hint">Wył = tylko Wi-Fi (to ~530 MB)</string>
+    <string name="mind_download_button">Pobierz (~530 MB, jednorazowo)</string>
+    <string name="mind_pack_incoming_label">Umysł jest w drodze</string>
+    <string name="mind_pack_progress">%1$.0f / %2$.0f MB — Google Play dostarczy go sam; nie musisz tu czekać.</string>
+    <string name="mind_pack_packed_label">Umysł jest zapakowany z aplikacją</string>
+    <string name="mind_pack_packed_hint">Google Play niesie umysł dla tego stworzenia, ale jeszcze go nie dostarczył. Poproś, a przyjdzie sam.</string>
+    <string name="mind_pack_fetch">Niech przyjdzie</string>
+    <string name="mind_pack_consent_label">Umysł czeka na pozwolenie</string>
+    <string name="mind_pack_consent_hint">Google Play trzyma ~660 MB umysłu, dopóki nie pozwolisz na pobieranie (woli Wi-Fi).</string>
+    <string name="mind_ram_label">Ostrożnie z tym telefonem</string>
+    <string name="mind_ram_hint">Umysł z pakietu już tu jest, ale ten telefon ma mało pamięci (poniżej ~6 GB). Uruchomienie Gemmy może wszystko spowolnić. Możesz spróbować mimo to albo użyć umysłu w chmurze poniżej.</string>
+    <string name="mind_ram_try">Spróbuj mimo to</string>
+    <string name="mind_model_active">Aktywny</string>
+    <string name="mind_model_meta">%1$.0f MB · %2$s</string>
+    <string name="mind_model_from_pack">z pakietu</string>
+    <string name="mind_license_unknown">nieznana licencja</string>
+    <string name="mind_model_delete">Usuń</string>
+    <string name="mind_cloud_label">Umysł w chmurze (opcjonalnie)</string>
+    <string name="mind_cloud_intro">Domyślnie wyłączony. Jeśli go włączysz, stworzenie myśli u dostawcy AI, którego TY wybierasz, z TWOIM kluczem. W tym trybie każda twoja wiadomość — plus fakty z pamięci stworzenia potrzebne do odpowiedzi i raport o jego ciele — opuszcza ten telefon i idzie do %1$s. Nic więcej. Dusza zostaje tutaj.</string>
+    <string name="mind_cloud_unconfigured">Włączony, ale nieskonfigurowany — wciąż mówi umysł lokalny.</string>
+    <string name="mind_cloud_key_prefix">Klucze zwykle zaczynają się od %1$s…</string>
+    <string name="mind_cloud_free_tier">darmowy plan</string>
+    <string name="mind_cloud_model_placeholder">nazwa modelu (np. gpt-4.1-mini)</string>
+    <string name="mind_cloud_key_placeholder">Klucz API</string>
+    <string name="mind_cloud_key_placeholder_stored">Klucz API (zapisany — wklej nowy, aby zastąpić)</string>
+    <string name="mind_cloud_forget_key">Zapomnij klucz</string>
+    <string name="mind_cloud_check_key">Sprawdź klucz</string>
+    <string name="mind_cloud_key_note">Klucz jest zaszyfrowany sprzętowym magazynem kluczy tego telefonu, nigdy nie trafia do logów ani do eksportu duszy. Brak sieci? Stworzenie samo wróci do lokalnego umysłu.</string>
+    <string name="mind_provider_fallback">twój dostawca</string>
+    <string name="mind_notice_label">Co się stało</string>
+    <string name="mind_notice_ok">OK</string>
+    <string name="mind_notice_arrived">Umysł już tu jest. Przywitaj się.</string>
+    <string name="mind_notice_deleted">Pliku umysłu już nie ma. Stworzenie zostaje.</string>
+    <string name="mind_notice_paste_link">Najpierw wklej bezpośredni link https do pliku modelu.</string>
+    <string name="mind_notice_https_required">Adresy chmury muszą zaczynać się od https://</string>
+    <string name="mind_notice_key_erased">Klucz chmury wymazany. Umysł znów jest lokalny.</string>
+    <string name="mind_notice_key_ok">Klucz działa.</string>
+    <string name="mind_notice_key_bad">Dostawca odrzucił ten klucz.</string>
+    <string name="mind_notice_key_unreachable">Nie udało się połączyć z dostawcą.</string>
+    <string name="mind_notice_key_unconfigured">Najpierw zapisz adres i klucz.</string>
+    <string name="mind_failure_needs_wifi">Czekam na Wi-Fi — to duży plik. Przestaw przełącznik, aby użyć danych komórkowych.</string>
+    <string name="mind_failure_not_https">Działają tu tylko bezpośrednie linki https://</string>
+    <string name="mind_failure_http">Serwer odmówił (%1$s). Oficjalne linki Gemmy wymagają akceptacji licencji — pobierz plik w przeglądarce i użyj opcji „Wybierz plik umysłu".</string>
+    <string name="mind_failure_http_no_detail">brak szczegółów</string>
+    <string name="mind_failure_interrupted">Transfer się urwał. Spróbuj jeszcze raz — wznowi się w tym samym miejscu.</string>
+    <string name="mind_failure_checksum">Plik nie przeszedł kontroli integralności i został odrzucony. (otrzymano %1$s…)</string>
+    <string name="mind_failure_not_model">To nie wygląda na plik umysłu (.task / .litertlm, setki MB).</string>
+    <string name="mind_failure_no_space">Za mało wolnego miejsca na plik umysłu.</string>
+
+    <!-- Trust screen -->
+    <string name="trust_title">Dlaczego bez internetu</string>
+    <string name="trust_hero_title">Twoje stworzenie mieszka tutaj. Tylko tutaj.</string>
+    <string name="trust_hero_body">Anima działa w całości na tym telefonie. Bez konta, bez chmury domyślnie, bez nikogo, kto patrzy.</string>
+    <string name="trust_no_account">Bez konta. Nie ma się gdzie rejestrować.</string>
+    <string name="trust_no_servers">Bez naszych serwerów. Rozmowy nigdy do nas nie docierają.</string>
+    <string name="trust_no_trackers">Bez trackerów. Bez reklam, bez analityki — serio.</string>
+    <string name="trust_cant_read_label">Nie możemy czytać twoich rozmów</string>
+    <string name="trust_cant_read_body">Nie dlatego, że obiecujemy nie czytać — dlatego, że nigdy do nas nie docierają. Po naszej stronie nie ma czego czytać. Umysł to model językowy działający na własnym czipie tego telefonu; wszystko, czego się uczy, mieszka w zaszyfrowanej bazie, której klucz nigdy nie opuszcza bezpiecznego sprzętu telefonu.</string>
+    <string name="trust_prove_label">Sprawdź to</string>
+    <string name="trust_prove_body">Włącz tryb samolotowy. Wszystko dalej działa — stworzenie wyczuwa zmianę połączenia jak pogodę i nic więcej się nie dzieje. Żadna funkcja nie potrzebuje sieci.</string>
+    <string name="trust_network_label">Co JEDNAK używa sieci — cała lista</string>
+    <string name="trust_network_body">1. Dostarczenie pliku umysłu: Google Play przynosi go z aplikacją albo sam uruchamiasz pobieranie na ekranie Umysł. Bajty modelu przychodzą; nic o tobie nie wychodzi.\n\n2. Umysł w chmurze — tylko jeśli TY go włączysz, z własnym dostawcą i kluczem. %1$s\n\nTest podczas budowania aplikacji nie przechodzi, jeśli jakakolwiek inna jej część choćby wspomina o sieciowym API.</string>
+    <string name="trust_cloud_on_now">Teraz jest WŁĄCZONY: wiadomości i fakty potrzebne do odpowiedzi idą do twojego dostawcy.</string>
+    <string name="trust_cloud_off_now">Teraz jest WYŁĄCZONY.</string>
+    <string name="trust_yourdata_label">Twoje dane, twoja decyzja</string>
+    <string name="trust_yourdata_body">Zapomnij wspomnienie, a zostanie oznaczone w duszy jako martwe (stworzenie przestaje z niego korzystać). Wyeksportuj duszę do jednego pliku, który należy do ciebie. Usuń Animę, a wszystko zniknie razem z nią — nigdzie nie ma innej kopii.</string>
+
+    <!-- Wardrobe (Forms) screen -->
+    <string name="wardrobe_title">Formy</string>
+    <string name="wardrobe_intro">Palety otwierają się, gdy żyjecie razem — dni, wspomnienia, odpoczynki. Co się otworzy, zostaje otwarte na zawsze.</string>
+    <string name="wardrobe_worn_now">noszona teraz</string>
+    <string name="wardrobe_open_tap">otwarta — dotknij, aby założyć</string>
+    <string name="wardrobe_opens_at">otworzy się: %1$s</string>
+
+    <!-- Crash log screen -->
+    <string name="crashlog_title">Ostatnia awaria</string>
+    <string name="crashlog_eyes_label">Tylko dla twoich oczu</string>
+    <string name="crashlog_eyes_body">Jeśli Anima kiedyś się przewróci, szczegóły wylądują tutaj — na tym telefonie, nigdzie indziej. Skopiuj je, jeśli zechcesz zgłosić błąd.</string>
+    <string name="crashlog_none">Brak zapisanych awarii. Oby tak dalej.</string>
+    <string name="crashlog_copy">Kopiuj</string>
+    <string name="crashlog_clear">Wyczyść</string>
+</resources>

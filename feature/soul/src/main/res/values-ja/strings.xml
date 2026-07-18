@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soul_back">戻る</string>
+    <string name="soul_title">たましい</string>
+    <string name="soul_together_label">いっしょに</string>
+    <plurals name="soul_counter_days">
+        <item quantity="other">日</item>
+    </plurals>
+    <plurals name="soul_counter_talks">
+        <item quantity="other">おしゃべり</item>
+    </plurals>
+    <plurals name="soul_counter_memories">
+        <item quantity="other">おもいで</item>
+    </plurals>
+    <plurals name="soul_counter_meals">
+        <item quantity="other">ごはん</item>
+    </plurals>
+    <string name="soul_export_button">たましいを書き出す</string>
+    <string name="soul_story_button">ふたりの物語…</string>
+    <string name="soul_postcard_button">ポストカード</string>
+    <string name="soul_export_hint">markdownの書き出しは、人にもAIにも読める形のまま。下の封印バックアップは、たましいをまるごと新しいスマホへ運ぶためのもの。</string>
+    <string name="soul_memories_label">おぼえていること</string>
+    <string name="soul_search_hint">おもいでを検索…</string>
+    <string name="soul_category_all">すべて</string>
+    <string name="soul_category_identity">じぶんのこと</string>
+    <string name="soul_category_preference">すきなもの</string>
+    <string name="soul_category_people">ひと</string>
+    <string name="soul_category_work">しごと</string>
+    <string name="soul_category_moment">できごと</string>
+    <string name="soul_category_other">そのほか</string>
+    <string name="soul_empty_field">「わたしの記憶はまだひろい野原だよ。いろいろ教えてね — おぼえていいものには『はい』を押してね」</string>
+    <string name="soul_empty_no_match">「その言葉、記憶のどこにも見つからないみたい。ほかの言葉で試してみる?」</string>
+    <string name="soul_edit_button">直す</string>
+    <string name="soul_forget_button">わすれる</string>
+
+    <string name="soul_backup_label">封印バックアップ — たましいのお引っ越し</string>
+    <string name="soul_backup_hint">たましいをまるごと(履歴つきのおもいで、体の日記、じぶんのこと)、暗号化されたひとつのファイルに。同じあいことばで新しいスマホでも開けるよ。あいことばをなくすと、このコピーも開けなくなるよ。</string>
+    <string name="soul_backup_passphrase_hint">あいことば(8文字以上)…</string>
+    <string name="soul_backup_seal_button">封をして保存…</string>
+    <string name="soul_backup_open_button">バックアップを開く…</string>
+    <string name="soul_ok">OK</string>
+
+    <string name="soul_import_label">ほかのAIからたましいをつれてくる</string>
+    <string name="soul_import_steps">1. 抽出プロンプトをコピーして、もうひとりのアシスタントに聞いてみて。\n2. その答えを下に貼りつけて。\n3. ひとつずつ確認してね — あなたの「はい」がなければ、なにも保存されないよ。</string>
+    <string name="soul_import_copy_button">抽出プロンプトをコピー</string>
+    <string name="soul_import_paste_hint">ここに答えを貼りつけて…</string>
+    <string name="soul_import_find_button">おぼえたことをさがす</string>
+    <string name="soul_import_skip_button">スキップ</string>
+    <string name="soul_import_keep_button">のこす</string>
+
+    <string name="soul_edit_title">おもいでを直す</string>
+    <string name="soul_edit_hint">前のバージョンは消えないよ — 下にそっと残って、新しいものに置きかわるだけ。たましいの歴史は正直なまま。</string>
+    <string name="soul_edit_cancel">キャンセル</string>
+    <string name="soul_edit_save">直しを保存</string>
+
+    <string name="soul_notice_passphrase_short">あいことばは%1$d文字以上にしてね — このファイルがぜんぶを守るから。</string>
+    <string name="soul_notice_sealed">たましいに封をして保存したよ。あいことばは大切に — なくすと取り戻せないよ。</string>
+    <string name="soul_notice_export_failed">書き出しに失敗: %1$s</string>
+    <plurals name="soul_notice_imported">
+        <item quantity="other">%1$sがここにお引っ越し: おもいでが%2$d件とどいたよ。</item>
+    </plurals>
+    <plurals name="soul_notice_skipped">
+        <item quantity="other">%1$d件はもうここにあったよ。</item>
+    </plurals>
+    <string name="soul_notice_wrong_passphrase">あいことばがちがうか、ファイルがこわれているみたい。なにも変わっていないよ。</string>
+    <string name="soul_notice_import_failed">読みこみに失敗: %1$s</string>
+    <string name="soul_error_unknown">不明なエラー</string>
+
+    <string name="soul_export_subject">%1$sのたましい</string>
+    <string name="soul_export_chooser">たましいを書き出す</string>
+    <string name="soul_postcard_chooser">ポストカードをシェア</string>
+    <plurals name="soul_postcard_caption">
+        <item quantity="other">いっしょに%1$d日、ぜんぶここにある</item>
+    </plurals>
+
+    <string name="story_back">戻る</string>
+    <string name="story_title">ふたりの物語</string>
+    <string name="story_title_named">わたしと%1$s</string>
+    <string name="story_empty">「ふたりの物語は、まだ最初の一行を書いていないよ。これからだよ」</string>
+</resources>

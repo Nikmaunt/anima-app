@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soul_back">Назад</string>
+    <string name="soul_title">Душа</string>
+    <string name="soul_together_label">Вместе</string>
+    <plurals name="soul_counter_days">
+        <item quantity="one">день</item>
+        <item quantity="few">дня</item>
+        <item quantity="many">дней</item>
+        <item quantity="other">дня</item>
+    </plurals>
+    <plurals name="soul_counter_talks">
+        <item quantity="one">разговор</item>
+        <item quantity="few">разговора</item>
+        <item quantity="many">разговоров</item>
+        <item quantity="other">разговора</item>
+    </plurals>
+    <plurals name="soul_counter_memories">
+        <item quantity="one">воспоминание</item>
+        <item quantity="few">воспоминания</item>
+        <item quantity="many">воспоминаний</item>
+        <item quantity="other">воспоминания</item>
+    </plurals>
+    <plurals name="soul_counter_meals">
+        <item quantity="one">кормёжка</item>
+        <item quantity="few">кормёжки</item>
+        <item quantity="many">кормёжек</item>
+        <item quantity="other">кормёжки</item>
+    </plurals>
+    <string name="soul_export_button">Экспорт души</string>
+    <string name="soul_story_button">Наша история…</string>
+    <string name="soul_postcard_button">Открытка</string>
+    <string name="soul_export_hint">Markdown-экспорт останется читаемым для любого человека или ИИ. Запечатанная копия ниже переносит всю душу между телефонами.</string>
+    <string name="soul_memories_label">Что оно помнит</string>
+    <string name="soul_search_hint">Искать в воспоминаниях…</string>
+    <string name="soul_category_all">все</string>
+    <string name="soul_category_identity">личность</string>
+    <string name="soul_category_preference">предпочтения</string>
+    <string name="soul_category_people">люди</string>
+    <string name="soul_category_work">работа</string>
+    <string name="soul_category_moment">моменты</string>
+    <string name="soul_category_other">другое</string>
+    <string name="soul_empty_field">«Моя память пока — открытое поле. Расскажи мне что-нибудь — и отметь, что мне можно оставить.»</string>
+    <string name="soul_empty_no_match">«В моей памяти такого нет. Попробуешь другое слово?»</string>
+    <string name="soul_edit_button">Править</string>
+    <string name="soul_forget_button">Забыть</string>
+
+    <string name="soul_backup_label">Запечатанная копия — перенос души</string>
+    <string name="soul_backup_hint">Вся душа (воспоминания со всей их историей, дневник тела, личность) в одном зашифрованном файле. Та же кодовая фраза откроет его на новом телефоне. Потеряешь фразу — потеряешь копию.</string>
+    <string name="soul_backup_passphrase_hint">Кодовая фраза (не короче 8 знаков)…</string>
+    <string name="soul_backup_seal_button">Запечатать и сохранить…</string>
+    <string name="soul_backup_open_button">Открыть копию…</string>
+    <string name="soul_ok">Хорошо</string>
+
+    <string name="soul_import_label">Принести душу из другого ИИ</string>
+    <string name="soul_import_steps">1. Скопируй промпт-экстрактор и спроси другого ассистента.\n2. Вставь его ответ ниже.\n3. Подтверди каждый факт — без твоего «да» ничего не сохранится.</string>
+    <string name="soul_import_copy_button">Скопировать промпт-экстрактор</string>
+    <string name="soul_import_paste_hint">Вставь ответ сюда…</string>
+    <string name="soul_import_find_button">Найти факты</string>
+    <string name="soul_import_skip_button">Пропустить</string>
+    <string name="soul_import_keep_button">Оставить</string>
+
+    <string name="soul_edit_title">Поправить воспоминание</string>
+    <string name="soul_edit_hint">Старая версия не стирается — она остаётся ниже, просто уступает место новой. История души остаётся честной.</string>
+    <string name="soul_edit_cancel">Отмена</string>
+    <string name="soul_edit_save">Сохранить правку</string>
+
+    <string name="soul_notice_passphrase_short">Нужно не меньше %1$d знаков — этот файл защищает всё.</string>
+    <string name="soul_notice_sealed">Душа запечатана и сохранена. Береги кодовую фразу — восстановить её нельзя.</string>
+    <string name="soul_notice_export_failed">Экспорт не удался: %1$s</string>
+    <plurals name="soul_notice_imported">
+        <item quantity="one">%1$s теперь живёт здесь: прибыло %2$d воспоминание.</item>
+        <item quantity="few">%1$s теперь живёт здесь: прибыло %2$d воспоминания.</item>
+        <item quantity="many">%1$s теперь живёт здесь: прибыло %2$d воспоминаний.</item>
+        <item quantity="other">%1$s теперь живёт здесь: прибыло %2$d воспоминания.</item>
+    </plurals>
+    <plurals name="soul_notice_skipped">
+        <item quantity="one">%1$d уже было здесь.</item>
+        <item quantity="few">%1$d уже были здесь.</item>
+        <item quantity="many">%1$d уже было здесь.</item>
+        <item quantity="other">%1$d уже было здесь.</item>
+    </plurals>
+    <string name="soul_notice_wrong_passphrase">Кодовая фраза не подходит, или файл повреждён. Ничего не изменилось.</string>
+    <string name="soul_notice_import_failed">Импорт не удался: %1$s</string>
+    <string name="soul_error_unknown">неизвестная ошибка</string>
+
+    <string name="soul_export_subject">Душа: %1$s</string>
+    <string name="soul_export_chooser">Экспорт души</string>
+    <string name="soul_postcard_chooser">Поделиться открыткой</string>
+    <plurals name="soul_postcard_caption">
+        <item quantity="one">%1$d день вместе — и весь здесь</item>
+        <item quantity="few">%1$d дня вместе — и все здесь</item>
+        <item quantity="many">%1$d дней вместе — и все здесь</item>
+        <item quantity="other">%1$d дня вместе — и все здесь</item>
+    </plurals>
+
+    <string name="story_back">Назад</string>
+    <string name="story_title">Наша история</string>
+    <string name="story_title_named">Я и %1$s</string>
+    <string name="story_empty">«Первая строка нашей истории ещё не написана. Но обязательно будет.»</string>
+</resources>

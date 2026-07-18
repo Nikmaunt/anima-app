@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soul_back">Atrás</string>
+    <string name="soul_title">Alma</string>
+    <string name="soul_together_label">Juntos</string>
+    <plurals name="soul_counter_days">
+        <item quantity="one">día</item>
+        <item quantity="other">días</item>
+    </plurals>
+    <plurals name="soul_counter_talks">
+        <item quantity="one">charla</item>
+        <item quantity="other">charlas</item>
+    </plurals>
+    <plurals name="soul_counter_memories">
+        <item quantity="one">recuerdo</item>
+        <item quantity="other">recuerdos</item>
+    </plurals>
+    <plurals name="soul_counter_meals">
+        <item quantity="one">comida</item>
+        <item quantity="other">comidas</item>
+    </plurals>
+    <string name="soul_export_button">Exportar el alma</string>
+    <string name="soul_story_button">Nuestra historia…</string>
+    <string name="soul_postcard_button">Postal</string>
+    <string name="soul_export_hint">La exportación en markdown queda legible para cualquier persona o IA. La copia sellada de abajo lleva el alma entera de un teléfono a otro.</string>
+    <string name="soul_memories_label">Lo que recuerda</string>
+    <string name="soul_search_hint">Buscar en los recuerdos…</string>
+    <string name="soul_category_all">todo</string>
+    <string name="soul_category_identity">identidad</string>
+    <string name="soul_category_preference">gustos</string>
+    <string name="soul_category_people">gente</string>
+    <string name="soul_category_work">trabajo</string>
+    <string name="soul_category_moment">momentos</string>
+    <string name="soul_category_other">otros</string>
+    <string name="soul_empty_field">«Mi memoria todavía es un campo abierto. Cuéntame cosas — y di que sí a lo que pueda guardar.»</string>
+    <string name="soul_empty_no_match">«Nada en mi memoria encaja con eso. ¿Pruebas otra palabra?»</string>
+    <string name="soul_edit_button">Editar</string>
+    <string name="soul_forget_button">Olvidar</string>
+
+    <string name="soul_backup_label">Copia sellada — mudar el alma</string>
+    <string name="soul_backup_hint">El alma entera (los recuerdos con toda su historia, el diario del cuerpo, la identidad) en un solo archivo cifrado. La misma frase de acceso lo abre en el teléfono nuevo. Si pierdes la frase, pierdes la copia.</string>
+    <string name="soul_backup_passphrase_hint">Frase de acceso (mín. 8 caracteres)…</string>
+    <string name="soul_backup_seal_button">Sellar y guardar…</string>
+    <string name="soul_backup_open_button">Abrir una copia…</string>
+    <string name="soul_ok">Vale</string>
+
+    <string name="soul_import_label">Traer un alma desde otra IA</string>
+    <string name="soul_import_steps">1. Copia el prompt extractor y pregúntale a tu otro asistente.\n2. Pega su respuesta abajo.\n3. Confirma cada dato — nada se guarda sin tu sí.</string>
+    <string name="soul_import_copy_button">Copiar el prompt extractor</string>
+    <string name="soul_import_paste_hint">Pega la respuesta aquí…</string>
+    <string name="soul_import_find_button">Buscar datos</string>
+    <string name="soul_import_skip_button">Saltar</string>
+    <string name="soul_import_keep_button">Guardar</string>
+
+    <string name="soul_edit_title">Corregir un recuerdo</string>
+    <string name="soul_edit_hint">La versión antigua no se borra — queda debajo, solo cede su lugar a la nueva. La historia del alma sigue siendo honesta.</string>
+    <string name="soul_edit_cancel">Cancelar</string>
+    <string name="soul_edit_save">Guardar corrección</string>
+
+    <string name="soul_notice_passphrase_short">Usa al menos %1$d caracteres — este archivo lo protege todo.</string>
+    <string name="soul_notice_sealed">Alma sellada y guardada. Cuida la frase de acceso — no hay recuperación posible.</string>
+    <string name="soul_notice_export_failed">La exportación falló: %1$s</string>
+    <plurals name="soul_notice_imported">
+        <item quantity="one">%1$s se ha mudado aquí: llegó %2$d recuerdo.</item>
+        <item quantity="other">%1$s se ha mudado aquí: llegaron %2$d recuerdos.</item>
+    </plurals>
+    <plurals name="soul_notice_skipped">
+        <item quantity="one">%1$d ya estaba aquí.</item>
+        <item quantity="other">%1$d ya estaban aquí.</item>
+    </plurals>
+    <string name="soul_notice_wrong_passphrase">La frase de acceso no es correcta, o el archivo está dañado. No se cambió nada.</string>
+    <string name="soul_notice_import_failed">La importación falló: %1$s</string>
+    <string name="soul_error_unknown">error desconocido</string>
+
+    <string name="soul_export_subject">El alma de %1$s</string>
+    <string name="soul_export_chooser">Exportar el alma</string>
+    <string name="soul_postcard_chooser">Compartir una postal</string>
+    <plurals name="soul_postcard_caption">
+        <item quantity="one">%1$d día juntos, todo él aquí</item>
+        <item quantity="other">%1$d días juntos, todos aquí</item>
+    </plurals>
+
+    <string name="story_back">Atrás</string>
+    <string name="story_title">Nuestra historia</string>
+    <string name="story_title_named">%1$s y yo</string>
+    <string name="story_empty">«Nuestra historia aún no ha escrito su primera línea. Lo hará.»</string>
+</resources>

@@ -2,6 +2,7 @@ package app.anima.feature.soul
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -33,6 +34,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -88,40 +91,53 @@ fun SoulScreen(
             .padding(horizontal = 20.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
-            GhostButton("Back", onClick = onBack)
-            Text("Soul", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(start = 8.dp))
+            GhostButton(stringResource(R.string.soul_back), onClick = onBack)
+            Text(
+                stringResource(R.string.soul_title),
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(start = 8.dp),
+            )
         }
 
         LazyColumn(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             state.stats?.let { stats ->
                 item {
                     SectionCard {
-                        SectionLabel("Together")
+                        SectionLabel(stringResource(R.string.soul_together_label))
                         Row {
-                            Counter("days", stats.daysTogether(System.currentTimeMillis()).toString())
-                            Counter("talks", stats.conversationCount.toString())
-                            Counter("memories", stats.liveFactCount.toString())
-                            Counter("meals", stats.chargeCount.toString())
+                            val days = stats.daysTogether(System.currentTimeMillis()).toInt()
+                            Counter(pluralStringResource(R.plurals.soul_counter_days, days), days.toString())
+                            Counter(
+                                pluralStringResource(R.plurals.soul_counter_talks, stats.conversationCount),
+                                stats.conversationCount.toString(),
+                            )
+                            Counter(
+                                pluralStringResource(R.plurals.soul_counter_memories, stats.liveFactCount),
+                                stats.liveFactCount.toString(),
+                            )
+                            Counter(
+                                pluralStringResource(R.plurals.soul_counter_meals, stats.chargeCount),
+                                stats.chargeCount.toString(),
+                            )
                         }
                         Row {
-                            PillButton("Export the soul", onClick = {
+                            PillButton(stringResource(R.string.soul_export_button), onClick = {
                                 viewModel.buildExportIntent { context.startActivity(it) }
                             })
-                            GhostButton("Our story…", onClick = onOpenStory)
-                            GhostButton("Postcard", onClick = {
+                            GhostButton(stringResource(R.string.soul_story_button), onClick = onOpenStory)
+                            GhostButton(stringResource(R.string.soul_postcard_button), onClick = {
                                 viewModel.buildPostcardIntent { context.startActivity(it) }
                             })
                         }
                         Text(
-                            "The markdown export stays readable by any human or AI. " +
-                                "The sealed backup below moves the whole soul between phones.",
+                            stringResource(R.string.soul_export_hint),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     }
                 }
             }
 
-            item { SectionLabel("What it remembers", Modifier.padding(top = 6.dp)) }
+            item { SectionLabel(stringResource(R.string.soul_memories_label), Modifier.padding(top = 6.dp)) }
 
             item {
                 // Memory browser (v2): search + category filter.
@@ -133,7 +149,7 @@ fun SoulScreen(
                         .padding(horizontal = 14.dp, vertical = 10.dp),
                 ) {
                     if (state.query.isEmpty()) {
-                        Text("Search memories…", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.soul_search_hint), style = MaterialTheme.typography.bodyMedium)
                     }
                     BasicTextField(
                         value = state.query,
@@ -151,9 +167,11 @@ fun SoulScreen(
                         .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    CategoryChip("all", state.categoryFilter == null) { viewModel.onCategoryFilter(null) }
+                    CategoryChip(stringResource(R.string.soul_category_all), state.categoryFilter == null) {
+                        viewModel.onCategoryFilter(null)
+                    }
                     FactCategory.entries.forEach { category ->
-                        CategoryChip(categoryName(category), state.categoryFilter == category) {
+                        CategoryChip(stringResource(categoryNameRes(category)), state.categoryFilter == category) {
                             viewModel.onCategoryFilter(category)
                         }
                     }
@@ -166,12 +184,13 @@ fun SoulScreen(
                         concept = state.concept,
                         seed = state.seed,
                         line =
-                            if (state.query.isBlank() && state.categoryFilter == null) {
-                                "\"My memory is an open field so far. Tell me things — " +
-                                    "and tap yes on what I may keep.\""
-                            } else {
-                                "\"Nothing in my memory matches that. Try another word?\""
-                            },
+                            stringResource(
+                                if (state.query.isBlank() && state.categoryFilter == null) {
+                                    R.string.soul_empty_field
+                                } else {
+                                    R.string.soul_empty_no_match
+                                },
+                            ),
                         night = colors.isNight,
                     )
                 }
@@ -186,21 +205,22 @@ fun SoulScreen(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(Modifier.weight(1f)) {
-                        Text(categoryName(fact.category), style = MaterialTheme.typography.labelMedium)
+                        Text(
+                            stringResource(categoryNameRes(fact.category)),
+                            style = MaterialTheme.typography.labelMedium,
+                        )
                         Text(fact.text, style = MaterialTheme.typography.bodyLarge)
                     }
-                    GhostButton("Edit", onClick = { viewModel.startEdit(fact) })
-                    GhostButton("Forget", onClick = { viewModel.forget(fact) })
+                    GhostButton(stringResource(R.string.soul_edit_button), onClick = { viewModel.startEdit(fact) })
+                    GhostButton(stringResource(R.string.soul_forget_button), onClick = { viewModel.forget(fact) })
                 }
             }
 
             item {
                 SectionCard(Modifier.padding(top = 10.dp)) {
-                    SectionLabel("Sealed backup — move the soul")
+                    SectionLabel(stringResource(R.string.soul_backup_label))
                     Text(
-                        "The whole soul (memories with their full history, the body " +
-                            "journal, identity) in one encrypted file. Same passphrase " +
-                            "opens it on the new phone. Lose the passphrase — lose the copy.",
+                        stringResource(R.string.soul_backup_hint),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     Box(
@@ -211,7 +231,10 @@ fun SoulScreen(
                             .padding(horizontal = 14.dp, vertical = 10.dp),
                     ) {
                         if (backupPassphrase.isEmpty()) {
-                            Text("Passphrase (min 8 chars)…", style = MaterialTheme.typography.bodyMedium)
+                            Text(
+                                stringResource(R.string.soul_backup_passphrase_hint),
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
                         }
                         BasicTextField(
                             value = backupPassphrase,
@@ -224,33 +247,31 @@ fun SoulScreen(
                     }
                     Row {
                         GhostButton(
-                            "Seal & save…",
+                            stringResource(R.string.soul_backup_seal_button),
                             enabled = backupPassphrase.length >= 8,
                             onClick = { exportLauncher.launch("anima-soul.backup") },
                         )
                         GhostButton(
-                            "Open a backup…",
+                            stringResource(R.string.soul_backup_open_button),
                             enabled = backupPassphrase.isNotEmpty(),
                             onClick = { importLauncher.launch(arrayOf("*/*")) },
                         )
                     }
                     state.backupNotice?.let { notice ->
-                        Text(notice, style = MaterialTheme.typography.bodyLarge)
-                        GhostButton("OK", onClick = viewModel::dismissBackupNotice)
+                        Text(backupNoticeText(notice), style = MaterialTheme.typography.bodyLarge)
+                        GhostButton(stringResource(R.string.soul_ok), onClick = viewModel::dismissBackupNotice)
                     }
                 }
             }
 
             item {
                 SectionCard(Modifier.padding(top = 10.dp)) {
-                    SectionLabel("Bring a soul from another AI")
+                    SectionLabel(stringResource(R.string.soul_import_label))
                     Text(
-                        "1. Copy the extractor prompt and ask your other assistant.\n" +
-                            "2. Paste its answer below.\n" +
-                            "3. Confirm each fact — nothing is saved without your yes.",
+                        stringResource(R.string.soul_import_steps),
                         style = MaterialTheme.typography.bodyMedium,
                     )
-                    GhostButton("Copy extractor prompt", onClick = {
+                    GhostButton(stringResource(R.string.soul_import_copy_button), onClick = {
                         clipboard.setText(AnnotatedString(viewModel.extractorPrompt()))
                     })
                     Box(
@@ -262,7 +283,10 @@ fun SoulScreen(
                             .padding(12.dp),
                     ) {
                         if (state.importText.isEmpty()) {
-                            Text("Paste the answer here…", style = MaterialTheme.typography.bodyMedium)
+                            Text(
+                                stringResource(R.string.soul_import_paste_hint),
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
                         }
                         BasicTextField(
                             value = state.importText,
@@ -273,7 +297,7 @@ fun SoulScreen(
                         )
                     }
                     GhostButton(
-                        "Find facts",
+                        stringResource(R.string.soul_import_find_button),
                         onClick = viewModel::parseImport,
                         enabled = state.importText.isNotBlank(),
                     )
@@ -290,11 +314,20 @@ fun SoulScreen(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(Modifier.weight(1f)) {
-                        Text(categoryName(candidate.category), style = MaterialTheme.typography.labelMedium)
+                        Text(
+                            stringResource(categoryNameRes(candidate.category)),
+                            style = MaterialTheme.typography.labelMedium,
+                        )
                         Text(candidate.text, style = MaterialTheme.typography.bodyLarge)
                     }
-                    GhostButton("Skip", onClick = { viewModel.rejectImport(candidate) })
-                    GhostButton("Keep", onClick = { viewModel.confirmImport(candidate) })
+                    GhostButton(
+                        stringResource(R.string.soul_import_skip_button),
+                        onClick = { viewModel.rejectImport(candidate) },
+                    )
+                    GhostButton(
+                        stringResource(R.string.soul_import_keep_button),
+                        onClick = { viewModel.confirmImport(candidate) },
+                    )
                 }
             }
         }
@@ -312,11 +345,10 @@ private fun EditFactDialog(
     val fact = state.editing ?: return
     Dialog(onDismissRequest = viewModel::cancelEdit) {
         SectionCard {
-            SectionLabel("Correct a memory")
-            Text(categoryName(fact.category), style = MaterialTheme.typography.labelMedium)
+            SectionLabel(stringResource(R.string.soul_edit_title))
+            Text(stringResource(categoryNameRes(fact.category)), style = MaterialTheme.typography.labelMedium)
             Text(
-                "The old version isn't erased — it's kept underneath, superseded. " +
-                    "The soul's history stays honest.",
+                stringResource(R.string.soul_edit_hint),
                 style = MaterialTheme.typography.bodyMedium,
             )
             Box(
@@ -336,9 +368,9 @@ private fun EditFactDialog(
                 )
             }
             Row {
-                GhostButton("Cancel", onClick = viewModel::cancelEdit)
+                GhostButton(stringResource(R.string.soul_edit_cancel), onClick = viewModel::cancelEdit)
                 GhostButton(
-                    "Save correction",
+                    stringResource(R.string.soul_edit_save),
                     enabled = state.editDraft.isNotBlank(),
                     onClick = viewModel::confirmEdit,
                 )
@@ -346,6 +378,40 @@ private fun EditFactDialog(
         }
     }
 }
+
+/** Maps the closed [BackupNotice] set from the view model onto localized text. */
+@Composable
+private fun backupNoticeText(notice: BackupNotice): String =
+    when (notice) {
+        is BackupNotice.PassphraseTooShort ->
+            stringResource(R.string.soul_notice_passphrase_short, notice.minChars)
+        BackupNotice.ExportDone -> stringResource(R.string.soul_notice_sealed)
+        is BackupNotice.ExportFailed ->
+            stringResource(
+                R.string.soul_notice_export_failed,
+                notice.detail ?: stringResource(R.string.soul_error_unknown),
+            )
+        is BackupNotice.ImportDone -> {
+            val arrived =
+                pluralStringResource(
+                    R.plurals.soul_notice_imported,
+                    notice.imported,
+                    notice.creatureName,
+                    notice.imported,
+                )
+            if (notice.skipped > 0) {
+                arrived + " " + pluralStringResource(R.plurals.soul_notice_skipped, notice.skipped, notice.skipped)
+            } else {
+                arrived
+            }
+        }
+        BackupNotice.WrongPassphraseOrCorrupt -> stringResource(R.string.soul_notice_wrong_passphrase)
+        is BackupNotice.ImportFailed ->
+            stringResource(
+                R.string.soul_notice_import_failed,
+                notice.detail ?: stringResource(R.string.soul_error_unknown),
+            )
+    }
 
 @Composable
 private fun CategoryChip(
@@ -378,12 +444,13 @@ private fun Counter(
     }
 }
 
-private fun categoryName(category: FactCategory): String =
+@StringRes
+private fun categoryNameRes(category: FactCategory): Int =
     when (category) {
-        FactCategory.IDENTITY -> "identity"
-        FactCategory.PREFERENCE -> "preference"
-        FactCategory.PEOPLE -> "people"
-        FactCategory.WORK -> "work"
-        FactCategory.MOMENT -> "moment"
-        FactCategory.OTHER -> "other"
+        FactCategory.IDENTITY -> R.string.soul_category_identity
+        FactCategory.PREFERENCE -> R.string.soul_category_preference
+        FactCategory.PEOPLE -> R.string.soul_category_people
+        FactCategory.WORK -> R.string.soul_category_work
+        FactCategory.MOMENT -> R.string.soul_category_moment
+        FactCategory.OTHER -> R.string.soul_category_other
     }

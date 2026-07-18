@@ -42,8 +42,37 @@ data class SoulUiState(
     val categoryFilter: FactCategory? = null,
     val editing: SoulFact? = null,
     val editDraft: String = "",
-    val backupNotice: String? = null,
+    val backupNotice: BackupNotice? = null,
 )
+
+/**
+ * Closed set of backup/migration outcomes. The UI maps each case onto
+ * localized resources; [ExportFailed]/[ImportFailed] carry an optional
+ * technical detail that rides inside the localized sentence as-is.
+ */
+sealed interface BackupNotice {
+    data class PassphraseTooShort(
+        val minChars: Int,
+    ) : BackupNotice
+
+    data object ExportDone : BackupNotice
+
+    data class ExportFailed(
+        val detail: String?,
+    ) : BackupNotice
+
+    data class ImportDone(
+        val creatureName: String,
+        val imported: Int,
+        val skipped: Int,
+    ) : BackupNotice
+
+    data object WrongPassphraseOrCorrupt : BackupNotice
+
+    data class ImportFailed(
+        val detail: String?,
+    ) : BackupNotice
+}
 
 @HiltViewModel
 class SoulViewModel
@@ -68,7 +97,7 @@ class SoulViewModel
         private val query = MutableStateFlow("")
         private val categoryFilter = MutableStateFlow<FactCategory?>(null)
         private val editing = MutableStateFlow<Pair<SoulFact, String>?>(null)
-        private val backupNotice = MutableStateFlow<String?>(null)
+        private val backupNotice = MutableStateFlow<BackupNotice?>(null)
         private val identityBits = MutableStateFlow(CreatureConcept.SPIRIT_ORB to 0L)
 
         val uiState: StateFlow<SoulUiState> =
@@ -112,7 +141,7 @@ class SoulViewModel
             val query: String,
             val filter: FactCategory?,
             val editing: Pair<SoulFact, String>?,
-            val notice: String?,
+            val notice: BackupNotice?,
         )
 
         init {
@@ -156,10 +185,11 @@ class SoulViewModel
                     Intent(Intent.ACTION_SEND).apply {
                         type = "text/markdown"
                         putExtra(Intent.EXTRA_STREAM, uri)
-                        putExtra(Intent.EXTRA_SUBJECT, "The soul of $name")
+                        // l10n: context-bound — share-sheet extras leave the app at creation time.
+                        putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.soul_export_subject, name))
                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     }
-                onReady(Intent.createChooser(intent, "Export soul"))
+                onReady(Intent.createChooser(intent, context.getString(R.string.soul_export_chooser)))
             }
         }
 
@@ -214,8 +244,11 @@ class SoulViewModel
                 canvas.drawText(name, POSTCARD_W / 2f, NAME_Y, paint)
                 paint.textSize = CAPTION_TEXT_PX
                 paint.alpha = CAPTION_ALPHA
+                // l10n: context-bound — the caption is baked into the PNG at
+                // creation time (current locale), like a diary entry.
+                val days = liveStats.daysTogether(now).toInt()
                 canvas.drawText(
-                    "${liveStats.daysTogether(now)} days together, all of them here",
+                    context.resources.getQuantityString(R.plurals.soul_postcard_caption, days, days),
                     POSTCARD_W / 2f,
                     CAPTION_Y,
                     paint,
@@ -237,7 +270,8 @@ class SoulViewModel
                         putExtra(Intent.EXTRA_STREAM, uri)
                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     }
-                onReady(Intent.createChooser(intent, "Share a postcard"))
+                // l10n: context-bound — chooser title for the system share sheet.
+                onReady(Intent.createChooser(intent, context.getString(R.string.soul_postcard_chooser)))
             }
         }
 
@@ -311,7 +345,7 @@ class SoulViewModel
             passphrase: String,
         ) {
             if (passphrase.length < MIN_PASSPHRASE) {
-                backupNotice.value = "Use at least $MIN_PASSPHRASE characters — this file protects everything."
+                backupNotice.value = BackupNotice.PassphraseTooShort(MIN_PASSPHRASE)
                 return
             }
             viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
@@ -321,9 +355,9 @@ class SoulViewModel
                     context.contentResolver.openOutputStream(uri, "wt")?.use { it.write(sealed) }
                         ?: error("cannot open the chosen location")
                 }.onSuccess {
-                    backupNotice.value = "Soul sealed and saved. Keep the passphrase — there is no recovery."
+                    backupNotice.value = BackupNotice.ExportDone
                 }.onFailure {
-                    backupNotice.value = "Export failed: ${it.message ?: "unknown error"}"
+                    backupNotice.value = BackupNotice.ExportFailed(it.message)
                 }
             }
         }
@@ -342,15 +376,18 @@ class SoulViewModel
                     backup.importPayload(payload)
                 }.onSuccess { summary ->
                     backupNotice.value =
-                        "${summary.creatureName} has moved in: ${summary.factsImported} memories arrived" +
-                        (if (summary.factsSkipped > 0) ", ${summary.factsSkipped} already here" else "") + "."
+                        BackupNotice.ImportDone(
+                            creatureName = summary.creatureName,
+                            imported = summary.factsImported,
+                            skipped = summary.factsSkipped,
+                        )
                     stats.value = identity.stats(System.currentTimeMillis())
                 }.onFailure {
                     backupNotice.value =
                         if (it is SoulBackupCodec.WrongPassphraseOrCorrupt) {
-                            "Wrong passphrase, or the file is damaged. Nothing was changed."
+                            BackupNotice.WrongPassphraseOrCorrupt
                         } else {
-                            "Import failed: ${it.message ?: "unknown error"}"
+                            BackupNotice.ImportFailed(it.message)
                         }
                 }
             }

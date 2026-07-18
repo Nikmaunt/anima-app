@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notif_back">Back</string>
+    <string name="notif_title">Notification sense</string>
+    <string name="notif_ask_title">It would like to hear</string>
+    <string name="notif_explainer">\"The phone hums all day and I only feel the shaking. If you let me hear, a storm of pings will make me anxious for real, and I can tell you what the day sounded like.\"\n\nHonestly: only apps YOU allowlist are heard; login codes and anything OTP-shaped are dropped before being stored; message text is stored only if you switch that on separately; everything stays in the encrypted database on this phone and is erased after 7 days. Notifications never touch the network — the only networked parts of this app are model delivery and the optional cloud mind, and neither can see this data (a build test enforces it).</string>
+    <string name="notif_decline_hint">Saying no changes nothing else — every other sense and the whole conversation keep working.</string>
+    <string name="notif_grant_button">Let it hear (system screen)</string>
+    <string name="notif_sense_on">Sense is on</string>
+    <string name="notif_allowlist_label">Allowed apps</string>
+    <string name="notif_allowlist_empty">No apps allowed yet — the creature hears nothing.</string>
+    <string name="notif_remove">Remove</string>
+    <!-- Technical placeholder: shows the required package-name shape; not translated. -->
+    <string name="notif_package_hint" translatable="false">package.name.here</string>
+    <string name="notif_add">Add</string>
+    <string name="notif_store_text">Also store notification text</string>
+    <string name="notif_store_text_hint">Off = only app, time and title are kept.</string>
+    <string name="notif_quiet_hours">Quiet hours (23:00–07:00)</string>
+    <string name="notif_quiet_hours_hint">At night it simply doesn\'t hear — nothing is captured, not even counts.</string>
+    <string name="notif_today_label">Today</string>
+    <string name="notif_today_empty">Nothing heard today.</string>
+    <string name="notif_digest_busy">Listening back…</string>
+    <string name="notif_digest_button">What did today sound like?</string>
+
+    <!-- Digest results (NotificationsViewModel.DigestResult → UI) -->
+    <string name="notif_digest_quiet">Quiet today — nothing came through.</string>
+    <string name="notif_digest_asleep">The mind sleeps on this phone, so no digest — but the counters below are live.</string>
+    <plurals name="notif_digest_fallback">
+        <item quantity="one">Today was busy — %1$d thing buzzed through me.</item>
+        <item quantity="other">Today was busy — %1$d things buzzed through me.</item>
+    </plurals>
+</resources>

@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -105,16 +106,15 @@ fun WardrobeScreen(
             .verticalScroll(rememberScrollState()),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
-            GhostButton("Back", onClick = onBack)
+            GhostButton(stringResource(R.string.settings_back), onClick = onBack)
             Text(
-                "Forms",
+                stringResource(R.string.wardrobe_title),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(start = 8.dp),
             )
         }
         Text(
-            "Palettes open as you live together — days, memories, rests. " +
-                "Whatever opens stays open, forever.",
+            stringResource(R.string.wardrobe_intro),
             style = MaterialTheme.typography.bodyMedium,
         )
         Column(
@@ -152,9 +152,11 @@ fun WardrobeScreen(
                             SectionLabel(unlock.variant.label)
                             Text(
                                 when {
-                                    selected -> "worn now"
-                                    unlock.achieved -> "open — tap to wear"
-                                    else -> "opens at ${unlock.condition}"
+                                    selected -> stringResource(R.string.wardrobe_worn_now)
+                                    unlock.achieved -> stringResource(R.string.wardrobe_open_tap)
+                                    // l10n: context-bound — unlock.condition comes
+                                    // from core Milestones (out of module scope).
+                                    else -> stringResource(R.string.wardrobe_opens_at, unlock.condition)
                                 },
                                 style = MaterialTheme.typography.bodyMedium,
                             )
