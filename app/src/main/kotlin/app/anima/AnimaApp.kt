@@ -25,9 +25,19 @@ class AnimaApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        // Open the encrypted DB eagerly, then scrub the Java-side passphrase.
-        // SQLCipher never zeroes it itself; see SoulKeyHolder / ADR-003.
-        appScope.launch { soulVaultWarmer.warmUpAndScrub() }
+        // Open the encrypted DB eagerly so a corrupt soul.key fails at
+        // launch. The passphrase is deliberately NOT scrubbed: the WAL pool
+        // re-keys every new connection from it — SoulKeyHolder / ADR-003
+        // addendum v0.4.
+        appScope.launch { soulVaultWarmer.warmUp() }
+        // Plaintext soul exports are share-sheet ephemera (audit-v03 F2):
+        // whatever a previous session left in cache/exports dies here.
+        appScope.launch {
+            java.io
+                .File(cacheDir, "exports")
+                .listFiles()
+                ?.forEach { it.delete() }
+        }
         // ADR-010: learn whether Play has (or is fetching) the mind pack.
         // Observation only — the fast-follow download is Play's own doing.
         packModelSource.refresh()

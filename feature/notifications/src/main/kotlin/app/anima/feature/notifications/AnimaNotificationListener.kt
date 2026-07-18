@@ -16,10 +16,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * Anima's ONLY background entity (constraint #5). It does exactly one thing:
- * filter → write to the local encrypted DB. Zero inference, zero network
- * (this module has no network-capable dependency and the app has no INTERNET
- * permission), zero UI, zero wake locks.
+ * One of Anima's few background entities (with the widget receiver and the
+ * parked WorkManager one-shots — audit-v03 F7 keeps this list honest). It
+ * does exactly one thing: filter → write to the local encrypted DB. Zero
+ * inference, zero network (this module has no network-capable dependency;
+ * INTERNET lives only in model-delivery and cloud-mind), zero UI, zero wake
+ * locks.
  *
  * hermes-lens listener discipline carried over:
  * - the whole handler is wrapped in swallow-everything — a listener exception

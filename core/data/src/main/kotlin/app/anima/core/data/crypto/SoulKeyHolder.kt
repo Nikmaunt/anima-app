@@ -4,16 +4,20 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Custody of the plaintext passphrase between DB construction and the eager
- * first open. SQLCipher's Support layer retains the exact array reference we
- * hand it and never scrubs it (verified against sqlcipher-android 4.6.1
- * bytecode), so zeroing *this* array also scrubs the copy the factory holds.
+ * Custody of the plaintext passphrase for the lifetime of the process.
  *
- * Contract: [zero] may only be called after the database has actually been
- * opened once (AnimaApp does this eagerly at startup). After zeroing, a
- * re-open within the same process would fail loudly — accepted, because the
- * Room singleton keeps its connection for the process lifetime and a fresh
- * process re-derives the passphrase from the Keystore-wrapped file.
+ * Why it must stay alive (ADR-003 addendum v0.4): sqlcipher-android retains
+ * the exact array reference we hand the factory and RE-READS it every time
+ * the connection pool opens a new physical connection —
+ * `SQLiteConnection.open()` → `nativeKey(configuration.password)`, verified
+ * against 4.17.0 bytecode (audit-v03 §1; same aliasing as 4.6.1). In WAL
+ * mode Room's pool opens non-primary connections at any moment under
+ * concurrent load, so zeroing this array after the first open (the
+ * v0.2/v0.3 ritual) turned routine pool growth into a fatal
+ * SQLiteNotADatabaseException — reproduced live in the v0.4 emulator pass
+ * and pinned by WalPoolKeyDeviceTest. The plaintext window is therefore the
+ * process lifetime; at rest the passphrase only ever exists
+ * Keystore-wrapped (KeystoreSoulKeySource).
  */
 @Singleton
 class SoulKeyHolder
@@ -26,11 +30,4 @@ class SoulKeyHolder
 
         @Synchronized
         fun passphrase(): ByteArray = bytes ?: source.passphrase().also { bytes = it }
-
-        /** Scrub the Java-side copy. Native key material remains — ADR-003. */
-        @Synchronized
-        fun zero() {
-            bytes?.fill(0)
-            bytes = null
-        }
     }

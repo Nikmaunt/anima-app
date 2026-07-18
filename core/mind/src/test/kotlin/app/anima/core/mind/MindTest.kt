@@ -65,4 +65,29 @@ class MindTest {
         val many = (1..20).joinToString(",", "[", "]") { """{"category":"other","text":"f$it"}""" }
         assertThat(FactJson.parseCandidates(many)).hasSize(FactJson.MAX_CANDIDATES)
     }
+
+    // ADR-011 data-scope guard (audit-v03 F1): the local-only view must never
+    // pick CLOUD, whatever the cloud's state; the full ladder still does.
+
+    @Test
+    fun `tier selection never picks cloud when the surface excludes it`() {
+        assertThat(
+            TierSelection.pick(cloudReady = false, nanoAwake = false, hasLocalModel = false),
+        ).isEqualTo(app.anima.core.model.MindTier.NONE)
+        // The digest path passes cloudReady=false unconditionally; even a
+        // ready cloud plus no local tier must fall through to NONE.
+        assertThat(
+            TierSelection.pick(cloudReady = false, nanoAwake = false, hasLocalModel = true),
+        ).isEqualTo(app.anima.core.model.MindTier.GEMMA)
+        assertThat(
+            TierSelection.pick(cloudReady = false, nanoAwake = true, hasLocalModel = true),
+        ).isEqualTo(app.anima.core.model.MindTier.NANO)
+    }
+
+    @Test
+    fun `tier selection prefers cloud only when allowed and ready`() {
+        assertThat(
+            TierSelection.pick(cloudReady = true, nanoAwake = true, hasLocalModel = true),
+        ).isEqualTo(app.anima.core.model.MindTier.CLOUD)
+    }
 }

@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.anima.core.data.prefs.NotifConfigStore
 import app.anima.core.data.repo.NotifEventsRepository
-import app.anima.core.model.MindEngine
+import app.anima.core.model.LocalMindEngine
 import app.anima.core.model.MindEvent
 import app.anima.core.model.MindStatus
 import app.anima.core.model.NotifCaptureFilter
@@ -40,7 +40,9 @@ class NotificationsViewModel
         @ApplicationContext private val context: Context,
         private val configStore: NotifConfigStore,
         private val events: NotifEventsRepository,
-        private val mind: MindEngine,
+        // LocalMindEngine, not MindEngine: notification titles must never
+        // reach the cloud tier (ADR-011 data scope; audit-v03 F1).
+        private val mind: LocalMindEngine,
     ) : ViewModel() {
         private val state = MutableStateFlow(NotificationsUiState())
         val uiState: StateFlow<NotificationsUiState> = state.asStateFlow()

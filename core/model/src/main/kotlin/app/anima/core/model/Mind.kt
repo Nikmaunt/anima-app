@@ -78,3 +78,12 @@ interface MindEngine {
         creatureText: String,
     ): List<FactCandidate>
 }
+
+/**
+ * ADR-011 data-scope guard (audit-v03 F1): a view of the mind that can never
+ * select the cloud tier. Surfaces that feed body-adjacent data into prompts —
+ * the notification digest is the canonical case — must depend on THIS type,
+ * so "the cloud never sees notification data" is enforced by the DI graph's
+ * types, not by callers remembering a rule.
+ */
+interface LocalMindEngine : MindEngine

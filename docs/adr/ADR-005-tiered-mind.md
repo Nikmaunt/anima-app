@@ -97,3 +97,10 @@ download of the official file is impossible. Therefore:
 - RAM: 1B int4 peaks ~0.7–1.5 GB — acceptable on 8 GB; the engine is
   released when the chat closes (LRU: model unloads on background).
 - Thermals favor bursty short replies — which is the product's shape anyway.
+
+## Errata (v0.4, 2026-07-18)
+
+"Probes in that order once per process start" was never how the code worked:
+tier probing is per call (a cheap binder/StateFlow read), deliberately
+stateless — installing or deleting a model or going offline needs no
+invalidation choreography. The per-call design is the one on record.

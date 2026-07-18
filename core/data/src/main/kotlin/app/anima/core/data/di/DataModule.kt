@@ -33,11 +33,11 @@ internal object DataModule {
     ): AnimaDatabase {
         // SQLCipher native library must be loaded before the factory is used.
         System.loadLibrary("sqlcipher")
-        // sqlcipher-android never zeroes the passphrase itself (verified
-        // against the 4.6.1 bytecode: the factory retains the array as-is;
-        // the boolean ctor param is WAL, not clearPassphrase). The holder
-        // keeps the one reference; AnimaApp zeroes it right after the eager
-        // first open. ADR-003 addendum records the native-side residue.
+        // sqlcipher-android never zeroes the passphrase itself and aliases
+        // the array we pass (re-verified against 4.17.0 bytecode, audit-v03
+        // §1). The pool re-keys every new physical connection from that
+        // array, so the holder keeps it alive for the process lifetime —
+        // zeroing it would crash WAL pool growth (ADR-003 addendum v0.4).
         return Room
             .databaseBuilder(context, AnimaDatabase::class.java, AnimaDatabase.NAME)
             .openHelperFactory(SupportOpenHelperFactory(keyHolder.passphrase()))

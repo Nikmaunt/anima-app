@@ -73,3 +73,39 @@ holds key material for open connections; there is no API to scrub those
 native copies short of closing the database. The threat model is at-rest
 disk compromise, not a same-process memory reader — a process that can read
 our heap can read the open DB anyway.
+
+## Addendum (v0.4, 2026-07-18): the zeroing ritual was unsound — removed
+
+The v0.2 mechanism rested on the assumption that "the Room singleton holds
+its connection for the process lifetime" — i.e. exactly one physical
+connection. That assumption is false under WAL (Room's default journal
+mode): `SQLiteConnectionPool` opens **non-primary connections on demand**
+under concurrent load, and 4.17.0 bytecode (audit-v03 §1) shows every
+physical open re-reads `configuration.password` — the very array we had
+zeroed. Result observed live in the v0.4 emulator pass, minutes after a
+fresh onboarding: `SQLiteNotADatabaseException: file is not a database` in
+`tryAcquireNonPrimaryConnectionLocked` → process death. The v0.2/v0.3
+"plaintext window is startup-seconds" claim bought a crash, not a security
+property.
+
+v0.4 posture:
+
+- `SoulKeyHolder` keeps the passphrase for the process lifetime; nothing
+  scrubs it while the pool lives. `SoulVaultWarmer.warmUp()` remains as the
+  fail-fast for corrupt `soul.key`.
+- Pinned by `WalPoolKeyDeviceTest` (core:data androidTest): a held write
+  transaction plus a concurrent read forces a non-primary connection; the
+  read must succeed.
+- The honest security statement: at rest the passphrase exists only
+  Keystore-wrapped; in memory it lives as long as the process, same as the
+  native key material it feeds. The threat model (at-rest compromise, not
+  same-process memory readers) is unchanged — see the accepted limitation
+  above, which now covers the Java copy too.
+
+## Note (v0.4): the one bulk write path into the soul
+
+Sealed-backup restore (`SoulBackup.importPayload`) inserts every fact from
+the envelope after a single file+passphrase act — the sanctioned exception
+to per-fact confirmation (audit-v03 F9): restoring one's own soul IS the
+consent. A crafted backup a user chooses to import can inject arbitrary
+memories; accepted, since the same user can type arbitrary memories.

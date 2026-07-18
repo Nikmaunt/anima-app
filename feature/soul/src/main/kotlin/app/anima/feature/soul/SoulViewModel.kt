@@ -145,6 +145,10 @@ class SoulViewModel
                         nowMillis = now,
                     )
                 val dir = File(context.cacheDir, "exports").apply { mkdirs() }
+                // Plaintext export residue (audit-v03 F2): previous exports
+                // are removed before writing a new one, and AnimaApp sweeps
+                // this dir on every app start.
+                dir.listFiles()?.forEach { it.delete() }
                 val file = File(dir, "soul-of-${name.lowercase().replace(Regex("[^a-zа-яё0-9]+"), "-")}.md")
                 file.writeText(markdown)
                 val uri = FileProvider.getUriForFile(context, "${context.packageName}.files", file)

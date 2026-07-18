@@ -19,6 +19,13 @@ sealed interface PackPhase {
     /** No Play delivery here (sideload/debug) or state not yet known. */
     data object Absent : PackPhase
 
+    /**
+     * Play knows the pack but has not delivered it (fast-follow not yet
+     * fetched — the sideload-then-store-install edge, or local testing).
+     * The one place [PackModelSource.requestFetch] is offered from.
+     */
+    data object NotFetched : PackPhase
+
     data class Downloading(
         val bytesDone: Long,
         val bytesTotal: Long,
@@ -99,6 +106,7 @@ class PackModelSource
                     PackPhase.Downloading(packState.bytesDownloaded(), packState.totalBytesToDownload())
                 AssetPackStatus.REQUIRES_USER_CONFIRMATION, AssetPackStatus.WAITING_FOR_WIFI ->
                     PackPhase.WaitingForConsent
+                AssetPackStatus.NOT_INSTALLED -> PackPhase.NotFetched
                 AssetPackStatus.FAILED -> PackPhase.Failed(packState.errorCode())
                 else -> PackPhase.Absent
             }

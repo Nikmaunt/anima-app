@@ -64,3 +64,18 @@ user action. Changes against the original text of this ADR:
   now FAILS when no build output exists (and `:app` unit tests depend on the
   manifest-packaging task so the input always exists), and the dependency
   grep covers every `build.gradle.kts`, not just the catalog.
+
+## Addendum (v0.4, 2026-07-18): the merged permission budget, in full
+
+The three source permissions are only part of what ships: library manifests
+merge in FOREGROUND_SERVICE + FOREGROUND_SERVICE_DATA_SYNC (Play asset-pack
+extraction service), WAKE_LOCK + RECEIVE_BOOT_COMPLETED (WorkManager's
+one-shot charge triggers surviving reboot), and the AICore client-side
+`com.google.android.apps.aicore.service.BIND_SERVICE` (ML Kit GenAI binder).
+The honest statement is therefore: **eight uses-permissions in the merged
+manifest, zero of them dangerous-tier, zero runtime prompts.** This set is
+now pinned by NetworkIsolationTest v4 (`merged permission budget is exactly
+the documented set`) — any new library-merged permission fails the build.
+Asset-pack extraction may briefly run a foreground service with Play's own
+notification; "Anima posts zero notifications" refers to app code, which
+still posts none.

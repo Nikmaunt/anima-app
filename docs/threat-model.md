@@ -53,7 +53,8 @@ exports. Assets → boundaries → threats → mitigations, with honest residues
 
 ### Information disclosure — the core threat class
 - **Network exfiltration** (any→out): two INTERNET modules total, enforced
-  by NetworkIsolationTest v3 (manifests, sources, catalog, build files);
+  by NetworkIsolationTest v4 (manifests incl. release when built, permission
+  budget pin, sources, catalog, build files, digest-tier guard);
   cloud-mind additionally has a pinned dependency allowlist and a logging
   ban. DataTransport telemetry components stripped from the merged
   manifest (asserted).
@@ -65,11 +66,16 @@ exports. Assets → boundaries → threats → mitigations, with honest residues
   Settings switch, and the trust page.
 - **Key custody** (A2/A3): random 32-byte secrets wrapped by non-exportable
   Keystore AES-GCM keys (separate aliases); files in noBackupFilesDir
-  (never in backups/device transfer). Java-side copies zeroed after use.
+  (never in backups/device transfer). The SOUL passphrase lives in memory
+  for the process lifetime — the WAL pool re-keys every new connection from
+  the aliased array (4.17.0 bytecode, audit-v03 §1), so scrubbing it is
+  impossible without crashing pool growth (the v0.2/v0.3 "zero after warm"
+  ritual did exactly that; removed in v0.4). Cloud-key copies are still
+  zeroed after each request.
   Residues, honestly: (1) SQLCipher's native layer keeps key material —
-  ADR-003 accepted; the zero-share claim ("our array IS the factory's
-  array") was verified against 4.6.1 bytecode and must be RE-VERIFIED
-  against 4.17.0 (S24 checklist v3 item); (2) the cloud key briefly exists
+  ADR-003 accepted; the aliasing claim ("our array IS the factory's
+  array") was verified against 4.6.1 bytecode and RE-VERIFIED against
+  4.17.0 in the v0.4 run (audit-v03 §1); (2) the cloud key briefly exists
   as an immutable header String per request; (3) Keystore keys have no
   user-auth gate — the creature must wake without biometrics (ADR-003).
 - **Screen surfaces** (B6): Soul screen sets FLAG_SECURE by default
@@ -102,7 +108,7 @@ exports. Assets → boundaries → threats → mitigations, with honest residues
 
 ## Standing mitigations (build-time)
 
-- NetworkIsolationTest v3 (10 tests) — the network world order.
+- NetworkIsolationTest v4 (11 tests) — the network world order.
 - GMD instrumented suite — real SQLCipher/Keystore behavior on device.
 - StrictMode (debug builds) — leaked closables/activities, disk/network
   on main thread.

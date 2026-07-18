@@ -85,7 +85,9 @@ fun TrustScreen(
             SectionCard {
                 SectionLabel("Prove it")
                 Text(
-                    "Turn on airplane mode. Anima won't even notice.",
+                    "Turn on airplane mode. Everything keeps working — the " +
+                        "creature senses the connection change like weather, " +
+                        "and nothing else happens. No feature needs the network.",
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }

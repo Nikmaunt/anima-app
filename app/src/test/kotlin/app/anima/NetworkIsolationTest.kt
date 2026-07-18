@@ -6,20 +6,19 @@ import org.junit.Test
 import java.io.File
 
 /**
- * The network guarantee as a failing build, v3 (ADR-004 as amended by
- * ADR-005 and ADR-011). What changed against v2:
+ * The network guarantee as a failing build, v4 (ADR-004 as amended by
+ * ADR-005 and ADR-011; audit-v03 F6/F8/F1). What changed against v3:
  *
- *  1. The sanctioned network world grew to exactly TWO modules:
- *     :core:model-delivery (model bytes in) and :core:cloud-mind (the
- *     user-keyed cloud mind, ADR-011). INTERNET must originate from
- *     exactly these two module manifests; source-level network APIs are
- *     banned everywhere else.
- *  2. The version catalog still carries no third-party network stack at
- *     all — both modules speak platform HttpsURLConnection.
- *  3. :core:cloud-mind gets the listener treatment: a pinned dependency
- *     allowlist, a logging ban (the BYOK key and the user's words must
- *     never reach a log), and a soul-export guard (cloud.key never rides
- *     the export).
+ *  1. The merged-manifest check now also covers the RELEASE variant when
+ *     its build output exists (debug remains mandatory).
+ *  2. The forbidden-API needle list grew: openStream, SocketChannel,
+ *     DatagramSocket, ServerSocket, WebView, DownloadManager.
+ *  3. The merged permission budget is pinned as an exact allowlist —
+ *     library-merged additions (WorkManager, AICore) are documented in
+ *     ADR-004 and any NEW permission fails this build.
+ *  4. Digest guard (audit-v03 F1): the notifications module must speak to
+ *     the mind through LocalMindEngine only — notification titles must
+ *     never reach the cloud tier.
  */
 class NetworkIsolationTest {
     private val networkModules =
@@ -34,19 +33,29 @@ class NetworkIsolationTest {
             .first { File(it, "settings.gradle.kts").exists() }
     }
 
-    @Test
-    fun `merged manifest exists and carries INTERNET only via model-delivery`() {
-        val candidates =
+    private fun mergedManifests(): List<File> {
+        val debug =
             listOf(
                 "build/intermediates/packaged_manifests/debug/processDebugManifestForPackage/AndroidManifest.xml",
                 "build/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest.xml",
             ).map { File(repoRoot, "app/$it") }.filter { it.exists() }
-        // v0.1 gap closed: absence of build output is a FAILURE, not a pass.
+        // v0.1 gap closed: absence of the debug output is a FAILURE, not a pass.
         assertWithMessage(
             "No merged manifest found — run `gradlew assembleDebug` before `test`; " +
                 "this check is meaningless without it and refuses to pretend otherwise.",
-        ).that(candidates).isNotEmpty()
-        candidates.forEach { manifest ->
+        ).that(debug).isNotEmpty()
+        // v4: the release output is checked whenever it has been built.
+        val release =
+            listOf(
+                "build/intermediates/packaged_manifests/release/processReleaseManifestForPackage/AndroidManifest.xml",
+                "build/intermediates/merged_manifest/release/processReleaseMainManifest/AndroidManifest.xml",
+            ).map { File(repoRoot, "app/$it") }.filter { it.exists() }
+        return debug + release
+    }
+
+    @Test
+    fun `merged manifest exists and carries INTERNET only via model-delivery`() {
+        mergedManifests().forEach { manifest ->
             val text = manifest.readText().replace(Regex("<!--.*?-->", RegexOption.DOT_MATCHES_ALL), "")
             // INTERNET is expected now (model delivery) — but the telemetry
             // components must stay stripped.
@@ -55,6 +64,59 @@ class NetworkIsolationTest {
             assertThat(text).doesNotContain("AlarmManagerSchedulerBroadcastReceiver")
             assertThat(text).doesNotContain("TransportBackendDiscovery")
         }
+    }
+
+    @Test
+    fun `merged permission budget is exactly the documented set`() {
+        // ADR-004 addendum (audit-v03 F8): the app's own three permissions
+        // plus the library-merged residue, in full. Anything new fails.
+        val allowed =
+            setOf(
+                "android.permission.INTERNET",
+                "android.permission.ACCESS_NETWORK_STATE",
+                "android.permission.VIBRATE",
+                "android.permission.FOREGROUND_SERVICE",
+                "android.permission.FOREGROUND_SERVICE_DATA_SYNC",
+                "android.permission.WAKE_LOCK",
+                "android.permission.RECEIVE_BOOT_COMPLETED",
+                "com.google.android.apps.aicore.service.BIND_SERVICE",
+                // androidx.core synthesizes this app-private permission for
+                // every app to protect non-exported dynamic receivers.
+                "app.anima.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+            )
+        mergedManifests().forEach { manifest ->
+            val text = manifest.readText().replace(Regex("<!--.*?-->", RegexOption.DOT_MATCHES_ALL), "")
+            val declared =
+                Regex("<uses-permission[^>]*android:name=\"([^\"]+)\"")
+                    .findAll(text)
+                    .map { it.groupValues[1] }
+                    .toSet()
+            assertWithMessage("undocumented permissions in ${manifest.name}")
+                .that(declared - allowed)
+                .isEmpty()
+            assertThat(declared).contains("android.permission.INTERNET")
+            assertThat(declared).contains("android.permission.VIBRATE")
+        }
+    }
+
+    @Test
+    fun `notification digest speaks only to the local mind`() {
+        // audit-v03 F1: the digest prompt carries notification titles; the
+        // DI type LocalMindEngine makes the cloud tier unreachable. This
+        // static tripwire fails if the module ever goes back to the full
+        // MindEngine or reaches for the cloud backend directly.
+        val moduleSrc = File(repoRoot, "feature/notifications/src/main")
+        val viewModel = File(moduleSrc, "kotlin/app/anima/feature/notifications/NotificationsViewModel.kt").readText()
+        assertThat(viewModel).contains("LocalMindEngine")
+        assertThat(viewModel).doesNotContain("val mind: MindEngine")
+        moduleSrc
+            .walkTopDown()
+            .filter { it.isFile && it.extension == "kt" }
+            .forEach { file ->
+                assertWithMessage("${file.name} must not touch the cloud backend")
+                    .that(file.readText().contains("CloudMindBackend"))
+                    .isFalse()
+            }
     }
 
     @Test
@@ -84,6 +146,13 @@ class NetworkIsolationTest {
                 "java.net.Socket",
                 "HttpsURLConnection",
                 "openConnection(",
+                // v4 (audit-v03 F6): the quieter ways out of the sandbox.
+                "openStream(",
+                "SocketChannel",
+                "DatagramSocket",
+                "ServerSocket",
+                "WebView",
+                "DownloadManager",
             )
         val offenders = mutableListOf<String>()
         sourceFiles()

@@ -59,3 +59,21 @@ all; v0.3 adds it as an explicit user choice.
 - Play Data safety declaration changes IF the user enables cloud: the app
   itself still collects nothing; user-directed BYOK traffic goes to the
   user's own provider. Wording lands in the store-listing checklist.
+
+## Errata + hardening (v0.4, 2026-07-18)
+
+- **Data-scope violation fixed (audit-v03 F1):** the notification digest fed
+  titles+packages into the tiered engine, which picked CLOUD when enabled —
+  contradicting this ADR's "never the journal/notification tables". The
+  digest (and any future body-adjacent summary) now depends on
+  `LocalMindEngine`, a DI type that cannot select the cloud tier; pinned by
+  a unit test on the tier ladder and a NetworkIsolationTest v4 tripwire.
+- "Masked tail in UI" was never built: the key is simply never displayed
+  (placeholder text only) — stronger than documented; the entry field is
+  now password-masked while typing (audit-v03 F5).
+- "Tiny antenna badge on the creature" shipped as the "· cloud mind" header
+  label — the label IS the indicator of record.
+- Mid-stream degradation: an offline/misconfigured cloud falls through to
+  local tiers before the call; a FAILED mid-stream reply does NOT retry
+  locally for that reply (honest error instead). The "falls back by itself"
+  settings copy covers the pre-call path only.

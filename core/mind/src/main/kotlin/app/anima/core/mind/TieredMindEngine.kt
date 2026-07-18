@@ -2,6 +2,7 @@ package app.anima.core.mind
 
 import app.anima.core.model.CloudMindBackend
 import app.anima.core.model.FactCandidate
+import app.anima.core.model.LocalMindEngine
 import app.anima.core.model.MindEngine
 import app.anima.core.model.MindEvent
 import app.anima.core.model.MindFailure
@@ -36,13 +37,30 @@ class TieredMindEngine
         private val locator: MindModelLocator,
     ) : MindEngine,
         MindInventory {
-        private suspend fun active(): Pair<MindTier, MindEngine>? {
-            if (cloud.status() == MindStatus.READY) return MindTier.CLOUD to cloud
-            val nanoStatus = nano.status()
-            if (nanoStatus != MindStatus.ASLEEP) return MindTier.NANO to nano
-            if (locator.installed.value != null) return MindTier.GEMMA to gemma
-            return null
-        }
+        private suspend fun active(includeCloud: Boolean = true): Pair<MindTier, MindEngine>? =
+            when (
+                TierSelection.pick(
+                    cloudReady = includeCloud && cloud.status() == MindStatus.READY,
+                    nanoAwake = nano.status() != MindStatus.ASLEEP,
+                    hasLocalModel = locator.installed.value != null,
+                )
+            ) {
+                MindTier.CLOUD -> MindTier.CLOUD to cloud
+                MindTier.NANO -> MindTier.NANO to nano
+                MindTier.GEMMA -> MindTier.GEMMA to gemma
+                else -> null
+            }
+
+        private fun replyVia(
+            prompt: MindPrompt,
+            includeCloud: Boolean,
+        ): Flow<MindEvent> =
+            flow {
+                when (val backend = active(includeCloud)) {
+                    null -> emit(MindEvent.Failed(MindFailure.LOST_THOUGHT))
+                    else -> emitAll(backend.second.reply(prompt))
+                }
+            }
 
         override suspend fun status(): MindStatus =
             when (val backend = active()) {
@@ -54,13 +72,7 @@ class TieredMindEngine
 
         override suspend fun releaseResources() = gemma.releaseResources()
 
-        override fun reply(prompt: MindPrompt): Flow<MindEvent> =
-            flow {
-                when (val backend = active()) {
-                    null -> emit(MindEvent.Failed(MindFailure.LOST_THOUGHT))
-                    else -> emitAll(backend.second.reply(prompt))
-                }
-            }
+        override fun reply(prompt: MindPrompt): Flow<MindEvent> = replyVia(prompt, includeCloud = true)
 
         override suspend fun extractFactCandidates(
             userText: String,
@@ -74,4 +86,50 @@ class TieredMindEngine
                 gemmaModel = locator.installed.value,
                 cloud = cloud.currentConfig(),
             )
+
+        /**
+         * ADR-011 data-scope guard (audit-v03 F1): the digest and any other
+         * body-adjacent summary go through this view, which skips CLOUD even
+         * when the user has it enabled and online.
+         */
+        val localOnly: LocalMindEngine =
+            object : LocalMindEngine {
+                override suspend fun status(): MindStatus =
+                    when (val backend = active(includeCloud = false)) {
+                        null -> MindStatus.ASLEEP
+                        else -> backend.second.status()
+                    }
+
+                override suspend fun requestDownload(): Boolean =
+                    active(includeCloud = false)?.second?.requestDownload() ?: false
+
+                override suspend fun releaseResources() = gemma.releaseResources()
+
+                override fun reply(prompt: MindPrompt): Flow<MindEvent> = replyVia(prompt, includeCloud = false)
+
+                override suspend fun extractFactCandidates(
+                    userText: String,
+                    creatureText: String,
+                ): List<FactCandidate> =
+                    active(includeCloud = false)?.second?.extractFactCandidates(userText, creatureText).orEmpty()
+            }
     }
+
+/**
+ * The tier ladder as a pure function (unit-tested): CLOUD strictly by
+ * opt-in+ready AND only when the surface allows it, NANO where the Prompt
+ * API answers, GEMMA where a local model exists, honest sleep last.
+ */
+internal object TierSelection {
+    fun pick(
+        cloudReady: Boolean,
+        nanoAwake: Boolean,
+        hasLocalModel: Boolean,
+    ): MindTier =
+        when {
+            cloudReady -> MindTier.CLOUD
+            nanoAwake -> MindTier.NANO
+            hasLocalModel -> MindTier.GEMMA
+            else -> MindTier.NONE
+        }
+}

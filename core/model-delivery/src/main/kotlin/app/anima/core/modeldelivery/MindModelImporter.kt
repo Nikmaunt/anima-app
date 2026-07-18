@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,7 +33,11 @@ class MindModelImporter
             expectedSha256: String? = null,
         ): Flow<DeliveryEvent> =
             flow {
-                val (name, size) = describe(uri)
+                val (rawName, size) = describe(uri)
+                // DISPLAY_NAME comes from an untrusted documents provider
+                // (audit-v03 F3): strip any path structure before it can
+                // steer where the staging file lands.
+                val name = rawName?.let { File(it).name }?.takeIf { it.isNotBlank() && it == rawName }
                 if (name == null || name.substringAfterLast('.') !in MindModelStore.MODEL_EXTENSIONS) {
                     emit(DeliveryEvent.Failed(DeliveryFailure.NOT_A_MODEL, name ?: uri.toString()))
                     return@flow

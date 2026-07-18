@@ -42,3 +42,9 @@ first-class case of that mode rather than a hack.
   beyond the listener) already guarantees by design.
 - BUSY/quota errors surface as the creature being "тired of thinking" with
   `getRetryDelay()`-driven retry hints — never as raw error codes.
+
+## Errata (v0.4, 2026-07-18)
+
+`getRetryDelay()`-driven retry hints were never implemented; download/inference
+failures map to two fixed honest strings. Recorded as intentional scope,
+not a bug.

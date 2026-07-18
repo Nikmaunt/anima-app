@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +34,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.anima.core.model.CloudMindConfig
@@ -264,6 +268,17 @@ private fun PackCard(
                 }
             }
         }
+        is PackPhase.NotFetched -> {
+            SectionCard {
+                SectionLabel("A mind is packed with the app")
+                Text(
+                    "Google Play carries a mind for this creature but hasn't " +
+                        "delivered it yet. Ask, and it comes on its own.",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                GhostButton("Let it come", onClick = onFetch)
+            }
+        }
         is PackPhase.WaitingForConsent -> {
             SectionCard {
                 SectionLabel("The mind waits for permission")
@@ -361,6 +376,9 @@ private fun CloudCard(
             value = keyDraft,
             onValueChange = { keyDraft = it },
             placeholder = if (state.cloud.hasKey) "API key (stored — paste to replace)" else "API key",
+            // audit-v03 F5: the key is a credential — masked while typed,
+            // password keyboard (no learning/autofill suggestion cache).
+            secret = true,
         )
         Row {
             GhostButton("Save", onClick = {
@@ -392,6 +410,7 @@ private fun MindTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
+    secret: Boolean = false,
 ) {
     val colors = LocalAnimaColors.current
     Column(Modifier.padding(vertical = 4.dp)) {
@@ -400,6 +419,14 @@ private fun MindTextField(
             onValueChange = onValueChange,
             textStyle = MaterialTheme.typography.bodyMedium.copy(color = colors.text),
             cursorBrush = SolidColor(colors.accent),
+            visualTransformation =
+                if (secret) PasswordVisualTransformation() else VisualTransformation.None,
+            keyboardOptions =
+                if (secret) {
+                    KeyboardOptions(keyboardType = KeyboardType.Password)
+                } else {
+                    KeyboardOptions.Default
+                },
             modifier =
                 Modifier
                     .fillMaxWidth()
