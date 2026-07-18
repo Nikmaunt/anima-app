@@ -20,6 +20,8 @@ import app.anima.feature.home.BodyDiaryScreen
 import app.anima.feature.home.HomeScreen
 import app.anima.feature.notifications.NotificationsScreen
 import app.anima.feature.onboarding.OnboardingScreen
+import app.anima.feature.rest.RestScreen
+import app.anima.feature.rest.RestTileService
 import app.anima.feature.settings.CrashLogScreen
 import app.anima.feature.settings.MindScreen
 import app.anima.feature.settings.SettingsScreen
@@ -48,20 +50,38 @@ class RootViewModel
     }
 
 @Composable
-fun AnimaRoot(viewModel: RootViewModel = hiltViewModel()) {
+fun AnimaRoot(
+    actions: kotlinx.coroutines.flow.Flow<String> = kotlinx.coroutines.flow.emptyFlow(),
+    viewModel: RootViewModel = hiltViewModel(),
+) {
     AnimaTheme {
         val done by viewModel.onboardingDone.collectAsState()
         val colors = LocalAnimaColors.current
         when (done) {
             null -> Box(Modifier.fillMaxSize().background(colors.background))
-            else -> AnimaNavHost(startAtHome = done == true)
+            else -> AnimaNavHost(startAtHome = done == true, actions = actions)
         }
     }
 }
 
 @Composable
-private fun AnimaNavHost(startAtHome: Boolean) {
+private fun AnimaNavHost(
+    startAtHome: Boolean,
+    actions: kotlinx.coroutines.flow.Flow<String>,
+) {
     val nav = rememberNavController()
+    // QS tile / app shortcuts land here as intent actions (ADR-015). Only a
+    // hatched creature can navigate; pre-onboarding actions are ignored.
+    androidx.compose.runtime.LaunchedEffect(startAtHome) {
+        if (!startAtHome) return@LaunchedEffect
+        actions.collect { action ->
+            when (action) {
+                RestTileService.ACTION_OPEN_REST -> nav.navigate(Routes.REST)
+                ACTION_OPEN_DIARY -> nav.navigate(Routes.DIARY)
+                else -> Unit
+            }
+        }
+    }
     NavHost(
         navController = nav,
         startDestination = if (startAtHome) Routes.HOME else Routes.ONBOARDING,
@@ -76,10 +96,14 @@ private fun AnimaNavHost(startAtHome: Boolean) {
                 onOpenSettings = { nav.navigate(Routes.SETTINGS) },
                 onOpenSoul = { nav.navigate(Routes.SOUL) },
                 onOpenDiary = { nav.navigate(Routes.DIARY) },
+                onOpenRest = { nav.navigate(Routes.REST) },
             )
         }
         composable(Routes.DIARY) {
             BodyDiaryScreen(onBack = { nav.popBackStack() })
+        }
+        composable(Routes.REST) {
+            RestScreen(onBack = { nav.popBackStack() })
         }
         composable(Routes.SETTINGS) {
             SettingsScreen(
@@ -114,9 +138,13 @@ private fun AnimaNavHost(startAtHome: Boolean) {
     }
 }
 
+/** Shortcut action mirrored in res/xml/shortcuts.xml. */
+const val ACTION_OPEN_DIARY = "app.anima.action.DIARY"
+
 private object Routes {
     const val ONBOARDING = "onboarding"
     const val HOME = "home"
+    const val REST = "rest"
     const val SETTINGS = "settings"
     const val NOTIFICATIONS = "notifications"
     const val SOUL = "soul"

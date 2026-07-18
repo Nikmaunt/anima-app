@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.core.data)
     implementation(projects.core.mind)
     implementation(projects.core.ui)
+    implementation(projects.core.voice)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)

@@ -457,3 +457,53 @@ counts (re-verify in Console).
 - Exact shortcut publish limit "15" (docs now say "varies").
 - WallpaperService.Engine javadoc quoted from AOSP source + docs mirror
   (live reference page renders client-side; wording matched across both).
+
+---
+
+## §9 Battery health facts (feeds Phase 2.2 "care as creature care")
+
+Verified 2026-07-18 (dedicated research track). Key findings, each mapped to
+what the creature may honestly say:
+
+- **20-80% is a continuum, not a cliff.** BU-808 tables: 100% DoD ≈ 300
+  cycles vs 20% DoD ≈ 2,000; charge-voltage table shows every 70 mV drop
+  costs ~10% capacity but multiplies cycle life
+  (https://www.batteryuniversity.com/article/bu-808-how-to-prolong-lithium-based-batteries/).
+  Keil et al. 2016: degradation vs SoC is non-monotonic with plateaus; the
+  dominant driver is TIME AT HIGH SoC
+  (https://iopscience.iop.org/article/10.1149/2.0411609jes).
+  → creature expresses comfort in the middle, never a hard threshold.
+- **Overnight ≠ overcharge, but 100% dwell is real stress.** Samsung: "Keeping
+  your battery at a full 100% charge for a long time can reduce its
+  lifespan"; One UI Battery protection modes Basic/Adaptive/Maximum(80%)
+  (https://www.samsung.com/sg/support/mobile-devices/galaxy-battery-protection-feature-in-one-ui-6-1/).
+  Pixel: Adaptive Charging + "Limit to 80%" (full charge every ~10th cycle
+  for gauge calibration)
+  (https://support.google.com/pixelphone/answer/6090612?hl=en).
+  → recommend the OS feature BY NAME; never reimplement it.
+- **Deep discharge**: phone-0% occasionally = mild (BMS stops well above
+  damage); habitual deep cycling burns cycle life; true over-discharge in
+  storage causes copper dissolution/dendrites
+  (https://calce.umd.edu/news/story/understanding-the-nature-of-copper-dissolution-in-overdischarged-lithiumion-batteries).
+  Samsung: recharge at 15-20%, store at ≥50%
+  (https://www.samsung.com/us/support/galaxy-battery/care-and-maintenance/).
+- **Heat is enemy #1**, especially heat + full charge (BU-808 storage table:
+  a year at 100%/40°C → ~65% retained). Samsung operating range 0-35°C.
+  → the top-priority advice line.
+- **Fast charging**: cell-level harm is heat-mediated; modern flagships
+  engineer around it — do not demonize wattage, tie advice to observed
+  temperature.
+- **Top-ups beat full cycles**: no memory effect; micro-cycling roughly
+  doubled equivalent-full-cycle lifetime in experiment
+  (https://www.sciencedirect.com/science/article/pii/S2352152X2201338X);
+  occasional full charge keeps the fuel gauge calibrated.
+- **Myths banned from the app**: memory effect, "drain fully", "unplug at
+  exactly 80% or damage", overnight-explosion fear, and ANY numeric health
+  percentage (Android 14's true SoH API needs BATTERY_STATS — ungrantable;
+  ΔCHARGE_COUNTER/Δ% estimation is ±5% at best and stays out of v0.4).
+- UNVERIFIED: Pixel 80% "bypass charging" behavior; exact "doubles per
+  +10°C" multiplier; S24 populating EXTRA_CYCLE_COUNT for third-party apps
+  (gate on runtime value if ever used).
+
+CareAnalyzer (core/model/Care.kt) encodes exactly these rules; advice
+strings live in the diary and speak in preferences, never doom.

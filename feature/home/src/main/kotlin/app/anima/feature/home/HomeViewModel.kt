@@ -81,7 +81,12 @@ class HomeViewModel
         private val mind: MindEngine,
         private val mindInventory: MindInventory,
         private val prefs: AnimaPrefs,
+        private val voice: app.anima.core.voice.CreatureVoice,
+        private val voiceConfig: app.anima.core.voice.VoiceConfigStore,
     ) : ViewModel() {
+        /** ADR-013: armed only after an offline voice was confirmed. */
+        @Volatile
+        private var voiceReady = false
         private val lastInteractionAt = MutableStateFlow(System.currentTimeMillis())
         private val streaming = MutableStateFlow<String?>(null)
         private val candidates = MutableStateFlow<List<FactCandidate>>(emptyList())
@@ -170,11 +175,38 @@ class HomeViewModel
             viewModelScope.launch { refreshMindBits() }
             viewModelScope.launch { notifEvents.prune(System.currentTimeMillis()) }
             viewModelScope.launch { observeBodyTransitions() }
+            viewModelScope.launch { armVoice() }
             viewModelScope.launch { morningGreeting() }
             viewModelScope.launch { birthdayMoment() }
             viewModelScope.launch { computeStarters() }
             viewModelScope.launch { computeDreamAvailability() }
         }
+
+        /** ADR-013: offline-voice check once per screen life, only if on. */
+        private suspend fun armVoice() {
+            if (!voiceConfig.enabled.first()) return
+            voiceReady = (
+                voice.checkAvailability(java.util.Locale.getDefault())
+                    is app.anima.core.voice.VoiceAvailability.Ready
+            )
+        }
+
+        /** Speaks a creature line iff the toggle is on AND offline-verified. */
+        private suspend fun speakIfEnabled(text: String) {
+            if (!voiceReady || !voiceConfig.enabled.first()) return
+            val s = uiState.value
+            voice.speak(
+                text,
+                app.anima.core.voice.VoiceCharacter.of(
+                    s.concept,
+                    s.personality.warmth,
+                    s.personality.chattiness,
+                ),
+            )
+        }
+
+        /** Screen-off / navigation: the caller's duty per CreatureVoice KDoc. */
+        fun stopVoice() = voice.stop()
 
         private suspend fun refreshMindBits() {
             mindStatus.value = mind.status()
@@ -214,6 +246,7 @@ class HomeViewModel
             val seed = (identity.seed() ?: 0L) + epochDay
             val line = pool[(seed % pool.size).toInt().let { if (it < 0) it + pool.size else it }]
             chat.append(ChatRole.CREATURE, line, now)
+            speakIfEnabled(line)
         }
 
         /**
@@ -370,6 +403,8 @@ class HomeViewModel
 
         /** ON_STOP: drop the ~1 GB Gemma engine; it reloads lazily on return. */
         fun onAppBackgrounded() {
+            // Finite episodes: speech never outlives the visible screen.
+            voice.stop()
             viewModelScope.launch { mind.releaseResources() }
         }
 
@@ -441,6 +476,7 @@ class HomeViewModel
                             streaming.value = null
                             if (event.fullText.isNotBlank()) {
                                 chat.append(ChatRole.CREATURE, event.fullText.trim(), System.currentTimeMillis())
+                                speakIfEnabled(event.fullText.trim())
                                 proposeFacts(trimmed, event.fullText)
                             }
                         }

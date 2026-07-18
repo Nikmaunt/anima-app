@@ -104,6 +104,20 @@ interface BodyJournalDao {
         kind: String,
         sinceMillis: Long,
     ): List<BodyJournalEntity>
+
+    /**
+     * v0.4 "our year" heatmap: distinct local days (epoch-day using the
+     * caller's CURRENT zone offset — DST shifts a day boundary by an hour,
+     * acceptable for a heatmap) that have any journal entry at all.
+     */
+    @Query(
+        "SELECT DISTINCT (atMillis + :zoneOffsetMillis) / 86400000 FROM body_journal " +
+            "WHERE atMillis >= :sinceMillis",
+    )
+    suspend fun activeDaysSince(
+        sinceMillis: Long,
+        zoneOffsetMillis: Long,
+    ): List<Long>
 }
 
 @Dao

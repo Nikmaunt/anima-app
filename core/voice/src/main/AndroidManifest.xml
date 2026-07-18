@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  No permissions on purpose (ADR-013): the system TTS engine synthesizes in
+  its OWN process, so the creature's voice adds nothing to Anima's manifest
+  and NetworkIsolationTest's two-module INTERNET invariant stands untouched.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" />

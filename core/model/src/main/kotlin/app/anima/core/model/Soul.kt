@@ -106,6 +106,13 @@ enum class JournalKind(
 
     /** v0.3: the creature told a dream after being woken at night. */
     DREAM_TOLD("dream_told"),
+
+    /**
+     * v0.4: a completed rest-together session; detail = "planned:actual"
+     * minutes (RestSessions codec). Only completions are recorded —
+     * abandoning a session leaves no trace, by covenant.
+     */
+    REST_SESSION("rest_session"),
     ;
 
     companion object {
@@ -135,6 +142,8 @@ data class RelationshipStats(
     val conversationCount: Int,
     val liveFactCount: Int,
     val chargeCount: Int,
+    /** v0.4: completed rest-together sessions (defaulted so old callers compile). */
+    val restSessionCount: Int = 0,
 ) {
     fun daysTogether(nowMillis: Long): Long {
         val elapsed = nowMillis - hatchedAtMillis

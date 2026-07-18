@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- ADR-015: the QS tile is an action (start/continue rest), not a
+             mood display. Active-mode: bound only for tile events. -->
+        <service
+            android:name="app.anima.feature.rest.RestTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_rest_tile"
+            android:label="@string/rest_tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.quicksettings.ACTIVE_TILE"
+                android:value="true" />
+        </service>
+    </application>
+</manifest>

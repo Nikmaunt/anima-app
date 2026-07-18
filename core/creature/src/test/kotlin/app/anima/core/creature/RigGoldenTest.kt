@@ -4,22 +4,13 @@ import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
-import app.anima.core.creature.engine.CreatureEngine
-import app.anima.core.creature.render.RenderContext
-import app.anima.core.creature.render.Renderers
+import app.anima.core.creature.render.StillRender
 import app.anima.core.model.CreatureConcept
-import app.anima.core.model.CreatureGenome
 import app.anima.core.model.Mood
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
@@ -75,48 +66,29 @@ class RigGoldenTest {
         }
     }
 
-    /** WidgetSnapshot.render's exact recipe, kept in the rig's own module. */
+    /**
+     * v0.4: the goldens pin [StillRender] itself — the exact code the home
+     * widget AND the live wallpaper draw with.
+     */
     private fun renderTile(
         concept: CreatureConcept,
         state: RigState,
-    ): Bitmap {
-        val genome = CreatureGenome.from(SEED)
-        val engine = CreatureEngine(SEED, genome)
-        engine.setReducedMotion(true)
-        engine.setMood(state.mood)
-        engine.onResume()
-        engine.advance(ONE_TICK_NANOS)
-
-        val image = ImageBitmap(SIZE_PX, SIZE_PX)
-        val context =
-            RenderContext().apply {
-                pose = engine.pose
-                this.genome = genome
-                mood = state.mood
-                timeSeconds = 0f
-                night = state.night
-                seed = SEED
-                batteryPercent = state.batteryPercent
-                charging = state.charging
-                growth = GROWTH
-            }
-        val renderer = Renderers.forConcept(concept)
-        CanvasDrawScope().draw(
-            Density(1f),
-            LayoutDirection.Ltr,
-            Canvas(image),
-            Size(SIZE_PX.toFloat(), SIZE_PX.toFloat()),
-        ) {
-            with(renderer) { render(context) }
-        }
-        return image.asAndroidBitmap().copy(Bitmap.Config.ARGB_8888, false)
-    }
+    ): Bitmap =
+        StillRender.tile(
+            concept = concept,
+            seed = SEED,
+            mood = state.mood,
+            batteryPercent = state.batteryPercent,
+            charging = state.charging,
+            night = state.night,
+            growth = GROWTH,
+            sizePx = SIZE_PX,
+        )
 
     private companion object {
         const val TAG = "rig-golden"
         const val SEED = 42L
         const val SIZE_PX = 512
         const val GROWTH = 0.3f
-        const val ONE_TICK_NANOS = 16_000_000L
     }
 }

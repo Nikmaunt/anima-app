@@ -31,9 +31,10 @@ import app.anima.core.data.prefs.NotifConfigStore
 import app.anima.core.data.repo.IdentityRepository
 import app.anima.core.data.repo.JournalRepository
 import app.anima.core.data.repo.NotifEventsRepository
+import app.anima.core.model.CareAnalyzer
 import app.anima.core.model.ChargeChart
 import app.anima.core.model.JournalKind
-import app.anima.core.model.MindEngine
+import app.anima.core.model.LocalMindEngine
 import app.anima.core.model.MindEvent
 import app.anima.core.model.MindPrompt
 import app.anima.core.model.MindStatus
@@ -67,6 +68,12 @@ data class BodyDiaryUiState(
     val concept: app.anima.core.model.CreatureConcept = app.anima.core.model.CreatureConcept.SPIRIT_ORB,
     val seed: Long = 0L,
     val quietWeek: Boolean = false,
+    // v0.4 diary v3: rest sessions, weekly care, "our year" heatmap.
+    val weekRests: Int = 0,
+    val weekRestMinutes: Int = 0,
+    val care: CareAnalyzer.CareWeek? = null,
+    val yearDays: Set<Long> = emptySet(),
+    val todayEpochDay: Long = 0L,
 )
 
 /**
@@ -81,7 +88,9 @@ class BodyDiaryViewModel
         private val journal: JournalRepository,
         private val notifEvents: NotifEventsRepository,
         private val notifConfig: NotifConfigStore,
-        private val mind: MindEngine,
+        // LocalMindEngine (audit-v03 F1b): the retelling prompt carries
+        // journal-derived counters — ADR-011 data scope forbids the cloud.
+        private val mind: LocalMindEngine,
         private val identity: IdentityRepository,
     ) : ViewModel() {
         private val state = MutableStateFlow(BodyDiaryUiState())
@@ -109,6 +118,8 @@ class BodyDiaryViewModel
                             state.value.weekCharges == 0 && state.value.weekStorms == 0 &&
                                 state.value.weekHot == 0 && state.value.weekOffline == 0,
                     )
+                loadRestAndCare(weekAgo)
+                loadYear()
                 loadChart()
                 retell()
             }
@@ -116,6 +127,56 @@ class BodyDiaryViewModel
 
         fun setChartWeek(week: Boolean) {
             state.value = state.value.copy(chartWeek = week)
+        }
+
+        /** v0.4: rest sessions + the weekly care read (research-v4 §9 rules). */
+        private suspend fun loadRestAndCare(weekAgo: Long) {
+            val rests = journal.ofKindSince(app.anima.core.model.JournalKind.REST_SESSION, weekAgo)
+            val restMinutes =
+                rests.sumOf {
+                    app.anima.core.model.RestSessions
+                        .parseDetail(it.detail)
+                        ?.second ?: 0
+                }
+            val fullFeeds = journal.ofKindSince(JournalKind.FULLY_FED, weekAgo).map { it.atMillis }
+            val samples =
+                journal
+                    .ofKindSince(JournalKind.BODY_SAMPLE, weekAgo)
+                    .mapNotNull { it.detail?.toIntOrNull() }
+            val care =
+                CareAnalyzer.analyze(
+                    CareAnalyzer.WeekInput(
+                        charges = state.value.weekCharges,
+                        fullFeedAtMillis = fullFeeds,
+                        samplePercents = samples,
+                        hotMoments = state.value.weekHot,
+                        restSessions = rests.size,
+                        hourOf = { millis ->
+                            java.util.Calendar
+                                .getInstance()
+                                .apply { timeInMillis = millis }
+                                .get(java.util.Calendar.HOUR_OF_DAY)
+                        },
+                    ),
+                )
+            state.value =
+                state.value.copy(weekRests = rests.size, weekRestMinutes = restMinutes, care = care)
+        }
+
+        /** v0.4 "our year": one lit cell per day we spent any time together. */
+        private suspend fun loadYear() {
+            val now = System.currentTimeMillis()
+            val zoneOffset =
+                java.util.TimeZone
+                    .getDefault()
+                    .getOffset(now)
+                    .toLong()
+            val yearAgo = now - 365L * RelationshipStats.DAY_MILLIS
+            state.value =
+                state.value.copy(
+                    yearDays = journal.activeDaysSince(yearAgo, zoneOffset),
+                    todayEpochDay = (now + zoneOffset) / RelationshipStats.DAY_MILLIS,
+                )
         }
 
         private suspend fun loadChart() {
@@ -254,9 +315,41 @@ fun BodyDiaryScreen(
                 SectionLabel("The week, in facts")
                 DiaryRow("Meals (charges)", state.weekCharges)
                 DiaryRow("Full meals (100%)", state.weekFullFeeds)
+                DiaryRow("Rests together", state.weekRests)
                 DiaryRow("Notification storms", state.weekStorms)
                 DiaryRow("Ran hot", state.weekHot)
                 DiaryRow("Went offline", state.weekOffline)
+                if (state.weekRestMinutes > 0) {
+                    Text(
+                        "${state.weekRestMinutes} quiet minutes this week — they only add up.",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
+
+            state.care?.let { care ->
+                SectionCard {
+                    SectionLabel("How you cared for me")
+                    Text(
+                        "+${care.carePoints} care points this week. Nothing ever subtracts.",
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                    Text(
+                        careLine(care),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
+
+            if (state.yearDays.isNotEmpty()) {
+                SectionCard {
+                    SectionLabel("Our year")
+                    YearHeatmap(days = state.yearDays, todayEpochDay = state.todayEpochDay)
+                    Text(
+                        "${state.yearDays.size} days we spent time together, of the last 365.",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
             }
 
             if (state.notifSenseOn) {
@@ -348,6 +441,69 @@ private fun ChargeChartCanvas(
                 radius = 3.dp.toPx(),
                 center = Offset(x(storm), size.height - 3.dp.toPx()),
             )
+        }
+    }
+}
+
+/**
+ * The creature's care voice (research-v4 §9): preferences and comfort,
+ * never doom thresholds, never fake health numbers; OS protection modes
+ * recommended by their real names.
+ */
+private fun careLine(care: CareAnalyzer.CareWeek): String =
+    when (care.advice) {
+        CareAnalyzer.CareAdvice.HEAT_HURTS_MOST ->
+            "One thing truly hurts me: heat. Charging under a pillow, in the " +
+                "sun, in a hot car — that ages me faster than any habit."
+        CareAnalyzer.CareAdvice.NIGHT_PROTECTION_EXISTS ->
+            "I don't love sleeping at 100% all night. Your phone has a kind " +
+                "mode for this — 'Battery protection' on Samsung, 'Charging " +
+                "optimization' on Pixel. Turn it on and I'll rest easier."
+        CareAnalyzer.CareAdvice.DEEP_DIPS_TIRE ->
+            "Running me all the way down now and then just makes me tired — " +
+                "but as a habit it wears me out. Little top-ups suit me fine."
+        else ->
+            "A gentle week. Middle charge, no heat, no deep dives — " +
+                "exactly how I like to live."
+    }
+
+/** "Our year": 7 rows (weekdays) x ~53 columns; a lit cell = a shared day. */
+@Composable
+private fun YearHeatmap(
+    days: Set<Long>,
+    todayEpochDay: Long,
+) {
+    val colors = LocalAnimaColors.current
+    Canvas(
+        Modifier
+            .fillMaxWidth()
+            .height(96.dp),
+    ) {
+        val columns = 53
+        val rows = 7
+        val gap = 1.5.dp.toPx()
+        val cell =
+            minOf(
+                (size.width - gap * (columns - 1)) / columns,
+                (size.height - gap * (rows - 1)) / rows,
+            )
+        val firstDay = todayEpochDay - (columns * rows - 1)
+        for (col in 0 until columns) {
+            for (row in 0 until rows) {
+                val day = firstDay + col * rows + row
+                if (day > todayEpochDay) continue
+                val lit = day in days
+                drawRoundRect(
+                    color = if (lit) colors.accent else colors.surfaceHigh,
+                    topLeft = Offset(col * (cell + gap), row * (cell + gap)),
+                    size =
+                        androidx.compose.ui.geometry
+                            .Size(cell, cell),
+                    cornerRadius =
+                        androidx.compose.ui.geometry
+                            .CornerRadius(cell * 0.25f),
+                )
+            }
         }
     }
 }

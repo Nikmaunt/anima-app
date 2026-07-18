@@ -38,13 +38,17 @@ object Evolution {
     const val FACT_WEIGHT = 1f / 3f
     const val CONVERSATION_WEIGHT = 1f / 10f
 
+    /** v0.4: a completed rest session weighs like a fifth of a day together. */
+    const val REST_WEIGHT = 1f / 5f
+
     fun score(
         stats: RelationshipStats,
         nowMillis: Long,
     ): Float =
         stats.daysTogether(nowMillis).toFloat() +
             stats.liveFactCount * FACT_WEIGHT +
-            stats.conversationCount * CONVERSATION_WEIGHT
+            stats.conversationCount * CONVERSATION_WEIGHT +
+            stats.restSessionCount * REST_WEIGHT
 
     fun stageOf(
         stats: RelationshipStats,

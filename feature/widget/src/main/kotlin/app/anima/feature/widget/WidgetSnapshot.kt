@@ -3,18 +3,8 @@ package app.anima.feature.widget
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.BatteryManager
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Canvas
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
-import app.anima.core.creature.engine.CreatureEngine
-import app.anima.core.creature.render.RenderContext
-import app.anima.core.creature.render.Renderers
+import app.anima.core.creature.render.StillRender
 import app.anima.core.model.CreatureConcept
-import app.anima.core.model.CreatureGenome
 import app.anima.core.model.Mood
 
 /**
@@ -52,6 +42,10 @@ object WidgetSnapshot {
             else -> Mood.ALERT
         }
 
+    /**
+     * v0.4: delegates to the shared [StillRender] recipe (also used by the
+     * live wallpaper and pinned bit-for-bit by RigGoldenTest's goldens).
+     */
     fun render(
         concept: CreatureConcept,
         seed: Long,
@@ -59,40 +53,18 @@ object WidgetSnapshot {
         vitals: Vitals,
         night: Boolean,
         growth: Float,
-    ): Bitmap {
-        val genome = CreatureGenome.from(seed)
-        val engine = CreatureEngine(seed, genome)
-        engine.setReducedMotion(true)
-        engine.setMood(mood)
-        engine.onResume()
-        engine.advance(ONE_TICK_NANOS)
-
-        val image = ImageBitmap(SIZE_PX, SIZE_PX)
-        val renderContext =
-            RenderContext().apply {
-                pose = engine.pose
-                this.genome = genome
-                this.mood = mood
-                timeSeconds = 0f
-                this.night = night
-                this.seed = seed
-                batteryPercent = vitals.batteryPercent
-                charging = vitals.charging
-                this.growth = growth
-            }
-        val renderer = Renderers.forConcept(concept)
-        CanvasDrawScope().draw(
-            Density(1f),
-            LayoutDirection.Ltr,
-            Canvas(image),
-            Size(SIZE_PX.toFloat(), SIZE_PX.toFloat()),
-        ) {
-            with(renderer) { render(renderContext) }
-        }
-        return image.asAndroidBitmap().copy(Bitmap.Config.ARGB_8888, false)
-    }
+    ): Bitmap =
+        StillRender.tile(
+            concept = concept,
+            seed = seed,
+            mood = mood,
+            batteryPercent = vitals.batteryPercent,
+            charging = vitals.charging,
+            night = night,
+            growth = growth,
+            sizePx = SIZE_PX,
+        )
 
     private const val FALLBACK_BATTERY = 50
     private const val SLEEPY_BATTERY = 20
-    private const val ONE_TICK_NANOS = 16_000_000L
 }

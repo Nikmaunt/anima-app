@@ -152,6 +152,12 @@ class JournalRepository
             dao.ofKindSince(kind.wire, sinceMillis).map {
                 BodyJournalEntry(it.id, kind, it.atMillis, it.detail)
             }
+
+        /** v0.4 "our year": local epoch-days with any interaction at all. */
+        suspend fun activeDaysSince(
+            sinceMillis: Long,
+            zoneOffsetMillis: Long,
+        ): Set<Long> = dao.activeDaysSince(sinceMillis, zoneOffsetMillis).toSet()
     }
 
 @Singleton
@@ -256,7 +262,8 @@ class IdentityRepository
             val conversations = chatDao.userMessageCount().first()
             val facts = soulFactDao.liveCount().first()
             val charges = journalDao.countOfKind(JournalKind.CHARGE_START.wire)
-            return RelationshipStats(hatched, conversations, facts, charges)
+            val rests = journalDao.countOfKind(JournalKind.REST_SESSION.wire)
+            return RelationshipStats(hatched, conversations, facts, charges, rests)
         }
 
         private companion object {

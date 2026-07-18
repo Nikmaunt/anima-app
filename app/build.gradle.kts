@@ -74,6 +74,8 @@ dependencies {
     implementation(projects.feature.soul)
     implementation(projects.feature.settings)
     implementation(projects.feature.widget)
+    implementation(projects.feature.rest)
+    implementation(projects.feature.wallpaper)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

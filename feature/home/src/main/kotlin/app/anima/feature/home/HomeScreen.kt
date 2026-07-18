@@ -75,6 +75,7 @@ fun HomeScreen(
     onOpenSettings: () -> Unit,
     onOpenSoul: () -> Unit,
     onOpenDiary: () -> Unit,
+    onOpenRest: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -94,7 +95,11 @@ fun HomeScreen(
                 }
             }
         lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            // Navigating away: speech is a visible-screen episode (ADR-013).
+            viewModel.stopVoice()
+        }
     }
 
     // Personality tunes the genome (saccades, blink pace) within its bounds;
@@ -157,6 +162,7 @@ fun HomeScreen(
                     style = MaterialTheme.typography.labelMedium,
                 )
             }
+            GhostButton("Rest", onClick = onOpenRest)
             GhostButton("Soul", onClick = onOpenSoul)
             GhostButton("Diary", onClick = onOpenDiary)
             GhostButton("Settings", onClick = onOpenSettings)

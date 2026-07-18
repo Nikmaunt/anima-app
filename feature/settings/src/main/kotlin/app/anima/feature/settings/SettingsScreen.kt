@@ -47,6 +47,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -64,6 +65,15 @@ data class SettingsUiState(
     val soulScreenshotsAllowed: Boolean = false,
 )
 
+/** ADR-013: what the voice toggle should honestly display. */
+enum class VoiceUiStatus {
+    OFF,
+    CHECKING,
+    READY,
+    NO_OFFLINE_VOICE,
+    ENGINE_UNAVAILABLE,
+}
+
 @HiltViewModel
 class SettingsViewModel
     @Inject
@@ -71,7 +81,47 @@ class SettingsViewModel
         private val identity: IdentityRepository,
         private val prefs: AnimaPrefs,
         private val cloudStore: CloudMindConfigStore,
+        private val voice: app.anima.core.voice.CreatureVoice,
+        private val voiceConfig: app.anima.core.voice.VoiceConfigStore,
     ) : ViewModel() {
+        /** ADR-013 toggle state; availability re-checked on every enable. */
+        val voiceStatus = MutableStateFlow(VoiceUiStatus.OFF)
+
+        val voiceEnabled: StateFlow<Boolean> =
+            voiceConfig.enabled.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+
+        init {
+            viewModelScope.launch {
+                if (voiceConfig.enabled.first()) refreshVoiceStatus()
+            }
+        }
+
+        private suspend fun refreshVoiceStatus() {
+            voiceStatus.value = VoiceUiStatus.CHECKING
+            voiceStatus.value =
+                when (voice.checkAvailability(java.util.Locale.getDefault())) {
+                    is app.anima.core.voice.VoiceAvailability.Ready -> VoiceUiStatus.READY
+                    is app.anima.core.voice.VoiceAvailability.NoOfflineVoice ->
+                        VoiceUiStatus.NO_OFFLINE_VOICE
+                    is app.anima.core.voice.VoiceAvailability.EngineUnavailable ->
+                        VoiceUiStatus.ENGINE_UNAVAILABLE
+                }
+        }
+
+        fun setVoiceEnabled(value: Boolean) {
+            viewModelScope.launch {
+                voiceConfig.setEnabled(value)
+                if (value) {
+                    refreshVoiceStatus()
+                } else {
+                    voice.stop()
+                    voiceStatus.value = VoiceUiStatus.OFF
+                }
+            }
+        }
+
+        fun ttsSettingsIntent() = voice.ttsSettingsIntent()
+
         private val seed = MutableStateFlow(0L)
 
         val uiState: StateFlow<SettingsUiState> =
@@ -283,6 +333,8 @@ fun SettingsScreen(
                 GhostButton("Mind…", onClick = onOpenMind)
             }
 
+            VoiceCard(viewModel)
+
             PrivacyCard(cloudEnabled = state.cloud.enabled)
 
             SectionCard {
@@ -332,6 +384,51 @@ private fun PersonalitySlider(
                     inactiveTrackColor = colors.surfaceHigh,
                 ),
         )
+    }
+}
+
+/** ADR-013: offline-verified voices only, default OFF, honest mute state. */
+@Composable
+private fun VoiceCard(viewModel: SettingsViewModel) {
+    val colors = LocalAnimaColors.current
+    val enabled by viewModel.voiceEnabled.collectAsState()
+    val status by viewModel.voiceStatus.collectAsState()
+    val context = androidx.compose.ui.platform.LocalContext.current
+    SectionCard {
+        SectionLabel("Voice")
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            Column(Modifier.weight(1f)) {
+                Text("The creature speaks", style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    when (status) {
+                        VoiceUiStatus.OFF -> "Off. When on, it uses only voices that work offline."
+                        VoiceUiStatus.CHECKING -> "Listening for an offline voice…"
+                        VoiceUiStatus.READY ->
+                            "Speaks with an offline voice — words never leave the phone."
+                        VoiceUiStatus.NO_OFFLINE_VOICE ->
+                            "No offline voice for your language is installed, so it stays " +
+                                "quiet. Install one in system speech settings."
+                        VoiceUiStatus.ENGINE_UNAVAILABLE ->
+                            "This phone has no speech engine. The creature can't speak here."
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            Switch(
+                checked = enabled,
+                onCheckedChange = viewModel::setVoiceEnabled,
+                colors =
+                    SwitchDefaults.colors(
+                        checkedTrackColor = colors.accent,
+                        checkedThumbColor = colors.background,
+                    ),
+            )
+        }
+        if (status == VoiceUiStatus.NO_OFFLINE_VOICE) {
+            GhostButton("Open speech settings", onClick = {
+                runCatching { context.startActivity(viewModel.ttsSettingsIntent()) }
+            })
+        }
     }
 }
 

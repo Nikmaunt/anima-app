@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- ADR-012: the sanctioned animation exception, in its static v0.4
+             form. exported=true + BIND_WALLPAPER is the system contract. -->
+        <service
+            android:name="app.anima.feature.wallpaper.AnimaWallpaperService"
+            android:exported="true"
+            android:label="@string/wallpaper_label"
+            android:permission="android.permission.BIND_WALLPAPER">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/anima_wallpaper" />
+        </service>
+    </application>
+</manifest>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wallpaper_label">Anima — your creature</string>
+    <string name="wallpaper_description">Your creature rests on the wallpaper.
+        A still pose that follows its mood; it never animates and costs no
+        battery beyond a static image.</string>
+</resources>
