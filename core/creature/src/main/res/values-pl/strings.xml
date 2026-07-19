@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="creature_concept_spirit_orb">Duszek-światełko</string>
+    <string name="creature_concept_fox_kit">Lisek</string>
+    <string name="creature_concept_jelly">Galaretka</string>
+    <string name="creature_concept_pixel_pet">Pikselowy zwierzak</string>
+    <string name="creature_concept_robot">Robot</string>
+    <string name="creature_concept_sprout">Kiełek</string>
+    <string name="creature_concept_ember">Iskierka</string>
+    <string name="creature_concept_moth">Ćma</string>
+</resources>

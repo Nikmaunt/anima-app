@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shortcut_talk">Porozmawiaj</string>
+    <string name="shortcut_diary">Dziennik</string>
+    <string name="shortcut_rest">Odpoczynek</string>
+</resources>

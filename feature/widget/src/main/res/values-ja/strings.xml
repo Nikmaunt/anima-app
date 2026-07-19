@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_a11y_state">%1$sは%2$s、エネルギー%3$d%%</string>
+    <string name="widget_a11y_eating_suffix">、食事中</string>
+    <string name="widget_mood_eating">食事中</string>
+    <string name="widget_mood_asleep">ねむっているよ</string>
+    <string name="widget_mood_dozing">うとうとしているよ</string>
+    <string name="widget_mood_awake">おきているよ</string>
+</resources>

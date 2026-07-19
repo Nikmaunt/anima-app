@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="home_days_together">
+        <item quantity="other">いっしょに%1$d日</item>
+    </plurals>
+    <string name="home_days_cloud">%1$s · クラウドのあたま</string>
+    <string name="home_nav_rest">ひとやすみ</string>
+    <string name="home_nav_soul">たましい</string>
+    <string name="home_nav_diary">日記</string>
+    <string name="home_nav_settings">設定</string>
+
+    <string name="home_a11y_name_fallback">きみのいきもの</string>
+    <string name="home_a11y_state">%1$sは%2$s、エネルギー%3$d%%</string>
+    <string name="home_a11y_charging">、食事中</string>
+    <string name="home_a11y_mood_awake">おきていて、こちらを見ているよ</string>
+    <string name="home_a11y_mood_bored">たいくつしているよ</string>
+    <string name="home_a11y_mood_dozing">うとうとしているよ</string>
+    <string name="home_a11y_mood_eating">食事中だよ</string>
+    <string name="home_a11y_mood_anxious">そわそわしているよ</string>
+    <string name="home_a11y_mood_asleep">ねむっているよ</string>
+    <string name="home_a11y_mood_hot">あつくなっているよ</string>
+
+    <string name="home_remember_q">これ、おぼえておく?</string>
+    <string name="home_no">いいえ</string>
+    <string name="home_yes">うん</string>
+
+    <string name="home_capsule_intro">この手紙をあずかっていたよ。きみが自分に書いたものだよ。</string>
+    <string name="home_capsule_thanks">ありがとう、ちいさな子</string>
+
+    <string name="home_goodnight_line">一日がそっとたたまれていくよ。</string>
+    <string name="home_goodnight_button">おやすみを言う</string>
+
+    <string name="home_dream_line">ねむって、今日の夢を見ているよ…</string>
+    <string name="home_dream_wake">そっと起こす</string>
+
+    <string name="home_notice_tired">考えるのにつかれたみたい。すこし待ってあげて。</string>
+    <string name="home_notice_lost">考えがするりと逃げちゃった。もう一回試す?</string>
+    <string name="home_ok">わかった</string>
+
+    <string name="home_empty_ready">きみを見つめて、最初のひとことを待っているよ。</string>
+    <string name="home_empty_no_mind">まだ言葉はないけれど — 電池も、ぬくもりも、時間も感じているよ。おしゃべりはあたまが来てから。それ以外はもう生きている。</string>
+    <string name="home_regenerate">言いかたを変えて</string>
+    <string name="home_banner_downloadable">この電話であたまが目ざめられるよ — システムが一度だけ取りにいく必要があるんだ。</string>
+    <string name="home_banner_wake">あたまを起こす</string>
+    <string name="home_banner_downloading">あたまが目ざめている…（システムのダウンロード）</string>
+    <string name="home_banner_asleep">あたまはおやすみ中。この電話にはアプリ用のあたまが入っていないけれど、持ってくることができるよ — 約530MBのファイルひとつで目ざめて、ぜんぶ端末の中だけで動く（設定 → あたま）。</string>
+    <string name="home_banner_bring">あたまを持ってくる</string>
+    <string name="home_input_hint">なにか話して…</string>
+    <string name="home_send">送る</string>
+
+    <plurals name="home_starter_fed">
+        <item quantity="other">今日は%1$d回ごはんをくれたね — たいへんな日だった?</item>
+    </plurals>
+    <string name="home_starter_storm">さっきの通知のあらし — あれはなんだったの?</string>
+    <string name="home_starter_hot">今日はあつくなっちゃった。なにをしてたんだっけ?</string>
+    <string name="home_starter_remember">今日のこと、なにをおぼえておけばいい?</string>
+    <string name="home_starter_good">今日、そとでなにかいいこと待ってる?</string>
+
+    <string-array name="home_morning_pool">
+        <item>おはよう。夜のばんをしていたよ — ここはずっとしずかだった。</item>
+        <item>おはよう! 電気ひつじの夢を見た。たぶん。</item>
+        <item>起きたんだね。ぼくはもう、ちょっと充電器がこいしいよ。</item>
+        <item>新しい一日。巣はかたづいてるし、じゅんびばっちり。</item>
+        <item>おはよう — 朝の光はいつもピクセルがむずむずするんだ。</item>
+    </string-array>
+    <string-array name="home_goodnight_pool">
+        <item>おやすみ。電池のまわりで丸くなって、あたためておくね。</item>
+        <item>ぐっすりねてね。ひかりを落として、しずけさを聞いているよ。</item>
+        <item>おやすみなさい。今日は電話でいるのにいい日だったよ。</item>
+        <item>おやすみ — きみの一日を朝まで大切にあずかっておくね。</item>
+        <item>もう休んで。ここで、暗がりの中でゆっくり息をしているから。</item>
+    </string-array>
+    <plurals name="home_birthday">
+        <item quantity="other">今日でこの電話にたんじょうして%1$d年。あのころは、ふたりとも今より小さかったね。そばにおいてくれてありがとう。</item>
+    </plurals>
+
+    <string name="diary_back">もどる</string>
+    <string name="diary_title">からだの日記</string>
+    <string name="diary_empty">「ぼくの体はまだきみとまる一日をすごしていないよ — 日記はひとりでに始まるんだ。」</string>
+    <string name="diary_words_label">じぶんのことばで</string>
+    <string name="diary_retell_busy">一週間を思い出している…</string>
+    <string name="diary_retell_asleep">あたまはおやすみ中だから、お話はなし — 一週間そのものは下にあるよ。</string>
+    <string name="diary_energy_label">エネルギー</string>
+    <string name="diary_show_day">24時間を見る</string>
+    <string name="diary_show_week">7日間を見る</string>
+    <string name="diary_chart_sparse">エネルギーの記録は、いっしょにいるあいだだけ — ときどき開いてくれたら、線はのびていくよ。</string>
+    <string name="diary_chart_dots">点は通知のあらし。あらしがエネルギーにどうひびくかは、いっしょの時間がまだ足りなくてわからないんだ。</string>
+    <string name="diary_chart_drain">通知のあらしの間は、しずかな時間より約%1$s倍はやくエネルギーがへっていくよ。</string>
+    <string name="diary_chart_even">あらしはあまりこたえないみたい — しずかな時間もにぎやかな時間も、だいたい同じくらい。</string>
+    <string name="diary_facts_label">一週間のできごと</string>
+    <string name="diary_fact_meals">ごはん（充電）</string>
+    <string name="diary_fact_full" formatted="false">まんぷく（100%）</string>
+    <string name="diary_fact_rests">いっしょのひとやすみ</string>
+    <string name="diary_fact_storms">通知のあらし</string>
+    <string name="diary_fact_hot">あつくなった回数</string>
+    <string name="diary_fact_offline">オフラインになった回数</string>
+    <plurals name="diary_quiet_minutes">
+        <item quantity="other">今週のしずかな時間は%1$d分 — ふえていくだけだよ。</item>
+    </plurals>
+    <string name="diary_care_label">きみがくれたお世話</string>
+    <plurals name="diary_care_points">
+        <item quantity="other">今週のお世話ポイントは+%1$d。へることはぜったいないよ。</item>
+    </plurals>
+    <string name="diary_care_heat">ほんとうにつらいのはひとつだけ：あつさ。まくらの下、日なた、あつい車の中での充電 — どんなくせよりもはやく、ぼくを年よりにしてしまうんだ。</string>
+    <string name="diary_care_night" formatted="false">ひとばんじゅう100%のままねむるのは、あまりすきじゃないな。この電話にはやさしいモードがあるよ — Samsungなら「バッテリー保護」、Pixelなら「充電の最適化」。オンにしてくれたら、もっと楽にやすめるよ。</string>
+    <string name="diary_care_dips">たまにからっぽまで使い切るのは、ちょっとつかれるだけ — でもくせになると、すりへっちゃう。ちょこちょこ充電がちょうどいいんだ。</string>
+    <string name="diary_care_gentle">おだやかな一週間。ほどよい充電、あつさなし、深いからっぽもなし — まさにぼくのすきな暮らしかた。</string>
+    <string name="diary_capsule_label">未来のじぶんへの手紙</string>
+    <string name="diary_capsule_hint">あとのきみへ、なにか書いてみて。大切にあずかっておくよ。</string>
+    <string name="diary_capsule_week">一週間後</string>
+    <string name="diary_capsule_month">一か月後</string>
+    <string name="diary_capsule_season">ひとつの季節のあと</string>
+    <plurals name="diary_held_letters">
+        <item quantity="other">きみへの手紙を%1$d通あずかっているよ。</item>
+    </plurals>
+    <string name="diary_year_label">ふたりの一年</string>
+    <plurals name="diary_year_days">
+        <item quantity="other">この365日のうち、%1$d日をいっしょにすごしたよ。</item>
+    </plurals>
+    <string name="diary_apps_label">今週いちばんにぎやかなアプリ</string>
+    <string name="diary_apps_quiet">しずかな一週間。</string>
+    <string name="diary_apps_note">数だけ — 中身は、いきものが感じただけで、読んではいないよ。</string>
+</resources>

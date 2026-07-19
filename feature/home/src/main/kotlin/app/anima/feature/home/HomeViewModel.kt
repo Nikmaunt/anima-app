@@ -1,5 +1,6 @@
 package app.anima.feature.home
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.anima.core.body.BodySensors
@@ -36,6 +37,7 @@ import app.anima.core.model.PromptBuilder
 import app.anima.core.model.RelationshipStats
 import app.anima.core.model.TimeCapsule
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -50,6 +52,25 @@ import javax.inject.Inject
 /** One-shot body events the creature should visibly react to. */
 enum class BodyEvent { CELEBRATE_CHARGE, STARTLE_STORM }
 
+/**
+ * Closed set of conversation starters. The VM ships data (counters), the
+ * UI resolves each into the current locale — the tapped line is sent (and
+ * stored) exactly as the user read it.
+ */
+sealed interface HomeStarter {
+    data class FedTimes(
+        val count: Int,
+    ) : HomeStarter
+
+    data object StormAsk : HomeStarter
+
+    data object RanHot : HomeStarter
+
+    data object RememberToday : HomeStarter
+
+    data object AnythingGood : HomeStarter
+}
+
 data class HomeUiState(
     val creatureName: String = "",
     val concept: CreatureConcept = CreatureConcept.SPIRIT_ORB,
@@ -61,11 +82,12 @@ data class HomeUiState(
     val mindStatus: MindStatus = MindStatus.ASLEEP,
     val candidates: List<FactCandidate> = emptyList(),
     val growth: Float = 0f,
-    val mindNotice: String? = null,
+    /** Closed failure set; the UI maps it onto localized resources. */
+    val mindNotice: MindFailure? = null,
     val calmMotion: Boolean = false,
     val stage: LifeStage = LifeStage.NEWBORN,
     val personality: Personality = Personality.Default,
-    val starters: List<String> = emptyList(),
+    val starters: List<HomeStarter> = emptyList(),
     /** ADR-011: which mind is speaking — CLOUD is always visibly labeled. */
     val activeTier: MindTier = MindTier.NONE,
     /** v0.3 dreams: asleep at night and not yet woken this night. */
@@ -81,6 +103,7 @@ data class HomeUiState(
 class HomeViewModel
     @Inject
     constructor(
+        @ApplicationContext private val appContext: Context,
         private val sensors: BodySensors,
         private val weatherFeel: app.anima.core.body.WeatherFeel,
         private val identity: IdentityRepository,
@@ -113,7 +136,7 @@ class HomeViewModel
         private val candidates = MutableStateFlow<List<FactCandidate>>(emptyList())
         private val mindStatus = MutableStateFlow(MindStatus.ASLEEP)
         private val mindTier = MutableStateFlow(MindTier.NONE)
-        private val mindNotice = MutableStateFlow<String?>(null)
+        private val mindNotice = MutableStateFlow<MindFailure?>(null)
         private val langFallback = MutableStateFlow(false)
         private val events = MutableStateFlow<BodyEvent?>(null)
         private val dreamAvailable = MutableStateFlow(false)
@@ -139,7 +162,7 @@ class HomeViewModel
         private var fullFedNotified = false
 
         /** Context conversation starters, recomputed at screen start. */
-        private val starters = MutableStateFlow<List<String>>(emptyList())
+        private val starters = MutableStateFlow<List<HomeStarter>>(emptyList())
 
         private val bodyState: StateFlow<BodyState> =
             combine(
@@ -152,7 +175,7 @@ class HomeViewModel
 
         private data class MindBits(
             val status: MindStatus,
-            val notice: String?,
+            val notice: MindFailure?,
             val tier: MindTier,
             val dream: Boolean,
             val englishFallback: Boolean,
@@ -258,14 +281,9 @@ class HomeViewModel
             viewModelScope.launch {
                 val now = System.currentTimeMillis()
                 journal.record(JournalKind.GOODNIGHT, now)
-                val pool =
-                    listOf(
-                        "Goodnight. I'll curl up around the battery and keep it warm.",
-                        "Sleep well. I'll dim my glow and listen to the quiet.",
-                        "Night-night. Today was a good day to be a phone.",
-                        "Goodnight — I'll hold your day safe until morning.",
-                        "Rest now. I'll be here, breathing slowly in the dark.",
-                    )
+                // l10n: context-bound — the line lands in the chat DB at
+                // creation time, in the locale of that moment (glossary §4).
+                val pool = appContext.resources.getStringArray(R.array.home_goodnight_pool)
                 val epochDay = now / RelationshipStats.DAY_MILLIS
                 val seed = (identity.seed() ?: 0L) + epochDay
                 val line = pool[(seed % pool.size).toInt().let { if (it < 0) it + pool.size else it }]
@@ -362,14 +380,9 @@ class HomeViewModel
             if (hour !in MORNING_FROM until MORNING_UNTIL) return
             if (!prefs.shouldGreetToday(epochDay)) return
             prefs.markGreetedToday(epochDay)
-            val pool =
-                listOf(
-                    "Good morning. I kept the night watch — all quiet in here.",
-                    "Morning! I dreamt of electric sheep. Probably.",
-                    "You're up. I already miss the charger a little.",
-                    "New day. My burrow's tidy and I'm ready.",
-                    "Good morning — first light always makes my pixels itch.",
-                )
+            // l10n: context-bound — appended to the chat DB at creation time
+            // in the current locale; history is never repainted (glossary §4).
+            val pool = appContext.resources.getStringArray(R.array.home_morning_pool)
             val seed = (identity.seed() ?: 0L) + epochDay
             val line = pool[(seed % pool.size).toInt().let { if (it < 0) it + pool.size else it }]
             chat.append(ChatRole.CREATURE, line, now)
@@ -452,9 +465,9 @@ class HomeViewModel
             if (!prefs.shouldCelebrateBirthday(today.year.toLong())) return
             prefs.markBirthdayCelebrated(today.year.toLong())
             val now = System.currentTimeMillis()
-            val line =
-                "Today it's $years ${if (years == 1) "year" else "years"} since I hatched " +
-                    "in this phone. We were both younger then. Thank you for keeping me."
+            // l10n: context-bound — a chat line minted once a year, in the
+            // locale of that morning (glossary §4).
+            val line = appContext.resources.getQuantityString(R.plurals.home_birthday, years, years)
             chat.append(ChatRole.CREATURE, line, now)
             journal.record(JournalKind.BIRTHDAY, now, "$years")
             events.value = BodyEvent.CELEBRATE_CHARGE
@@ -467,16 +480,14 @@ class HomeViewModel
             val chargesToday = journal.countOfSince(JournalKind.CHARGE_START, dayStart)
             val stormsToday = journal.countOfSince(JournalKind.NOTIF_STORM, dayStart)
             val hotToday = journal.countOfSince(JournalKind.RAN_HOT, dayStart)
-            val list = mutableListOf<String>()
-            if (chargesToday >= FREQUENT_CHARGES) {
-                list += "You fed me $chargesToday times today — heavy day?"
-            }
-            if (stormsToday > 0) list += "That notification storm earlier — what was that about?"
-            if (hotToday > 0) list += "I ran hot today. What were we doing?"
-            list += "What should I remember about today?"
+            val list = mutableListOf<HomeStarter>()
+            if (chargesToday >= FREQUENT_CHARGES) list += HomeStarter.FedTimes(chargesToday)
+            if (stormsToday > 0) list += HomeStarter.StormAsk
+            if (hotToday > 0) list += HomeStarter.RanHot
+            list += HomeStarter.RememberToday
             // v0.3 (product-research §1, Tolan pattern): the creature nudges
             // toward the real world instead of hoarding attention.
-            list += "Anything good waiting for you out there today?"
+            list += HomeStarter.AnythingGood
             starters.value = list.take(MAX_STARTERS)
         }
 
@@ -617,11 +628,9 @@ class HomeViewModel
                         }
                         is MindEvent.Failed -> {
                             streaming.value = null
-                            mindNotice.value =
-                                when (event.reason) {
-                                    MindFailure.TIRED -> "It's tired of thinking. Give it a minute."
-                                    MindFailure.LOST_THOUGHT -> "The thought slipped away. Try again?"
-                                }
+                            // Closed set: the UI maps MindFailure onto
+                            // localized resources at display time.
+                            mindNotice.value = event.reason
                         }
                     }
                 }

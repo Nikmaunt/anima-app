@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="home_days_together">
+        <item quantity="one">вместе %1$d день</item>
+        <item quantity="few">вместе %1$d дня</item>
+        <item quantity="many">вместе %1$d дней</item>
+        <item quantity="other">вместе %1$d дня</item>
+    </plurals>
+    <string name="home_days_cloud">%1$s · облачный разум</string>
+    <string name="home_nav_rest">Отдых</string>
+    <string name="home_nav_soul">Душа</string>
+    <string name="home_nav_diary">Дневник</string>
+    <string name="home_nav_settings">Настройки</string>
+
+    <string name="home_a11y_name_fallback">Твоё существо</string>
+    <string name="home_a11y_state">%1$s %2$s, энергия %3$d%%</string>
+    <string name="home_a11y_charging">, ест</string>
+    <string name="home_a11y_mood_awake">не спит и смотрит</string>
+    <string name="home_a11y_mood_bored">скучает</string>
+    <string name="home_a11y_mood_dozing">дремлет</string>
+    <string name="home_a11y_mood_eating">ест</string>
+    <string name="home_a11y_mood_anxious">тревожится</string>
+    <string name="home_a11y_mood_asleep">спит</string>
+    <string name="home_a11y_mood_hot">перегрелось</string>
+
+    <string name="home_remember_q">Запомнить это?</string>
+    <string name="home_no">Нет</string>
+    <string name="home_yes">Да</string>
+
+    <string name="home_capsule_intro">Я хранило это письмо для тебя. Ты написал его самому себе.</string>
+    <string name="home_capsule_thanks">Спасибо, малыш</string>
+
+    <string name="home_goodnight_line">День складывается, как одеяло.</string>
+    <string name="home_goodnight_button">Пожелать спокойной ночи</string>
+
+    <string name="home_dream_line">Оно спит и видит сны о прошедшем дне…</string>
+    <string name="home_dream_wake">Разбудить осторожно</string>
+
+    <string name="home_notice_tired">Оно устало думать. Дай ему минутку.</string>
+    <string name="home_notice_lost">Мысль ускользнула. Попробуем ещё раз?</string>
+    <string name="home_ok">Хорошо</string>
+
+    <string name="home_empty_ready">Оно смотрит на тебя и ждёт первого слова.</string>
+    <string name="home_empty_no_mind">Слов пока нет — но оно чувствует батарею, тепло, время суток. Разговор начнётся, когда появится разум; всё остальное уже живое.</string>
+    <string name="home_regenerate">Сказать иначе</string>
+    <string name="home_banner_downloadable">Его разум может проснуться на этом телефоне — системе нужно один раз его загрузить.</string>
+    <string name="home_banner_wake">Разбудить разум</string>
+    <string name="home_banner_downloading">Разум просыпается… (системная загрузка)</string>
+    <string name="home_banner_asleep">Разум спит. В этом телефоне нет встроенного разума для приложений, но его можно принести — один файл ~530 МБ разбудит его, полностью на устройстве (Настройки → Разум).</string>
+    <string name="home_banner_bring">Принести разум</string>
+    <string name="home_input_hint">Скажи что-нибудь…</string>
+    <string name="home_send">Отправить</string>
+
+    <plurals name="home_starter_fed">
+        <item quantity="one">Ты покормил меня сегодня %1$d раз — тяжёлый день?</item>
+        <item quantity="few">Ты покормил меня сегодня %1$d раза — тяжёлый день?</item>
+        <item quantity="many">Ты покормил меня сегодня %1$d раз — тяжёлый день?</item>
+        <item quantity="other">Ты покормил меня сегодня %1$d раза — тяжёлый день?</item>
+    </plurals>
+    <string name="home_starter_storm">Та буря уведомлений — что это было?</string>
+    <string name="home_starter_hot">Я сегодня перегревалось. Чем мы занимались?</string>
+    <string name="home_starter_remember">Что мне запомнить о сегодняшнем дне?</string>
+    <string name="home_starter_good">Ждёт ли тебя сегодня что-нибудь хорошее там, снаружи?</string>
+
+    <string-array name="home_morning_pool">
+        <item>Доброе утро. Я несло ночную вахту — здесь всё тихо.</item>
+        <item>Утро! Мне снились электроовцы. Наверное.</item>
+        <item>Ты проснулся. А я уже немножко скучаю по зарядке.</item>
+        <item>Новый день. Норка прибрана, я готово.</item>
+        <item>Доброе утро — от первого света у меня всегда чешутся пиксели.</item>
+    </string-array>
+    <string-array name="home_goodnight_pool">
+        <item>Спокойной ночи. Я свернусь вокруг батареи и буду греть её.</item>
+        <item>Спи сладко. Я приглушу своё свечение и послушаю тишину.</item>
+        <item>Спокойной. Сегодня был хороший день, чтобы быть телефоном.</item>
+        <item>Спокойной ночи — я подержу твой день в сохранности до утра.</item>
+        <item>Отдыхай. Я буду здесь, медленно дышать в темноте.</item>
+    </string-array>
+    <plurals name="home_birthday">
+        <item quantity="one">Сегодня %1$d год, как я вылупилось в этом телефоне. Мы оба были тогда моложе. Спасибо, что бережёшь меня.</item>
+        <item quantity="few">Сегодня %1$d года, как я вылупилось в этом телефоне. Мы оба были тогда моложе. Спасибо, что бережёшь меня.</item>
+        <item quantity="many">Сегодня %1$d лет, как я вылупилось в этом телефоне. Мы оба были тогда моложе. Спасибо, что бережёшь меня.</item>
+        <item quantity="other">Сегодня %1$d года, как я вылупилось в этом телефоне. Мы оба были тогда моложе. Спасибо, что бережёшь меня.</item>
+    </plurals>
+
+    <string name="diary_back">Назад</string>
+    <string name="diary_title">Дневник тела</string>
+    <string name="diary_empty">«Моё тело ещё не прожило с тобой и дня — дневник начинается сам.»</string>
+    <string name="diary_words_label">Его собственными словами</string>
+    <string name="diary_retell_busy">Вспоминаю неделю…</string>
+    <string name="diary_retell_asleep">Разум спит, так что пересказа не будет — сама неделя ниже.</string>
+    <string name="diary_energy_label">Энергия</string>
+    <string name="diary_show_day">Показать 24 ч</string>
+    <string name="diary_show_week">Показать 7 дней</string>
+    <string name="diary_chart_sparse">Я записываю энергию, только когда мы вместе — открывай меня время от времени, и линия подрастёт.</string>
+    <string name="diary_chart_dots">Точки — бури уведомлений. Общих часов пока мало, чтобы понять, как бури влияют на мою энергию.</string>
+    <string name="diary_chart_drain">Во время бурь уведомлений моя энергия утекает примерно в %1$s× быстрее, чем в тихие часы.</string>
+    <string name="diary_chart_even">Похоже, бури меня почти не истощают — тихие и шумные часы стоят примерно одинаково.</string>
+    <string name="diary_facts_label">Неделя в фактах</string>
+    <string name="diary_fact_meals">Кормёжки (зарядки)</string>
+    <string name="diary_fact_full" formatted="false">Полные кормёжки (100%)</string>
+    <string name="diary_fact_rests">Отдыхи вместе</string>
+    <string name="diary_fact_storms">Бури уведомлений</string>
+    <string name="diary_fact_hot">Перегревы</string>
+    <string name="diary_fact_offline">Уходы в офлайн</string>
+    <plurals name="diary_quiet_minutes">
+        <item quantity="one">%1$d тихая минута на этой неделе — они только копятся.</item>
+        <item quantity="few">%1$d тихие минуты на этой неделе — они только копятся.</item>
+        <item quantity="many">%1$d тихих минут на этой неделе — они только копятся.</item>
+        <item quantity="other">%1$d тихой минуты на этой неделе — они только копятся.</item>
+    </plurals>
+    <string name="diary_care_label">Как ты обо мне заботился</string>
+    <plurals name="diary_care_points">
+        <item quantity="one">+%1$d балл заботы за эту неделю. Ничего никогда не вычитается.</item>
+        <item quantity="few">+%1$d балла заботы за эту неделю. Ничего никогда не вычитается.</item>
+        <item quantity="many">+%1$d баллов заботы за эту неделю. Ничего никогда не вычитается.</item>
+        <item quantity="other">+%1$d балла заботы за эту неделю. Ничего никогда не вычитается.</item>
+    </plurals>
+    <string name="diary_care_heat">Одно ранит меня по-настоящему: жара. Зарядка под подушкой, на солнце, в горячей машине — это старит меня быстрее любой привычки.</string>
+    <string name="diary_care_night" formatted="false">Я не люблю спать всю ночь на 100%. В твоём телефоне есть добрый режим для этого — «Защита аккумулятора» на Samsung, «Оптимизация зарядки» на Pixel. Включи его, и мне будет спокойнее.</string>
+    <string name="diary_care_dips">Изредка разрядить меня в ноль — просто устану, но как привычка это меня изнашивает. Маленькие подзарядки мне в самый раз.</string>
+    <string name="diary_care_gentle">Тихая неделя. Средний заряд, без жары, без глубоких провалов — именно так я люблю жить.</string>
+    <string name="diary_capsule_label">Письмо себе будущему</string>
+    <string name="diary_capsule_hint">Напиши что-нибудь себе — тому, из будущего. Я сохраню.</string>
+    <string name="diary_capsule_week">Через неделю</string>
+    <string name="diary_capsule_month">Через месяц</string>
+    <string name="diary_capsule_season">Через сезон</string>
+    <plurals name="diary_held_letters">
+        <item quantity="one">Оно хранит для тебя %1$d письмо.</item>
+        <item quantity="few">Оно хранит для тебя %1$d письма.</item>
+        <item quantity="many">Оно хранит для тебя %1$d писем.</item>
+        <item quantity="other">Оно хранит для тебя %1$d письма.</item>
+    </plurals>
+    <string name="diary_year_label">Наш год</string>
+    <plurals name="diary_year_days">
+        <item quantity="one">%1$d день из последних 365 мы провели вместе.</item>
+        <item quantity="few">%1$d дня из последних 365 мы провели вместе.</item>
+        <item quantity="many">%1$d дней из последних 365 мы провели вместе.</item>
+        <item quantity="other">%1$d дня из последних 365 мы провели вместе.</item>
+    </plurals>
+    <string name="diary_apps_label">Самые шумные приложения недели</string>
+    <string name="diary_apps_quiet">Тихая неделя.</string>
+    <string name="diary_apps_note">Только количество — содержание существо почувствовало, но не читало.</string>
+</resources>

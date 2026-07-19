@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -186,16 +187,24 @@ private fun HatchStage(
             }
         }
         Text(
-            if (progress < 0.999f) "Something is waking up…" else "It's here. It IS this phone.",
+            if (progress < 0.999f) {
+                stringResource(R.string.onboarding_waking)
+            } else {
+                stringResource(R.string.onboarding_hatched)
+            },
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(20.dp))
         if (progress >= 0.999f) {
-            PillButton("Meet it", onClick = onHatched, modifier = Modifier.testTag("onboarding.meet"))
+            PillButton(
+                stringResource(R.string.onboarding_meet),
+                onClick = onHatched,
+                modifier = Modifier.testTag("onboarding.meet"),
+            )
         } else {
             Text(
-                "tap to hurry the shell",
+                stringResource(R.string.onboarding_hurry_hint),
                 style = MaterialTheme.typography.labelMedium,
             )
         }
@@ -213,14 +222,12 @@ private fun ChooseStage(
     val colors = LocalAnimaColors.current
     Column(Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
         Text(
-            "Choose its body",
+            stringResource(R.string.onboarding_choose_title),
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(top = 16.dp),
         )
         Text(
-            "Every cell is alive — this is the real engine, not pictures. " +
-                "Your phone's seed already shaped each one; you can change the " +
-                "body later, the soul stays.",
+            stringResource(R.string.onboarding_choose_hint),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
         )
@@ -234,7 +241,7 @@ private fun ChooseStage(
             modifier = Modifier.weight(1f),
         )
         PillButton(
-            "This one",
+            stringResource(R.string.onboarding_choose_confirm),
             onClick = onConfirm,
             enabled = selected != null,
             modifier =
@@ -269,7 +276,7 @@ private fun NameStage(
                     .fillMaxWidth()
                     .weight(1f),
         )
-        Text("Give it a name", style = MaterialTheme.typography.headlineMedium)
+        Text(stringResource(R.string.onboarding_name_title), style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(14.dp))
         BasicTextField(
             value = name,
@@ -293,15 +300,13 @@ private fun NameStage(
         // word (v0.3 ≤3-screen onboarding); the full story is the trust
         // page in Settings, reachable any time.
         Text(
-            "It lives on this phone. Conversations stay here, memory is " +
-                "encrypted, and it remembers a fact only after you tap yes. " +
-                "The whole story: Settings → Why no internet.",
+            stringResource(R.string.onboarding_contract),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(14.dp))
         PillButton(
-            "That's the name — begin",
+            stringResource(R.string.onboarding_begin),
             onClick = onConfirm,
             enabled = name.isNotBlank(),
             modifier = Modifier.testTag("onboarding.begin"),

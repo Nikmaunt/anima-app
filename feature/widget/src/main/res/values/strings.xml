@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home-screen widget: TalkBack sentence for the snapshot. -->
+    <string name="widget_a11y_state">%1$s is %2$s, battery %3$d%%</string>
+    <string name="widget_a11y_eating_suffix">, eating</string>
+    <string name="widget_mood_eating">eating</string>
+    <string name="widget_mood_asleep">asleep</string>
+    <string name="widget_mood_dozing">dozing</string>
+    <string name="widget_mood_awake">awake</string>
+</resources>

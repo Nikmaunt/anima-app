@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="creature_concept_spirit_orb">Дух-огонёк</string>
+    <string name="creature_concept_fox_kit">Лисёнок</string>
+    <string name="creature_concept_jelly">Желешка</string>
+    <string name="creature_concept_pixel_pet">Пиксельный зверёк</string>
+    <string name="creature_concept_robot">Робот</string>
+    <string name="creature_concept_sprout">Росток</string>
+    <string name="creature_concept_ember">Уголёк</string>
+    <string name="creature_concept_moth">Мотылёк</string>
+</resources>

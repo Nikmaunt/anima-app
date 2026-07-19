@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rest_back">Wstecz</string>
+    <string name="rest_a11y_creature">odpoczywające stworzenie</string>
+    <string name="rest_status_returned">wróciłeś — zachowałem twoje miejsce</string>
+    <string name="rest_status_eating">odpoczywamy, kiedy jem</string>
+    <string name="rest_status_together">po prostu bądźmy razem</string>
+    <string name="rest_keep_screen">nie wygaszaj ekranu</string>
+    <plurals name="rest_completed_title">
+        <item quantity="one">odpoczywaliśmy %1$d minutę</item>
+        <item quantity="few">odpoczywaliśmy %1$d minuty</item>
+        <item quantity="many">odpoczywaliśmy %1$d minut</item>
+        <item quantity="other">odpoczywaliśmy %1$d minuty</item>
+    </plurals>
+    <plurals name="rest_completed_sessions">
+        <item quantity="one">%1$d cichy odpoczynek razem</item>
+        <item quantity="few">%1$d ciche odpoczynki razem</item>
+        <item quantity="many">%1$d cichych odpoczynków razem</item>
+        <item quantity="other">%1$d cichego odpoczynku razem</item>
+    </plurals>
+    <plurals name="rest_completed_minutes">
+        <item quantity="one">%1$d minuta spokoju</item>
+        <item quantity="few">%1$d minuty spokoju</item>
+        <item quantity="many">%1$d minut spokoju</item>
+        <item quantity="other">%1$d minuty spokoju</item>
+    </plurals>
+    <string name="rest_completed_growth">%1$s — %2$s. One tylko rosną.</string>
+    <string name="rest_thanks">Dziękuję</string>
+    <string name="rest_pick_title">odpoczniesz ze mną chwilę?</string>
+    <string name="rest_pick_title_eating">odpoczniesz ze mną, kiedy jem?</string>
+    <plurals name="rest_pick_sessions">
+        <item quantity="one">już %1$d cichy odpoczynek</item>
+        <item quantity="few">już %1$d ciche odpoczynki</item>
+        <item quantity="many">już %1$d cichych odpoczynków</item>
+        <item quantity="other">już %1$d cichego odpoczynku</item>
+    </plurals>
+    <string name="rest_pick_week">%1$s · %2$d w tym tygodniu</string>
+    <string name="rest_minutes_chip">%1$d min</string>
+    <string name="rest_leave_hint">wyjdź, kiedy chcesz — poczekam i nic nie przepadnie</string>
+
+    <string name="rest_tile_label">Odpocznijmy razem</string>
+    <string name="rest_tile_waiting">czekam</string>
+</resources>

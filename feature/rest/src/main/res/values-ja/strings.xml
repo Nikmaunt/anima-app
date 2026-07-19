@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rest_back">もどる</string>
+    <string name="rest_a11y_creature">ひとやすみ中のいきもの</string>
+    <string name="rest_status_returned">おかえり — 場所をとっておいたよ</string>
+    <string name="rest_status_eating">食事しながらひとやすみ</string>
+    <string name="rest_status_together">ただいっしょにいるだけ</string>
+    <string name="rest_keep_screen">画面をつけたままにする</string>
+    <plurals name="rest_completed_title">
+        <item quantity="other">%1$d分いっしょに休んだよ</item>
+    </plurals>
+    <plurals name="rest_completed_sessions">
+        <item quantity="other">いっしょのひとやすみ %1$d回</item>
+    </plurals>
+    <plurals name="rest_completed_minutes">
+        <item quantity="other">おだやかな%1$d分</item>
+    </plurals>
+    <string name="rest_completed_growth">%1$s — %2$s。ふえていくだけだよ。</string>
+    <string name="rest_thanks">ありがとう</string>
+    <string name="rest_pick_title">すこしいっしょにひとやすみする?</string>
+    <string name="rest_pick_title_eating">食事のあいだ、いっしょにひとやすみする?</string>
+    <plurals name="rest_pick_sessions">
+        <item quantity="other">これまでのひとやすみ %1$d回</item>
+    </plurals>
+    <string name="rest_pick_week">%1$s · 今週は%2$d回</string>
+    <string name="rest_minutes_chip">%1$d分</string>
+    <string name="rest_leave_hint">いつ行ってもいいよ — 待ってるし、なにもなくならない</string>
+
+    <string name="rest_tile_label">いっしょにひとやすみ</string>
+    <string name="rest_tile_waiting">まってるよ</string>
+</resources>

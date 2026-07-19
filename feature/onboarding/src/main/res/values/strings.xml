@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Hatch stage -->
+    <string name="onboarding_waking">Something is waking up…</string>
+    <string name="onboarding_hatched">It\'s here. It IS this phone.</string>
+    <string name="onboarding_meet">Meet it</string>
+    <string name="onboarding_hurry_hint">tap to hurry the shell</string>
+
+    <!-- Choose stage -->
+    <string name="onboarding_choose_title">Choose its body</string>
+    <string name="onboarding_choose_hint">Every cell is alive — this is the real engine, not pictures. Your phone\'s seed already shaped each one; you can change the body later, the soul stays.</string>
+    <string name="onboarding_choose_confirm">This one</string>
+
+    <!-- Name stage + the honest contract -->
+    <string name="onboarding_name_title">Give it a name</string>
+    <string name="onboarding_contract">It lives on this phone. Conversations stay here, memory is encrypted, and it remembers a fact only after you tap yes. The whole story: Settings → Why no internet.</string>
+    <string name="onboarding_begin">That\'s the name — begin</string>
+</resources>

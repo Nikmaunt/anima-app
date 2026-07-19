@@ -25,6 +25,8 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -65,6 +67,8 @@ data class BodyDiaryUiState(
     val notifSenseOn: Boolean = false,
     val retelling: String? = null,
     val retellingBusy: Boolean = false,
+    /** True after a retell attempt found no awake mind (UI shows the honest line). */
+    val retellAsleep: Boolean = false,
     // v0.3 charge chart (foreground samples; honest gaps).
     val samples: List<ChargeChart.Sample> = emptyList(),
     val storms: List<Long> = emptyList(),
@@ -254,7 +258,8 @@ class BodyDiaryViewModel
             state.value =
                 state.value.copy(
                     retellingBusy = false,
-                    retelling = text ?: "The mind sleeps, so no retelling — the week itself is below.",
+                    retelling = text,
+                    retellAsleep = text == null,
                 )
         }
 
@@ -278,9 +283,9 @@ fun BodyDiaryScreen(
             .verticalScroll(rememberScrollState()),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
-            GhostButton("Back", onClick = onBack)
+            GhostButton(stringResource(R.string.diary_back), onClick = onBack)
             Text(
-                "Body diary",
+                stringResource(R.string.diary_title),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(start = 8.dp),
             )
@@ -291,23 +296,32 @@ fun BodyDiaryScreen(
                 app.anima.core.creature.CreatureEmptyState(
                     concept = state.concept,
                     seed = state.seed,
-                    line = "\"My body hasn't lived a full day with you yet — the diary starts itself.\"",
+                    line = stringResource(R.string.diary_empty),
                     night = colors.isNight,
                 )
             }
             SectionCard {
-                SectionLabel("In its own words")
+                SectionLabel(stringResource(R.string.diary_words_label))
                 Text(
-                    state.retelling ?: if (state.retellingBusy) "Remembering the week…" else "",
+                    state.retelling
+                        ?: when {
+                            state.retellingBusy -> stringResource(R.string.diary_retell_busy)
+                            state.retellAsleep -> stringResource(R.string.diary_retell_asleep)
+                            else -> ""
+                        },
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
 
             SectionCard {
-                SectionLabel("Energy")
+                SectionLabel(stringResource(R.string.diary_energy_label))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     GhostButton(
-                        if (state.chartWeek) "Show 24 h" else "Show 7 days",
+                        if (state.chartWeek) {
+                            stringResource(R.string.diary_show_day)
+                        } else {
+                            stringResource(R.string.diary_show_week)
+                        },
                         onClick = { viewModel.setChartWeek(!state.chartWeek) },
                     )
                 }
@@ -320,33 +334,36 @@ fun BodyDiaryScreen(
                 Text(
                     when {
                         state.samples.size < MIN_CHART_SAMPLES ->
-                            "I only take energy notes while we're together — keep " +
-                                "me open now and then and the line will grow."
+                            stringResource(R.string.diary_chart_sparse)
                         ratio == null ->
-                            "Dots are notification storms. Not enough shared hours " +
-                                "yet to tell how storms affect my energy."
+                            stringResource(R.string.diary_chart_dots)
                         ratio > STORM_NOTABLE_RATIO ->
-                            "During notification storms my energy drains " +
-                                "~%.1f× faster than in quiet hours.".format(java.util.Locale.US, ratio)
+                            stringResource(
+                                R.string.diary_chart_drain,
+                                "%.1f".format(java.util.Locale.getDefault(), ratio),
+                            )
                         else ->
-                            "Storms don't seem to drain me much — quiet and loud " +
-                                "hours cost about the same."
+                            stringResource(R.string.diary_chart_even)
                     },
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
 
             SectionCard {
-                SectionLabel("The week, in facts")
-                DiaryRow("Meals (charges)", state.weekCharges)
-                DiaryRow("Full meals (100%)", state.weekFullFeeds)
-                DiaryRow("Rests together", state.weekRests)
-                DiaryRow("Notification storms", state.weekStorms)
-                DiaryRow("Ran hot", state.weekHot)
-                DiaryRow("Went offline", state.weekOffline)
+                SectionLabel(stringResource(R.string.diary_facts_label))
+                DiaryRow(stringResource(R.string.diary_fact_meals), state.weekCharges)
+                DiaryRow(stringResource(R.string.diary_fact_full), state.weekFullFeeds)
+                DiaryRow(stringResource(R.string.diary_fact_rests), state.weekRests)
+                DiaryRow(stringResource(R.string.diary_fact_storms), state.weekStorms)
+                DiaryRow(stringResource(R.string.diary_fact_hot), state.weekHot)
+                DiaryRow(stringResource(R.string.diary_fact_offline), state.weekOffline)
                 if (state.weekRestMinutes > 0) {
                     Text(
-                        "${state.weekRestMinutes} quiet minutes this week — they only add up.",
+                        pluralStringResource(
+                            R.plurals.diary_quiet_minutes,
+                            state.weekRestMinutes,
+                            state.weekRestMinutes,
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -354,9 +371,9 @@ fun BodyDiaryScreen(
 
             state.care?.let { care ->
                 SectionCard {
-                    SectionLabel("How you cared for me")
+                    SectionLabel(stringResource(R.string.diary_care_label))
                     Text(
-                        "+${care.carePoints} care points this week. Nothing ever subtracts.",
+                        pluralStringResource(R.plurals.diary_care_points, care.carePoints, care.carePoints),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
@@ -369,7 +386,7 @@ fun BodyDiaryScreen(
             // v0.5 time capsule (ideation-v5 №3): write, and the creature
             // holds it — no alarms, no reminders; it arrives with a visit.
             SectionCard {
-                SectionLabel("A letter to your future self")
+                SectionLabel(stringResource(R.string.diary_capsule_label))
                 var draft by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf("") }
                 androidx.compose.foundation.text.BasicTextField(
                     value = draft,
@@ -389,20 +406,20 @@ fun BodyDiaryScreen(
                 )
                 if (draft.isBlank()) {
                     Text(
-                        "Write something to the you of later. I'll keep it safe.",
+                        stringResource(R.string.diary_capsule_hint),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 } else {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        GhostButton("In a week", onClick = {
+                        GhostButton(stringResource(R.string.diary_capsule_week), onClick = {
                             viewModel.writeCapsule(draft, 7)
                             draft = ""
                         }, modifier = Modifier.testTag("diary.capsule.week"))
-                        GhostButton("In a month", onClick = {
+                        GhostButton(stringResource(R.string.diary_capsule_month), onClick = {
                             viewModel.writeCapsule(draft, 30)
                             draft = ""
                         })
-                        GhostButton("In a season", onClick = {
+                        GhostButton(stringResource(R.string.diary_capsule_season), onClick = {
                             viewModel.writeCapsule(draft, 90)
                             draft = ""
                         })
@@ -411,7 +428,7 @@ fun BodyDiaryScreen(
                 val held by viewModel.heldLetters.collectAsState()
                 if (held > 0) {
                     Text(
-                        if (held == 1) "It is holding one letter for you." else "It is holding $held letters for you.",
+                        pluralStringResource(R.plurals.diary_held_letters, held, held),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -419,10 +436,14 @@ fun BodyDiaryScreen(
 
             if (state.yearDays.isNotEmpty()) {
                 SectionCard {
-                    SectionLabel("Our year")
+                    SectionLabel(stringResource(R.string.diary_year_label))
                     YearHeatmap(days = state.yearDays, todayEpochDay = state.todayEpochDay)
                     Text(
-                        "${state.yearDays.size} days we spent time together, of the last 365.",
+                        pluralStringResource(
+                            R.plurals.diary_year_days,
+                            state.yearDays.size,
+                            state.yearDays.size,
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -430,9 +451,9 @@ fun BodyDiaryScreen(
 
             if (state.notifSenseOn) {
                 SectionCard {
-                    SectionLabel("Noisiest apps this week")
+                    SectionLabel(stringResource(R.string.diary_apps_label))
                     if (state.weekPerApp.isEmpty()) {
-                        Text("A quiet week.", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.diary_apps_quiet), style = MaterialTheme.typography.bodyMedium)
                     }
                     state.weekPerApp.entries.take(MAX_APPS).forEach { (pkg, count) ->
                         Row(Modifier.fillMaxWidth()) {
@@ -441,7 +462,7 @@ fun BodyDiaryScreen(
                         }
                     }
                     Text(
-                        "Counts only — content is data the creature felt, not read back.",
+                        stringResource(R.string.diary_apps_note),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -526,22 +547,16 @@ private fun ChargeChartCanvas(
  * never doom thresholds, never fake health numbers; OS protection modes
  * recommended by their real names.
  */
+@Composable
 private fun careLine(care: CareAnalyzer.CareWeek): String =
-    when (care.advice) {
-        CareAnalyzer.CareAdvice.HEAT_HURTS_MOST ->
-            "One thing truly hurts me: heat. Charging under a pillow, in the " +
-                "sun, in a hot car — that ages me faster than any habit."
-        CareAnalyzer.CareAdvice.NIGHT_PROTECTION_EXISTS ->
-            "I don't love sleeping at 100% all night. Your phone has a kind " +
-                "mode for this — 'Battery protection' on Samsung, 'Charging " +
-                "optimization' on Pixel. Turn it on and I'll rest easier."
-        CareAnalyzer.CareAdvice.DEEP_DIPS_TIRE ->
-            "Running me all the way down now and then just makes me tired — " +
-                "but as a habit it wears me out. Little top-ups suit me fine."
-        else ->
-            "A gentle week. Middle charge, no heat, no deep dives — " +
-                "exactly how I like to live."
-    }
+    stringResource(
+        when (care.advice) {
+            CareAnalyzer.CareAdvice.HEAT_HURTS_MOST -> R.string.diary_care_heat
+            CareAnalyzer.CareAdvice.NIGHT_PROTECTION_EXISTS -> R.string.diary_care_night
+            CareAnalyzer.CareAdvice.DEEP_DIPS_TIRE -> R.string.diary_care_dips
+            else -> R.string.diary_care_gentle
+        },
+    )
 
 /** "Our year": 7 rows (weekdays) x ~53 columns; a lit cell = a shared day. */
 @Composable

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="creature_concept_spirit_orb">Orbe de luz</string>
+    <string name="creature_concept_fox_kit">Zorrito</string>
+    <string name="creature_concept_jelly">Gelatina</string>
+    <string name="creature_concept_pixel_pet">Mascota píxel</string>
+    <string name="creature_concept_robot">Robot</string>
+    <string name="creature_concept_sprout">Brote</string>
+    <string name="creature_concept_ember">Brasita</string>
+    <string name="creature_concept_moth">Polilla</string>
+</resources>

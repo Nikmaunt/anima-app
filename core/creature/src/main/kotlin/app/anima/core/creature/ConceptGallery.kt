@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.anima.core.model.BodyState
@@ -86,14 +87,17 @@ fun ConceptGallery(
     }
 }
 
+@Composable
 fun conceptName(concept: CreatureConcept): String =
-    when (concept) {
-        CreatureConcept.SPIRIT_ORB -> "Spirit orb"
-        CreatureConcept.FOX_KIT -> "Fox kit"
-        CreatureConcept.JELLY -> "Jelly"
-        CreatureConcept.PIXEL_PET -> "Pixel pet"
-        CreatureConcept.ROBOT -> "Robot"
-        CreatureConcept.SPROUT -> "Sprout"
-        CreatureConcept.EMBER -> "Ember"
-        CreatureConcept.MOTH -> "Moth"
-    }
+    stringResource(
+        when (concept) {
+            CreatureConcept.SPIRIT_ORB -> R.string.creature_concept_spirit_orb
+            CreatureConcept.FOX_KIT -> R.string.creature_concept_fox_kit
+            CreatureConcept.JELLY -> R.string.creature_concept_jelly
+            CreatureConcept.PIXEL_PET -> R.string.creature_concept_pixel_pet
+            CreatureConcept.ROBOT -> R.string.creature_concept_robot
+            CreatureConcept.SPROUT -> R.string.creature_concept_sprout
+            CreatureConcept.EMBER -> R.string.creature_concept_ember
+            CreatureConcept.MOTH -> R.string.creature_concept_moth
+        },
+    )

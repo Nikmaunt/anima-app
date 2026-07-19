@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shortcut_talk">Поговорить</string>
+    <string name="shortcut_diary">Дневник</string>
+    <string name="shortcut_rest">Отдых</string>
+</resources>

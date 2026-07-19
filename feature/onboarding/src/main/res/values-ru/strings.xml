@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_waking">Кто-то просыпается…</string>
+    <string name="onboarding_hatched">Оно здесь. Оно и ЕСТЬ этот телефон.</string>
+    <string name="onboarding_meet">Познакомиться</string>
+    <string name="onboarding_hurry_hint">коснись, чтобы поторопить скорлупу</string>
+
+    <string name="onboarding_choose_title">Выбери ему тело</string>
+    <string name="onboarding_choose_hint">Каждая клетка живая — это настоящий движок, а не картинки. Зерно твоего телефона уже придало форму каждому; тело можно сменить потом, душа останется.</string>
+    <string name="onboarding_choose_confirm">Вот это</string>
+
+    <string name="onboarding_name_title">Дай ему имя</string>
+    <string name="onboarding_contract">Оно живёт на этом телефоне. Разговоры остаются здесь, память зашифрована, а факт оно запоминает только после твоего «да». Вся история: Настройки → Почему без интернета.</string>
+    <string name="onboarding_begin">Это имя — начнём</string>
+</resources>

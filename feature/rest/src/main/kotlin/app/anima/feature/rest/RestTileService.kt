@@ -25,8 +25,8 @@ class RestTileService : TileService() {
             label = getString(R.string.rest_tile_label)
             subtitle =
                 when (val p = manager.phase.value) {
-                    is RestPhase.Running -> "${p.plannedMin} min"
-                    is RestPhase.Waiting -> "waiting"
+                    is RestPhase.Running -> getString(R.string.rest_minutes_chip, p.plannedMin)
+                    is RestPhase.Waiting -> getString(R.string.rest_tile_waiting)
                     else -> ""
                 }
             updateTile()

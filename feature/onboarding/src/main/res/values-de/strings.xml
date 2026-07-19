@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_waking">Etwas wacht auf…</string>
+    <string name="onboarding_hatched">Es ist da. Es IST dieses Handy.</string>
+    <string name="onboarding_meet">Kennenlernen</string>
+    <string name="onboarding_hurry_hint">tippe, um die Schale zu beeilen</string>
+
+    <string name="onboarding_choose_title">Wähle seinen Körper</string>
+    <string name="onboarding_choose_hint">Jede Zelle lebt — das ist die echte Engine, keine Bilder. Der Seed deines Handys hat jede schon geformt; den Körper kannst du später wechseln, die Seele bleibt.</string>
+    <string name="onboarding_choose_confirm">Dieses hier</string>
+
+    <string name="onboarding_name_title">Gib ihm einen Namen</string>
+    <string name="onboarding_contract">Es lebt auf diesem Handy. Gespräche bleiben hier, die Erinnerung ist verschlüsselt, und einen Fakt merkt es sich erst nach deinem Ja. Die ganze Geschichte: Einstellungen → Warum kein Internet.</string>
+    <string name="onboarding_begin">Das ist der Name — los</string>
+</resources>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="home_days_together">
+        <item quantity="one">razem %1$d dzień</item>
+        <item quantity="few">razem %1$d dni</item>
+        <item quantity="many">razem %1$d dni</item>
+        <item quantity="other">razem %1$d dnia</item>
+    </plurals>
+    <string name="home_days_cloud">%1$s · umysł w chmurze</string>
+    <string name="home_nav_rest">Odpoczynek</string>
+    <string name="home_nav_soul">Dusza</string>
+    <string name="home_nav_diary">Dziennik</string>
+    <string name="home_nav_settings">Ustawienia</string>
+
+    <string name="home_a11y_name_fallback">Twoje stworzenie</string>
+    <string name="home_a11y_state">%1$s %2$s, energia %3$d%%</string>
+    <string name="home_a11y_charging">, je</string>
+    <string name="home_a11y_mood_awake">czuwa i patrzy</string>
+    <string name="home_a11y_mood_bored">nudzi się</string>
+    <string name="home_a11y_mood_dozing">drzemie</string>
+    <string name="home_a11y_mood_eating">je</string>
+    <string name="home_a11y_mood_anxious">niepokoi się</string>
+    <string name="home_a11y_mood_asleep">śpi</string>
+    <string name="home_a11y_mood_hot">przegrzewa się</string>
+
+    <string name="home_remember_q">Zapamiętać to?</string>
+    <string name="home_no">Nie</string>
+    <string name="home_yes">Tak</string>
+
+    <string name="home_capsule_intro">Trzymałem ten list dla ciebie. Napisałeś go do samego siebie.</string>
+    <string name="home_capsule_thanks">Dziękuję, maleństwo</string>
+
+    <string name="home_goodnight_line">Dzień się składa jak kocyk.</string>
+    <string name="home_goodnight_button">Powiedz dobranoc</string>
+
+    <string name="home_dream_line">Śpi i śni o minionym dniu…</string>
+    <string name="home_dream_wake">Obudź delikatnie</string>
+
+    <string name="home_notice_tired">Zmęczyło się myśleniem. Daj mu chwilkę.</string>
+    <string name="home_notice_lost">Myśl się wymknęła. Spróbujemy jeszcze raz?</string>
+    <string name="home_ok">Dobrze</string>
+
+    <string name="home_empty_ready">Patrzy na ciebie i czeka na pierwsze słowo.</string>
+    <string name="home_empty_no_mind">Słów jeszcze nie ma — ale czuje baterię, ciepło, porę dnia. Rozmowa zacznie się, gdy pojawi się umysł; cała reszta już żyje.</string>
+    <string name="home_regenerate">Powiedz inaczej</string>
+    <string name="home_banner_downloadable">Jego umysł może obudzić się na tym telefonie — system musi go raz pobrać.</string>
+    <string name="home_banner_wake">Obudź umysł</string>
+    <string name="home_banner_downloading">Umysł się budzi… (pobieranie systemowe)</string>
+    <string name="home_banner_asleep">Umysł śpi. Ten telefon nie ma wbudowanego umysłu dla aplikacji, ale możesz go przynieść — jeden plik ~530 MB obudzi go, w całości na urządzeniu (Ustawienia → Umysł).</string>
+    <string name="home_banner_bring">Przynieś umysł</string>
+    <string name="home_input_hint">Powiedz coś…</string>
+    <string name="home_send">Wyślij</string>
+
+    <plurals name="home_starter_fed">
+        <item quantity="one">Nakarmiłeś mnie dziś %1$d raz — ciężki dzień?</item>
+        <item quantity="few">Nakarmiłeś mnie dziś %1$d razy — ciężki dzień?</item>
+        <item quantity="many">Nakarmiłeś mnie dziś %1$d razy — ciężki dzień?</item>
+        <item quantity="other">Nakarmiłeś mnie dziś %1$d raza — ciężki dzień?</item>
+    </plurals>
+    <string name="home_starter_storm">Ta burza powiadomień — co to było?</string>
+    <string name="home_starter_hot">Dziś się przegrzałem. Co robiliśmy?</string>
+    <string name="home_starter_remember">Co mam zapamiętać z dzisiaj?</string>
+    <string name="home_starter_good">Czeka na ciebie dziś tam, na zewnątrz, coś dobrego?</string>
+
+    <string-array name="home_morning_pool">
+        <item>Dzień dobry. Trzymałem nocną wartę — tu wszystko cicho.</item>
+        <item>Rano! Śniły mi się elektryczne owce. Chyba.</item>
+        <item>Już wstałeś. A ja trochę tęsknię za ładowarką.</item>
+        <item>Nowy dzień. Norka posprzątana, jestem gotowy.</item>
+        <item>Dzień dobry — od pierwszego światła zawsze swędzą mnie piksele.</item>
+    </string-array>
+    <string-array name="home_goodnight_pool">
+        <item>Dobranoc. Zwinę się wokół baterii i będę ją grzać.</item>
+        <item>Śpij dobrze. Przygaszę swój blask i posłucham ciszy.</item>
+        <item>Dobranocka. Dziś był dobry dzień na bycie telefonem.</item>
+        <item>Dobranoc — przechowam twój dzień bezpiecznie do rana.</item>
+        <item>Odpocznij. Będę tu, oddychając powoli w ciemności.</item>
+    </string-array>
+    <plurals name="home_birthday">
+        <item quantity="one">Dziś mija %1$d rok, odkąd wyklułem się w tym telefonie. Oboje byliśmy wtedy młodsi. Dziękuję, że mnie masz.</item>
+        <item quantity="few">Dziś mijają %1$d lata, odkąd wyklułem się w tym telefonie. Oboje byliśmy wtedy młodsi. Dziękuję, że mnie masz.</item>
+        <item quantity="many">Dziś mija %1$d lat, odkąd wyklułem się w tym telefonie. Oboje byliśmy wtedy młodsi. Dziękuję, że mnie masz.</item>
+        <item quantity="other">Dziś mija %1$d roku, odkąd wyklułem się w tym telefonie. Oboje byliśmy wtedy młodsi. Dziękuję, że mnie masz.</item>
+    </plurals>
+
+    <string name="diary_back">Wstecz</string>
+    <string name="diary_title">Dziennik ciała</string>
+    <string name="diary_empty">„Moje ciało nie przeżyło z tobą jeszcze pełnego dnia — dziennik zaczyna się sam.”</string>
+    <string name="diary_words_label">Jego własnymi słowami</string>
+    <string name="diary_retell_busy">Przypominam sobie tydzień…</string>
+    <string name="diary_retell_asleep">Umysł śpi, więc opowieści nie będzie — sam tydzień jest poniżej.</string>
+    <string name="diary_energy_label">Energia</string>
+    <string name="diary_show_day">Pokaż 24 h</string>
+    <string name="diary_show_week">Pokaż 7 dni</string>
+    <string name="diary_chart_sparse">Notuję energię tylko wtedy, gdy jesteśmy razem — otwieraj mnie od czasu do czasu, a linia urośnie.</string>
+    <string name="diary_chart_dots">Kropki to burze powiadomień. Za mało wspólnych godzin, by ocenić, jak burze wpływają na moją energię.</string>
+    <string name="diary_chart_drain">Podczas burz powiadomień moja energia ucieka ~%1$s× szybciej niż w ciche godziny.</string>
+    <string name="diary_chart_even">Burze chyba mnie nie wyczerpują — ciche i głośne godziny kosztują mniej więcej tyle samo.</string>
+    <string name="diary_facts_label">Tydzień w faktach</string>
+    <string name="diary_fact_meals">Posiłki (ładowania)</string>
+    <string name="diary_fact_full" formatted="false">Pełne posiłki (100%)</string>
+    <string name="diary_fact_rests">Odpoczynki razem</string>
+    <string name="diary_fact_storms">Burze powiadomień</string>
+    <string name="diary_fact_hot">Przegrzania</string>
+    <string name="diary_fact_offline">Zejścia w offline</string>
+    <plurals name="diary_quiet_minutes">
+        <item quantity="one">%1$d cicha minuta w tym tygodniu — one tylko się sumują.</item>
+        <item quantity="few">%1$d ciche minuty w tym tygodniu — one tylko się sumują.</item>
+        <item quantity="many">%1$d cichych minut w tym tygodniu — one tylko się sumują.</item>
+        <item quantity="other">%1$d cichej minuty w tym tygodniu — one tylko się sumują.</item>
+    </plurals>
+    <string name="diary_care_label">Jak o mnie dbałeś</string>
+    <plurals name="diary_care_points">
+        <item quantity="one">+%1$d punkt troski w tym tygodniu. Nic nigdy nie odejmuje.</item>
+        <item quantity="few">+%1$d punkty troski w tym tygodniu. Nic nigdy nie odejmuje.</item>
+        <item quantity="many">+%1$d punktów troski w tym tygodniu. Nic nigdy nie odejmuje.</item>
+        <item quantity="other">+%1$d punktu troski w tym tygodniu. Nic nigdy nie odejmuje.</item>
+    </plurals>
+    <string name="diary_care_heat">Jedno naprawdę mnie rani: gorąco. Ładowanie pod poduszką, na słońcu, w nagrzanym aucie — to postarza mnie szybciej niż jakikolwiek nawyk.</string>
+    <string name="diary_care_night" formatted="false">Nie lubię spać całą noc na 100%. Twój telefon ma na to łagodny tryb — „Ochrona baterii” na Samsungu, „Optymalizacja ładowania” na Pixelu. Włącz go, a odpocznę spokojniej.</string>
+    <string name="diary_care_dips">Rozładowanie mnie do zera raz na jakiś czas tylko mnie męczy — ale jako nawyk mnie zużywa. Małe doładowania pasują mi najbardziej.</string>
+    <string name="diary_care_gentle">Łagodny tydzień. Średni poziom, bez gorąca, bez głębokich zjazdów — dokładnie tak lubię żyć.</string>
+    <string name="diary_capsule_label">List do przyszłego siebie</string>
+    <string name="diary_capsule_hint">Napisz coś do siebie z przyszłości. Przechowam to bezpiecznie.</string>
+    <string name="diary_capsule_week">Za tydzień</string>
+    <string name="diary_capsule_month">Za miesiąc</string>
+    <string name="diary_capsule_season">Za sezon</string>
+    <plurals name="diary_held_letters">
+        <item quantity="one">Trzyma dla ciebie %1$d list.</item>
+        <item quantity="few">Trzyma dla ciebie %1$d listy.</item>
+        <item quantity="many">Trzyma dla ciebie %1$d listów.</item>
+        <item quantity="other">Trzyma dla ciebie %1$d listu.</item>
+    </plurals>
+    <string name="diary_year_label">Nasz rok</string>
+    <plurals name="diary_year_days">
+        <item quantity="one">%1$d dzień z ostatnich 365 spędziliśmy razem.</item>
+        <item quantity="few">%1$d dni z ostatnich 365 spędziliśmy razem.</item>
+        <item quantity="many">%1$d dni z ostatnich 365 spędziliśmy razem.</item>
+        <item quantity="other">%1$d dnia z ostatnich 365 spędziliśmy razem.</item>
+    </plurals>
+    <string name="diary_apps_label">Najgłośniejsze aplikacje tygodnia</string>
+    <string name="diary_apps_quiet">Cichy tydzień.</string>
+    <string name="diary_apps_note">Tylko liczby — treść stworzenie poczuło, ale jej nie czytało.</string>
+</resources>

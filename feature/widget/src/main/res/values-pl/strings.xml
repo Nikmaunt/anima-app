@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_a11y_state">%1$s teraz %2$s, energia %3$d%%</string>
+    <string name="widget_a11y_eating_suffix">, je</string>
+    <string name="widget_mood_eating">je</string>
+    <string name="widget_mood_asleep">śpi</string>
+    <string name="widget_mood_dozing">drzemie</string>
+    <string name="widget_mood_awake">czuwa</string>
+</resources>

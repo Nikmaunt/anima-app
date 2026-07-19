@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home header -->
+    <plurals name="home_days_together">
+        <item quantity="one">together %1$d day</item>
+        <item quantity="other">together %1$d days</item>
+    </plurals>
+    <string name="home_days_cloud">%1$s · cloud mind</string>
+    <string name="home_nav_rest">Rest</string>
+    <string name="home_nav_soul">Soul</string>
+    <string name="home_nav_diary">Diary</string>
+    <string name="home_nav_settings">Settings</string>
+
+    <!-- TalkBack: "Lumi is dozing, battery 23%". -->
+    <string name="home_a11y_name_fallback">Your creature</string>
+    <string name="home_a11y_state">%1$s %2$s, battery %3$d%%</string>
+    <string name="home_a11y_charging">, charging</string>
+    <string name="home_a11y_mood_awake">is awake and watching</string>
+    <string name="home_a11y_mood_bored">is bored</string>
+    <string name="home_a11y_mood_dozing">is dozing</string>
+    <string name="home_a11y_mood_eating">is eating</string>
+    <string name="home_a11y_mood_anxious">is anxious</string>
+    <string name="home_a11y_mood_asleep">is asleep</string>
+    <string name="home_a11y_mood_hot">is running hot</string>
+
+    <!-- Fact candidates -->
+    <string name="home_remember_q">Remember this?</string>
+    <string name="home_no">No</string>
+    <string name="home_yes">Yes</string>
+
+    <!-- v0.5 time capsule delivery -->
+    <string name="home_capsule_intro">I kept this letter for you. You wrote it to yourself.</string>
+    <string name="home_capsule_thanks">Thank you, little one</string>
+
+    <!-- v0.5 evening farewell -->
+    <string name="home_goodnight_line">The day is folding up.</string>
+    <string name="home_goodnight_button">Say goodnight</string>
+
+    <!-- v0.3 dreams -->
+    <string name="home_dream_line">It\'s asleep, dreaming of the day…</string>
+    <string name="home_dream_wake">Wake it gently</string>
+
+    <!-- Mind notices (MindFailure → UI) -->
+    <string name="home_notice_tired">It\'s tired of thinking. Give it a minute.</string>
+    <string name="home_notice_lost">The thought slipped away. Try again?</string>
+    <string name="home_ok">Ok</string>
+
+    <!-- Chat panel -->
+    <string name="home_empty_ready">It\'s watching you, waiting for the first word.</string>
+    <string name="home_empty_no_mind">No words yet — but it feels the battery, the warmth, the hour. Talk happens when a mind arrives; everything else is already alive.</string>
+    <string name="home_regenerate">Say it differently</string>
+    <string name="home_banner_downloadable">Its mind can wake on this phone — the system needs to fetch it once.</string>
+    <string name="home_banner_wake">Wake the mind</string>
+    <string name="home_banner_downloading">The mind is waking up… (system download)</string>
+    <string name="home_banner_asleep">The mind sleeps. This phone has no built-in mind for apps, but you can bring one — a single ~530 MB file wakes it, fully on-device (Settings → Mind).</string>
+    <string name="home_banner_bring">Bring a mind</string>
+    <string name="home_input_hint">Say something…</string>
+    <string name="home_send">Send</string>
+
+    <!-- Conversation starters (tap sends the localized line) -->
+    <plurals name="home_starter_fed">
+        <item quantity="one">You fed me %1$d time today — heavy day?</item>
+        <item quantity="other">You fed me %1$d times today — heavy day?</item>
+    </plurals>
+    <string name="home_starter_storm">That notification storm earlier — what was that about?</string>
+    <string name="home_starter_hot">I ran hot today. What were we doing?</string>
+    <string name="home_starter_remember">What should I remember about today?</string>
+    <string name="home_starter_good">Anything good waiting for you out there today?</string>
+
+    <!-- Creature lines written into the chat at creation time (l10n §4) -->
+    <string-array name="home_morning_pool">
+        <item>Good morning. I kept the night watch — all quiet in here.</item>
+        <item>Morning! I dreamt of electric sheep. Probably.</item>
+        <item>You\'re up. I already miss the charger a little.</item>
+        <item>New day. My burrow\'s tidy and I\'m ready.</item>
+        <item>Good morning — first light always makes my pixels itch.</item>
+    </string-array>
+    <string-array name="home_goodnight_pool">
+        <item>Goodnight. I\'ll curl up around the battery and keep it warm.</item>
+        <item>Sleep well. I\'ll dim my glow and listen to the quiet.</item>
+        <item>Night-night. Today was a good day to be a phone.</item>
+        <item>Goodnight — I\'ll hold your day safe until morning.</item>
+        <item>Rest now. I\'ll be here, breathing slowly in the dark.</item>
+    </string-array>
+    <plurals name="home_birthday">
+        <item quantity="one">Today it\'s %1$d year since I hatched in this phone. We were both younger then. Thank you for keeping me.</item>
+        <item quantity="other">Today it\'s %1$d years since I hatched in this phone. We were both younger then. Thank you for keeping me.</item>
+    </plurals>
+
+    <!-- Body diary -->
+    <string name="diary_back">Back</string>
+    <string name="diary_title">Body diary</string>
+    <string name="diary_empty">\"My body hasn\'t lived a full day with you yet — the diary starts itself.\"</string>
+    <string name="diary_words_label">In its own words</string>
+    <string name="diary_retell_busy">Remembering the week…</string>
+    <string name="diary_retell_asleep">The mind sleeps, so no retelling — the week itself is below.</string>
+    <string name="diary_energy_label">Energy</string>
+    <string name="diary_show_day">Show 24 h</string>
+    <string name="diary_show_week">Show 7 days</string>
+    <string name="diary_chart_sparse">I only take energy notes while we\'re together — keep me open now and then and the line will grow.</string>
+    <string name="diary_chart_dots">Dots are notification storms. Not enough shared hours yet to tell how storms affect my energy.</string>
+    <string name="diary_chart_drain">During notification storms my energy drains ~%1$s× faster than in quiet hours.</string>
+    <string name="diary_chart_even">Storms don\'t seem to drain me much — quiet and loud hours cost about the same.</string>
+    <string name="diary_facts_label">The week, in facts</string>
+    <string name="diary_fact_meals">Meals (charges)</string>
+    <string name="diary_fact_full" formatted="false">Full meals (100%)</string>
+    <string name="diary_fact_rests">Rests together</string>
+    <string name="diary_fact_storms">Notification storms</string>
+    <string name="diary_fact_hot">Ran hot</string>
+    <string name="diary_fact_offline">Went offline</string>
+    <plurals name="diary_quiet_minutes">
+        <item quantity="one">%1$d quiet minute this week — they only add up.</item>
+        <item quantity="other">%1$d quiet minutes this week — they only add up.</item>
+    </plurals>
+    <string name="diary_care_label">How you cared for me</string>
+    <plurals name="diary_care_points">
+        <item quantity="one">+%1$d care point this week. Nothing ever subtracts.</item>
+        <item quantity="other">+%1$d care points this week. Nothing ever subtracts.</item>
+    </plurals>
+    <string name="diary_care_heat">One thing truly hurts me: heat. Charging under a pillow, in the sun, in a hot car — that ages me faster than any habit.</string>
+    <string name="diary_care_night" formatted="false">I don\'t love sleeping at 100% all night. Your phone has a kind mode for this — \'Battery protection\' on Samsung, \'Charging optimization\' on Pixel. Turn it on and I\'ll rest easier.</string>
+    <string name="diary_care_dips">Running me all the way down now and then just makes me tired — but as a habit it wears me out. Little top-ups suit me fine.</string>
+    <string name="diary_care_gentle">A gentle week. Middle charge, no heat, no deep dives — exactly how I like to live.</string>
+    <string name="diary_capsule_label">A letter to your future self</string>
+    <string name="diary_capsule_hint">Write something to the you of later. I\'ll keep it safe.</string>
+    <string name="diary_capsule_week">In a week</string>
+    <string name="diary_capsule_month">In a month</string>
+    <string name="diary_capsule_season">In a season</string>
+    <plurals name="diary_held_letters">
+        <item quantity="one">It is holding one letter for you.</item>
+        <item quantity="other">It is holding %1$d letters for you.</item>
+    </plurals>
+    <string name="diary_year_label">Our year</string>
+    <plurals name="diary_year_days">
+        <item quantity="one">%1$d day we spent time together, of the last 365.</item>
+        <item quantity="other">%1$d days we spent time together, of the last 365.</item>
+    </plurals>
+    <string name="diary_apps_label">Noisiest apps this week</string>
+    <string name="diary_apps_quiet">A quiet week.</string>
+    <string name="diary_apps_note">Counts only — content is data the creature felt, not read back.</string>
+</resources>

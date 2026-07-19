@@ -1,4 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Rest screen -->
+    <string name="rest_back">Back</string>
+    <string name="rest_a11y_creature">resting creature</string>
+    <string name="rest_status_returned">you\'re back — I kept your place</string>
+    <string name="rest_status_eating">resting while I eat</string>
+    <string name="rest_status_together">just being here together</string>
+    <string name="rest_keep_screen">keep the screen awake</string>
+    <plurals name="rest_completed_title">
+        <item quantity="one">we rested %1$d minute</item>
+        <item quantity="other">we rested %1$d minutes</item>
+    </plurals>
+    <plurals name="rest_completed_sessions">
+        <item quantity="one">%1$d quiet session together</item>
+        <item quantity="other">%1$d quiet sessions together</item>
+    </plurals>
+    <plurals name="rest_completed_minutes">
+        <item quantity="one">%1$d minute of calm</item>
+        <item quantity="other">%1$d minutes of calm</item>
+    </plurals>
+    <string name="rest_completed_growth">%1$s — %2$s. They only ever grow.</string>
+    <string name="rest_thanks">Thank you</string>
+    <string name="rest_pick_title">rest with me a little?</string>
+    <string name="rest_pick_title_eating">rest with me while I eat?</string>
+    <plurals name="rest_pick_sessions">
+        <item quantity="one">%1$d quiet session so far</item>
+        <item quantity="other">%1$d quiet sessions so far</item>
+    </plurals>
+    <string name="rest_pick_week">%1$s · %2$d this week</string>
+    <string name="rest_minutes_chip">%1$d min</string>
+    <string name="rest_leave_hint">leave anytime — I\'ll wait, and nothing is lost</string>
+
+    <!-- Quick Settings tile -->
     <string name="rest_tile_label">Rest together</string>
+    <string name="rest_tile_waiting">waiting</string>
 </resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_waking">なにかが目をさましている…</string>
+    <string name="onboarding_hatched">ここにいるよ。この電話そのものなんだ。</string>
+    <string name="onboarding_meet">会ってみる</string>
+    <string name="onboarding_hurry_hint">タップでからをせかす</string>
+
+    <string name="onboarding_choose_title">からだをえらんであげて</string>
+    <string name="onboarding_choose_hint">どの細胞も生きている — 絵じゃなくて、ほんもののエンジンだよ。きみの電話のたねがもう形をつくってある。からだはあとで変えられるし、たましいはそのまま。</string>
+    <string name="onboarding_choose_confirm">この子にする</string>
+
+    <string name="onboarding_name_title">名前をつけてあげて</string>
+    <string name="onboarding_contract">この電話の中で生きているよ。会話はここに残って、記憶は暗号化されて、「いいよ」をタップしたことだけおぼえる。くわしくは：設定 → どうしてインターネットなしなの。</string>
+    <string name="onboarding_begin">この名前にする — はじめよう</string>
+</resources>

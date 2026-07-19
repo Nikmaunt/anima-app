@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rest_back">Назад</string>
+    <string name="rest_a11y_creature">существо отдыхает</string>
+    <string name="rest_status_returned">ты вернулся — я сохранило твоё место</string>
+    <string name="rest_status_eating">отдыхаем, пока я ем</string>
+    <string name="rest_status_together">просто побудем вместе</string>
+    <string name="rest_keep_screen">не гасить экран</string>
+    <plurals name="rest_completed_title">
+        <item quantity="one">мы отдохнули %1$d минуту</item>
+        <item quantity="few">мы отдохнули %1$d минуты</item>
+        <item quantity="many">мы отдохнули %1$d минут</item>
+        <item quantity="other">мы отдохнули %1$d минуты</item>
+    </plurals>
+    <plurals name="rest_completed_sessions">
+        <item quantity="one">%1$d тихий отдых вместе</item>
+        <item quantity="few">%1$d тихих отдыха вместе</item>
+        <item quantity="many">%1$d тихих отдыхов вместе</item>
+        <item quantity="other">%1$d тихого отдыха вместе</item>
+    </plurals>
+    <plurals name="rest_completed_minutes">
+        <item quantity="one">%1$d минута покоя</item>
+        <item quantity="few">%1$d минуты покоя</item>
+        <item quantity="many">%1$d минут покоя</item>
+        <item quantity="other">%1$d минуты покоя</item>
+    </plurals>
+    <string name="rest_completed_growth">%1$s — %2$s. Они только растут.</string>
+    <string name="rest_thanks">Спасибо</string>
+    <string name="rest_pick_title">отдохнёшь со мной немного?</string>
+    <string name="rest_pick_title_eating">отдохнёшь со мной, пока я ем?</string>
+    <plurals name="rest_pick_sessions">
+        <item quantity="one">уже %1$d тихий отдых</item>
+        <item quantity="few">уже %1$d тихих отдыха</item>
+        <item quantity="many">уже %1$d тихих отдыхов</item>
+        <item quantity="other">уже %1$d тихого отдыха</item>
+    </plurals>
+    <string name="rest_pick_week">%1$s · %2$d за неделю</string>
+    <string name="rest_minutes_chip">%1$d мин</string>
+    <string name="rest_leave_hint">уходи когда угодно — я подожду, и ничего не потеряется</string>
+
+    <string name="rest_tile_label">Отдохнуть вместе</string>
+    <string name="rest_tile_waiting">жду</string>
+</resources>

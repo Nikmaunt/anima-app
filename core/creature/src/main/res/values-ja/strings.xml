@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="creature_concept_spirit_orb">たましいのたま</string>
+    <string name="creature_concept_fox_kit">こぎつね</string>
+    <string name="creature_concept_jelly">ぷるぷる</string>
+    <string name="creature_concept_pixel_pet">ピクセルペット</string>
+    <string name="creature_concept_robot">ロボット</string>
+    <string name="creature_concept_sprout">めばえ</string>
+    <string name="creature_concept_ember">ひだね</string>
+    <string name="creature_concept_moth">よるのちょう</string>
+</resources>

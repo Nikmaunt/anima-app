@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rest_back">Zurück</string>
+    <string name="rest_a11y_creature">ruhendes Wesen</string>
+    <string name="rest_status_returned">du bist zurück — ich habe deinen Platz freigehalten</string>
+    <string name="rest_status_eating">ausruhen, während ich esse</string>
+    <string name="rest_status_together">einfach zusammen hier sein</string>
+    <string name="rest_keep_screen">Bildschirm wach halten</string>
+    <plurals name="rest_completed_title">
+        <item quantity="one">wir haben %1$d Minute geruht</item>
+        <item quantity="other">wir haben %1$d Minuten geruht</item>
+    </plurals>
+    <plurals name="rest_completed_sessions">
+        <item quantity="one">%1$d stille Ruhepause zusammen</item>
+        <item quantity="other">%1$d stille Ruhepausen zusammen</item>
+    </plurals>
+    <plurals name="rest_completed_minutes">
+        <item quantity="one">%1$d Minute Ruhe</item>
+        <item quantity="other">%1$d Minuten Ruhe</item>
+    </plurals>
+    <string name="rest_completed_growth">%1$s — %2$s. Sie werden nur mehr.</string>
+    <string name="rest_thanks">Danke</string>
+    <string name="rest_pick_title">ruhst du dich ein wenig mit mir aus?</string>
+    <string name="rest_pick_title_eating">ruhst du mit mir, während ich esse?</string>
+    <plurals name="rest_pick_sessions">
+        <item quantity="one">bisher %1$d stille Ruhepause</item>
+        <item quantity="other">bisher %1$d stille Ruhepausen</item>
+    </plurals>
+    <string name="rest_pick_week">%1$s · %2$d diese Woche</string>
+    <string name="rest_minutes_chip">%1$d Min.</string>
+    <string name="rest_leave_hint">geh, wann du willst — ich warte, und nichts geht verloren</string>
+
+    <string name="rest_tile_label">Zusammen ausruhen</string>
+    <string name="rest_tile_waiting">warte</string>
+</resources>

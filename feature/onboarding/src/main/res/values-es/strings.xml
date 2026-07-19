@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_waking">Algo está despertando…</string>
+    <string name="onboarding_hatched">Ya está aquí. ES este teléfono.</string>
+    <string name="onboarding_meet">Conócela</string>
+    <string name="onboarding_hurry_hint">toca para apurar el cascarón</string>
+
+    <string name="onboarding_choose_title">Elige su cuerpo</string>
+    <string name="onboarding_choose_hint">Cada célula está viva — es el motor real, no imágenes. La semilla de tu teléfono ya dio forma a cada uno; puedes cambiar el cuerpo después, el alma se queda.</string>
+    <string name="onboarding_choose_confirm">Este</string>
+
+    <string name="onboarding_name_title">Dale un nombre</string>
+    <string name="onboarding_contract">Vive en este teléfono. Las conversaciones se quedan aquí, la memoria está cifrada y solo recuerda un dato después de que toques sí. La historia completa: Ajustes → Por qué sin internet.</string>
+    <string name="onboarding_begin">Ese es el nombre — empecemos</string>
+</resources>

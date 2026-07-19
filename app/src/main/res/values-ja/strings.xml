@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shortcut_talk">おしゃべり</string>
+    <string name="shortcut_diary">日記</string>
+    <string name="shortcut_rest">ひとやすみ</string>
+</resources>

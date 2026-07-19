@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Concept gallery: the eight body concepts (product names, warm). -->
+    <string name="creature_concept_spirit_orb">Spirit orb</string>
+    <string name="creature_concept_fox_kit">Fox kit</string>
+    <string name="creature_concept_jelly">Jelly</string>
+    <string name="creature_concept_pixel_pet">Pixel pet</string>
+    <string name="creature_concept_robot">Robot</string>
+    <string name="creature_concept_sprout">Sprout</string>
+    <string name="creature_concept_ember">Ember</string>
+    <string name="creature_concept_moth">Moth</string>
+</resources>

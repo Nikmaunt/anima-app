@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="creature_concept_spirit_orb">Seelenlicht</string>
+    <string name="creature_concept_fox_kit">Fuchsjunges</string>
+    <string name="creature_concept_jelly">Glibberchen</string>
+    <string name="creature_concept_pixel_pet">Pixeltierchen</string>
+    <string name="creature_concept_robot">Roboter</string>
+    <string name="creature_concept_sprout">Sprössling</string>
+    <string name="creature_concept_ember">Glutfunke</string>
+    <string name="creature_concept_moth">Nachtfalter</string>
+</resources>

@@ -75,21 +75,30 @@ class AnimaWidget : GlanceAppWidget() {
             Image(
                 provider = ImageProvider(bitmap),
                 contentDescription =
-                    "$name is ${moodWord(mood)}, battery ${vitals.batteryPercent}%" +
-                        if (vitals.charging) ", eating" else "",
+                    context.getString(
+                        R.string.widget_a11y_state,
+                        name,
+                        moodWord(context, mood),
+                        vitals.batteryPercent,
+                    ) + if (vitals.charging) context.getString(R.string.widget_a11y_eating_suffix) else "",
                 contentScale = ContentScale.Fit,
                 modifier = if (launch != null) base.clickable(actionStartActivity(launch)) else base,
             )
         }
     }
 
-    private fun moodWord(mood: app.anima.core.model.Mood): String =
-        when (mood) {
-            app.anima.core.model.Mood.EATING -> "eating"
-            app.anima.core.model.Mood.ASLEEP -> "asleep"
-            app.anima.core.model.Mood.SLEEPY -> "dozing"
-            else -> "awake"
-        }
+    private fun moodWord(
+        context: Context,
+        mood: app.anima.core.model.Mood,
+    ): String =
+        context.getString(
+            when (mood) {
+                app.anima.core.model.Mood.EATING -> R.string.widget_mood_eating
+                app.anima.core.model.Mood.ASLEEP -> R.string.widget_mood_asleep
+                app.anima.core.model.Mood.SLEEPY -> R.string.widget_mood_dozing
+                else -> R.string.widget_mood_awake
+            },
+        )
 
     private companion object {
         const val NIGHT_FROM = 22

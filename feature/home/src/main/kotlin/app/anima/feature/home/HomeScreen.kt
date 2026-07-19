@@ -46,6 +46,8 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -59,6 +61,7 @@ import app.anima.core.model.ChatMessage
 import app.anima.core.model.ChatRole
 import app.anima.core.model.CreatureGenome
 import app.anima.core.model.FactCandidate
+import app.anima.core.model.MindFailure
 import app.anima.core.model.MindStatus
 import app.anima.core.model.MindTier
 import app.anima.core.model.tunedBy
@@ -155,20 +158,38 @@ fun HomeScreen(
         ) {
             Column(Modifier.weight(1f)) {
                 Text(state.creatureName, style = MaterialTheme.typography.titleMedium)
+                val days = state.daysTogether.toInt().coerceAtLeast(0)
+                val daysText = pluralStringResource(R.plurals.home_days_together, days, days)
                 Text(
                     // ADR-011: the user always knows which mind speaks.
                     if (state.activeTier == MindTier.CLOUD) {
-                        pluralDays(state.daysTogether) + " · cloud mind"
+                        stringResource(R.string.home_days_cloud, daysText)
                     } else {
-                        pluralDays(state.daysTogether)
+                        daysText
                     },
                     style = MaterialTheme.typography.labelMedium,
                 )
             }
-            GhostButton("Rest", onClick = onOpenRest, modifier = Modifier.testTag("home.rest"))
-            GhostButton("Soul", onClick = onOpenSoul, modifier = Modifier.testTag("home.soul"))
-            GhostButton("Diary", onClick = onOpenDiary, modifier = Modifier.testTag("home.diary"))
-            GhostButton("Settings", onClick = onOpenSettings, modifier = Modifier.testTag("home.settings"))
+            GhostButton(
+                stringResource(R.string.home_nav_rest),
+                onClick = onOpenRest,
+                modifier = Modifier.testTag("home.rest"),
+            )
+            GhostButton(
+                stringResource(R.string.home_nav_soul),
+                onClick = onOpenSoul,
+                modifier = Modifier.testTag("home.soul"),
+            )
+            GhostButton(
+                stringResource(R.string.home_nav_diary),
+                onClick = onOpenDiary,
+                modifier = Modifier.testTag("home.diary"),
+            )
+            GhostButton(
+                stringResource(R.string.home_nav_settings),
+                onClick = onOpenSettings,
+                modifier = Modifier.testTag("home.settings"),
+            )
         }
 
         CreatureSurface(
@@ -208,7 +229,7 @@ fun HomeScreen(
                     .padding(horizontal = 20.dp, vertical = 4.dp),
             ) {
                 Text(
-                    "I kept this letter for you. You wrote it to yourself.",
+                    stringResource(R.string.home_capsule_intro),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Text(
@@ -217,7 +238,7 @@ fun HomeScreen(
                     modifier = Modifier.padding(vertical = 6.dp),
                 )
                 GhostButton(
-                    "Thank you, little one",
+                    stringResource(R.string.home_capsule_thanks),
                     onClick = {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                         viewModel.openCapsule()
@@ -238,12 +259,12 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    "The day is folding up.",
+                    stringResource(R.string.home_goodnight_line),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f),
                 )
                 GhostButton(
-                    "Say goodnight",
+                    stringResource(R.string.home_goodnight_button),
                     onClick = {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                         viewModel.sayGoodnight()
@@ -262,11 +283,11 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    "It's asleep, dreaming of the day…",
+                    stringResource(R.string.home_dream_line),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f),
                 )
-                GhostButton("Wake it gently", onClick = {
+                GhostButton(stringResource(R.string.home_dream_wake), onClick = {
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                     viewModel.wakeForDream()
                 })
@@ -280,8 +301,16 @@ fun HomeScreen(
                     .padding(horizontal = 20.dp, vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(notice, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-                GhostButton("Ok", onClick = viewModel::dismissMindNotice)
+                Text(
+                    // Closed set (MindFailure) mapped onto localized resources.
+                    when (notice) {
+                        MindFailure.TIRED -> stringResource(R.string.home_notice_tired)
+                        MindFailure.LOST_THOUGHT -> stringResource(R.string.home_notice_lost)
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                GhostButton(stringResource(R.string.home_ok), onClick = viewModel::dismissMindNotice)
             }
         }
 
@@ -342,11 +371,9 @@ private fun ChatPanel(
                     // screen above) breaks the ice in its own voice.
                     Text(
                         if (state.mindStatus == MindStatus.READY) {
-                            "It's watching you, waiting for the first word."
+                            stringResource(R.string.home_empty_ready)
                         } else {
-                            "No words yet — but it feels the battery, the " +
-                                "warmth, the hour. Talk happens when a mind " +
-                                "arrives; everything else is already alive."
+                            stringResource(R.string.home_empty_no_mind)
                         },
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(vertical = 10.dp),
@@ -381,49 +408,49 @@ private fun ChatPanel(
                 // v0.3: another roll of the same question, honestly appended.
                 if (state.streamingReply == null && state.messages.lastOrNull()?.role == ChatRole.CREATURE) {
                     Row(Modifier.padding(horizontal = 20.dp)) {
-                        GhostButton("Say it differently", onClick = onRegenerate)
+                        GhostButton(stringResource(R.string.home_regenerate), onClick = onRegenerate)
                     }
                 }
                 InputRow(enabled = state.streamingReply == null, onSend = onSend, onTyping = onTyping)
             }
             MindStatus.DOWNLOADABLE ->
                 MindBanner(
-                    text = "Its mind can wake on this phone — the system needs to fetch it once.",
-                    action = { PillButton("Wake the mind", onClick = onRequestDownload) },
+                    text = stringResource(R.string.home_banner_downloadable),
+                    action = { PillButton(stringResource(R.string.home_banner_wake), onClick = onRequestDownload) },
                 )
-            MindStatus.DOWNLOADING -> MindBanner(text = "The mind is waking up… (system download)")
+            MindStatus.DOWNLOADING -> MindBanner(text = stringResource(R.string.home_banner_downloading))
             MindStatus.ASLEEP ->
                 MindBanner(
-                    text =
-                        "The mind sleeps. This phone has no built-in mind for apps, " +
-                            "but you can bring one — a single ~530 MB file wakes it, " +
-                            "fully on-device (Settings → Mind).",
-                    action = { PillButton("Bring a mind", onClick = onOpenMind) },
+                    text = stringResource(R.string.home_banner_asleep),
+                    action = { PillButton(stringResource(R.string.home_banner_bring), onClick = onOpenMind) },
                 )
         }
     }
 }
 
 /** TalkBack sentence: "Lumi is dozing, battery 23%". */
+@Composable
 private fun creatureA11y(state: HomeUiState): String {
-    val name = state.creatureName.ifEmpty { "Your creature" }
+    val name = state.creatureName.ifEmpty { stringResource(R.string.home_a11y_name_fallback) }
     val doing =
-        when (state.bodyState.mood) {
-            app.anima.core.model.Mood.ALERT -> "is awake and watching"
-            app.anima.core.model.Mood.BORED -> "is bored"
-            app.anima.core.model.Mood.SLEEPY -> "is dozing"
-            app.anima.core.model.Mood.EATING -> "is eating"
-            app.anima.core.model.Mood.ANXIOUS -> "is anxious"
-            app.anima.core.model.Mood.ASLEEP -> "is asleep"
-            app.anima.core.model.Mood.HOT -> "is running hot"
-        }
-    return "$name $doing, battery ${state.bodyState.signals.batteryPercent}%" +
-        if (state.bodyState.signals.charging) ", charging" else ""
+        stringResource(
+            when (state.bodyState.mood) {
+                app.anima.core.model.Mood.ALERT -> R.string.home_a11y_mood_awake
+                app.anima.core.model.Mood.BORED -> R.string.home_a11y_mood_bored
+                app.anima.core.model.Mood.SLEEPY -> R.string.home_a11y_mood_dozing
+                app.anima.core.model.Mood.EATING -> R.string.home_a11y_mood_eating
+                app.anima.core.model.Mood.ANXIOUS -> R.string.home_a11y_mood_anxious
+                app.anima.core.model.Mood.ASLEEP -> R.string.home_a11y_mood_asleep
+                app.anima.core.model.Mood.HOT -> R.string.home_a11y_mood_hot
+            },
+        )
+    return stringResource(R.string.home_a11y_state, name, doing, state.bodyState.signals.batteryPercent) +
+        if (state.bodyState.signals.charging) stringResource(R.string.home_a11y_charging) else ""
 }
 
 @Composable
 private fun StarterChips(
-    starters: List<String>,
+    starters: List<HomeStarter>,
     onPick: (String) -> Unit,
 ) {
     val colors = LocalAnimaColors.current
@@ -436,19 +463,34 @@ private fun StarterChips(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         starters.forEach { starter ->
+            // Resolved here, in the current locale; the tap sends the
+            // resolved line, so what lands in the chat is what was read.
+            val text = starterText(starter)
             Text(
-                starter,
+                text,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier =
                     Modifier
                         .clip(RoundedCornerShape(16.dp))
                         .background(colors.surface)
-                        .clickable { onPick(starter) }
+                        .clickable { onPick(text) }
                         .padding(horizontal = 14.dp, vertical = 8.dp),
             )
         }
     }
 }
+
+/** Closed starter set (VM ships data, the UI speaks the locale). */
+@Composable
+private fun starterText(starter: HomeStarter): String =
+    when (starter) {
+        is HomeStarter.FedTimes ->
+            pluralStringResource(R.plurals.home_starter_fed, starter.count, starter.count)
+        HomeStarter.StormAsk -> stringResource(R.string.home_starter_storm)
+        HomeStarter.RanHot -> stringResource(R.string.home_starter_hot)
+        HomeStarter.RememberToday -> stringResource(R.string.home_starter_remember)
+        HomeStarter.AnythingGood -> stringResource(R.string.home_starter_good)
+    }
 
 @Composable
 private fun MindBanner(
@@ -523,11 +565,11 @@ private fun CandidateBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
-            Text("Remember this?", style = MaterialTheme.typography.labelMedium)
+            Text(stringResource(R.string.home_remember_q), style = MaterialTheme.typography.labelMedium)
             Text(candidate.text, style = MaterialTheme.typography.bodyMedium, color = colors.text)
         }
-        GhostButton("No", onClick = { onReject(candidate) })
-        GhostButton("Yes", onClick = { onConfirm(candidate) })
+        GhostButton(stringResource(R.string.home_no), onClick = { onReject(candidate) })
+        GhostButton(stringResource(R.string.home_yes), onClick = { onConfirm(candidate) })
     }
 }
 
@@ -561,7 +603,7 @@ private fun InputRow(
                 Box {
                     if (text.isEmpty()) {
                         Text(
-                            "Say something…",
+                            stringResource(R.string.home_input_hint),
                             style = MaterialTheme.typography.bodyLarge,
                             color = colors.textDim,
                         )
@@ -581,7 +623,7 @@ private fun InputRow(
         ) {
             Icon(
                 imageVector = sendIcon(),
-                contentDescription = "Send",
+                contentDescription = stringResource(R.string.home_send),
                 tint = if (enabled && text.isNotBlank()) colors.accent else colors.textDim,
             )
         }
@@ -611,5 +653,3 @@ private fun sendIcon(): ImageVector =
                 }
             }.build()
     }
-
-private fun pluralDays(days: Long): String = "together $days ${if (days == 1L) "day" else "days"}"

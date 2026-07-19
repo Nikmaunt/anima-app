@@ -35,6 +35,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -179,7 +181,11 @@ fun RestContent(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row(Modifier.fillMaxWidth()) {
-                GhostButton("Back", onClick = onBack, modifier = Modifier.testTag("rest.back"))
+                GhostButton(
+                    stringResource(R.string.rest_back),
+                    onClick = onBack,
+                    modifier = Modifier.testTag("rest.back"),
+                )
             }
             Spacer(Modifier.height(8.dp))
 
@@ -196,7 +202,7 @@ fun RestContent(
                 night = phase is RestPhase.Running,
                 modifier = Modifier.size(220.dp),
                 interactive = false,
-                contentDescription = "resting creature",
+                contentDescription = stringResource(R.string.rest_a11y_creature),
                 runFrameLoop = frameLoop,
             )
             Spacer(Modifier.height(24.dp))
@@ -217,9 +223,9 @@ fun RestContent(
                     Spacer(Modifier.height(8.dp))
                     Text(
                         when {
-                            cameBackFromWait -> "you're back — I kept your place"
-                            charging -> "resting while I eat"
-                            else -> "just being here together"
+                            cameBackFromWait -> stringResource(R.string.rest_status_returned)
+                            charging -> stringResource(R.string.rest_status_eating)
+                            else -> stringResource(R.string.rest_status_together)
                         },
                         style = MaterialTheme.typography.bodyLarge,
                         color = colors.textDim,
@@ -230,7 +236,7 @@ fun RestContent(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Text(
-                            "keep the screen awake",
+                            stringResource(R.string.rest_keep_screen),
                             style = MaterialTheme.typography.bodyMedium,
                             color = colors.textDim,
                         )
@@ -247,19 +253,26 @@ fun RestContent(
                 }
                 is RestPhase.Completed -> {
                     Text(
-                        "we rested ${phase.plannedMin} minutes",
+                        pluralStringResource(R.plurals.rest_completed_title, phase.plannedMin, phase.plannedMin),
                         style = MaterialTheme.typography.headlineSmall,
                         color = colors.text,
                     )
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "${ui.totalSessions} quiet ${plural(ui.totalSessions, "session")} together — " +
-                            "${ui.totalQuietMinutes} minutes of calm. They only ever grow.",
+                        stringResource(
+                            R.string.rest_completed_growth,
+                            pluralStringResource(R.plurals.rest_completed_sessions, ui.totalSessions, ui.totalSessions),
+                            pluralStringResource(
+                                R.plurals.rest_completed_minutes,
+                                ui.totalQuietMinutes,
+                                ui.totalQuietMinutes,
+                            ),
+                        ),
                         style = MaterialTheme.typography.bodyLarge,
                         color = colors.textDim,
                     )
                     Spacer(Modifier.height(24.dp))
-                    GhostButton("Thank you", onClick = onDone)
+                    GhostButton(stringResource(R.string.rest_thanks), onClick = onDone)
                 }
             }
         }
@@ -274,15 +287,22 @@ private fun PickPanel(
 ) {
     val colors = LocalAnimaColors.current
     Text(
-        if (charging) "rest with me while I eat?" else "rest with me a little?",
+        if (charging) {
+            stringResource(R.string.rest_pick_title_eating)
+        } else {
+            stringResource(R.string.rest_pick_title)
+        },
         style = MaterialTheme.typography.headlineSmall,
         color = colors.text,
     )
     Spacer(Modifier.height(4.dp))
     if (ui.totalSessions > 0) {
         Text(
-            "${ui.totalSessions} quiet ${plural(ui.totalSessions, "session")} so far · " +
-                "${ui.weekSessions} this week",
+            stringResource(
+                R.string.rest_pick_week,
+                pluralStringResource(R.plurals.rest_pick_sessions, ui.totalSessions, ui.totalSessions),
+                ui.weekSessions,
+            ),
             style = MaterialTheme.typography.bodyMedium,
             color = colors.textDim,
         )
@@ -299,7 +319,7 @@ private fun PickPanel(
                     .testTag("rest.start.$minutes"),
             ) {
                 Text(
-                    "$minutes min",
+                    stringResource(R.string.rest_minutes_chip, minutes),
                     style = MaterialTheme.typography.bodyLarge,
                     color = colors.text,
                 )
@@ -308,15 +328,10 @@ private fun PickPanel(
     }
     Spacer(Modifier.height(16.dp))
     Text(
-        "leave anytime — I'll wait, and nothing is lost",
+        stringResource(R.string.rest_leave_hint),
         style = MaterialTheme.typography.bodySmall,
         color = colors.textDim,
     )
 }
-
-private fun plural(
-    n: Int,
-    word: String,
-): String = if (n == 1) word else "${word}s"
 
 private const val DIMMED_BRIGHTNESS = 0.25f
