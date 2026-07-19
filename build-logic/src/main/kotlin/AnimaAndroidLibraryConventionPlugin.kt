@@ -16,6 +16,15 @@ class AnimaAndroidLibraryConventionPlugin : Plugin<Project> {
 
         extensions.configure<LibraryExtension> {
             configureKotlinAndroid(this)
+            buildTypes {
+                getByName("debug") {
+                    // ADR-014 (v0.5): pseudolocales must be generated for
+                    // library modules too, or Robolectric unit tests cannot
+                    // resolve en-XA / ar-XB qualifiers against module strings.
+                    // Debug only — release output is untouched.
+                    isPseudoLocalesEnabled = true
+                }
+            }
         }
     }
 }

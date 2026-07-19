@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.anima.android.library)
     alias(libs.plugins.anima.android.compose)
     alias(libs.plugins.anima.hilt)
+    alias(libs.plugins.roborazzi)
 }
 
 android {
@@ -27,4 +28,10 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.ext.junit)
+    testImplementation(libs.androidx.ui.test.junit4)
+    testImplementation(libs.androidx.ui.test.manifest)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
 }

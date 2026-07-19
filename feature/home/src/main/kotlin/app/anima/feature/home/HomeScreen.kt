@@ -337,7 +337,7 @@ fun HomeScreen(
 }
 
 @Composable
-private fun ChatPanel(
+internal fun ChatPanel(
     state: HomeUiState,
     onSend: (String) -> Unit,
     onTyping: (Boolean) -> Unit,

@@ -3,6 +3,7 @@ package app.anima.feature.rest
 import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -308,7 +310,12 @@ private fun PickPanel(
         )
     }
     Spacer(Modifier.height(16.dp))
-    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+    // Overflow-safe (pseudolocale finding, v0.5): long locales scroll the
+    // row instead of clipping the last chip or wrapping inside chips.
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier.horizontalScroll(rememberScrollState()),
+    ) {
         RestSessions.DURATIONS_MIN.forEach { minutes ->
             Box(
                 Modifier
@@ -322,6 +329,7 @@ private fun PickPanel(
                     stringResource(R.string.rest_minutes_chip, minutes),
                     style = MaterialTheme.typography.bodyLarge,
                     color = colors.text,
+                    maxLines = 1,
                 )
             }
         }

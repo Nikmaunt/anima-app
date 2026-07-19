@@ -1,26 +1,36 @@
-# Handoff — v0.4 autonomous run, 2026-07-18
+# Handoff — v0.5 autonomous run, 2026-07-18
 
 Run COMPLETED in-session; this file is retained as the protocol requires.
-Final state = the committed tree (per the v0.4 commit policy), plus the
-session's final report. Key documents: docs/audit-v03.md, docs/research-v4.md,
-ADR-012..015 (+ addenda to ADR-002/003/004/005/011/014), docs/store/*,
-docs/privacy-policy.md, docs/manual-checklist-s24-v4.md.
+Final state = the committed tree, plus the session's final report. Key
+documents this run: docs/audit-v04.md, docs/research-v5.md,
+docs/model-matrix.md, ADR-016/017 (+ ADR-014 amendment), docs/ideation-v5.md,
+docs/l10n-glossary.md, docs/store/store-listing-v5.md,
+docs/manual-checklist-s24-v5.md, threat-model addendum v0.5.
 
-- Phases 0-2 done; localization string-migration deferred to v0.5 by the
-  declared cut order (ADR-014 amendment — the only scope deviation).
-- THE finding of the run: v0.3's passphrase zero-after-warm crashed WAL
-  pool growth (SQLiteNotADatabaseException on the first non-primary
-  connection open under concurrent load). Found by the bundletool
-  --local-testing E2E pass on the ATD emulator minutes into fresh use;
-  root-caused via 4.17.0 bytecode (the library aliases the array and
-  re-keys every physical connection from it); fixed by removing the ritual
-  (key lives process-long, Keystore-wrapped at rest); pinned by
-  WalPoolKeyDeviceTest. Upgrade-in-place check is S24 checklist v4 §0.
-- GMD needs `ANDROID_AVD_HOME=D:/Android/avd` on this machine (C: is
-  nearly full; AVDs live on D:). Not persisted — pass per invocation.
-- The Gemma `.task` file is NOT in git; store bundles need it dropped into
-  mind-pack/src/main/assets/ (owner's licensed download). The v0.4 run's
-  local-testing dummy was deleted before the release builds.
-- Key unproven risks: S24 checklist v4 §0 (first live conversation + Gemma
-  speed on Exynos 2400 — unchanged) and §0b (a real night of battery with
-  the live wallpaper set).
+- Phases 0–3 done in full: day-in-life E2E on GMD, mind v2 (registry /
+  multi-model / language routing / cloud presets), COMPLETE localization
+  (EN/RU/PL/DE/ES/JA — every module resourced, plurals, per-app language
+  config), ideation (16 cards) with top-3 shipped (goodnight ritual,
+  weather feel, time capsules).
+- Findings of the run: (1) AnimaRoot flipped NavHost startDestination when
+  the onboarding flag landed — two Home compositions cross-faded at once;
+  frozen at first composition, caught by DayInLifeTest's first GMD run.
+  (2) HomeViewModel init-order NPE (StateFlow declared below init) — only
+  reproducible on device; GMD caught it. Both are why the E2E discipline
+  exists.
+- DB is at schema v2 (time_capsules, MIGRATION_1_2, device-tested);
+  soul-backup payload v2 (v1 imports fine). Soul export now carries
+  capsules.
+- Pack default is CONFIGURED for Qwen2.5-1.5B (ADR-017); the int4 (~1.1 GB)
+  artifact must be produced/downloaded by the owner — the int8 (1.6 GB)
+  does NOT fit Play's 1.5 GB fast-follow pack limit. Until the int4 file
+  exists, the slot still accepts the old Gemma file; the registry handles
+  both. Model files are never in git.
+- GMD needs `ANDROID_AVD_HOME=D:/Android/avd/gradle-managed` per
+  invocation on this machine.
+- Bake-off harness: core/mind androidTest, models pushed to
+  /sdcard/Android/data/app.anima.core.mind.test/files/bakeoff/ — S24
+  checklist v5 §0 runs it for Gemma-vs-Qwen on live silicon.
+- Key unproven risks (S24 checklist v5): §0 Qwen2.5 speed/RAM on Exynos
+  2400, §0b wallpaper night battery (carried from v4, still unproven),
+  §0c native-speaker RU/JA conversation quality of Qwen2.5-1.5B.
