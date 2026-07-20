@@ -275,8 +275,6 @@ class SoulViewModel
             }
         }
 
-        fun extractorPrompt(): String = SoulPort.extractorPrompt()
-
         fun onImportTextChange(value: String) {
             importText.value = value
         }

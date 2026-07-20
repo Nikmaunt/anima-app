@@ -103,4 +103,32 @@ class SoulPortTest {
     fun `days together starts at one`() {
         assertThat(stats.daysTogether(nowMillis = 60_000L)).isEqualTo(1)
     }
+
+    /**
+     * v0.6: the extractor prompt is localized and pins English headings,
+     * but assistants localize them anyway — the parser must speak all six
+     * product languages (one representative per locale here).
+     */
+    @Test
+    fun `parse recognizes localized headings from all six locales`() {
+        val md =
+            """
+            ## Identität
+            - mag stille Morgen
+            ## Preferencias
+            - le encanta la lluvia
+            ## Ludzie
+            - siostra ma na imię Ola
+            ## 仕事
+            - Androidアプリを作っている
+            ## Моменты
+            - первый снег вместе
+            """.trimIndent()
+        val byCat = SoulPort.parseCandidates(md).associateBy { it.category }
+        assertThat(byCat[FactCategory.IDENTITY]?.text).isEqualTo("mag stille Morgen")
+        assertThat(byCat[FactCategory.PREFERENCE]?.text).isEqualTo("le encanta la lluvia")
+        assertThat(byCat[FactCategory.PEOPLE]?.text).isEqualTo("siostra ma na imię Ola")
+        assertThat(byCat[FactCategory.WORK]?.text).isEqualTo("Androidアプリを作っている")
+        assertThat(byCat[FactCategory.MOMENT]?.text).isEqualTo("первый снег вместе")
+    }
 }

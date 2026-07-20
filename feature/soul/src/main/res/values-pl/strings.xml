@@ -98,4 +98,5 @@
     <string name="story_title">Nasza historia</string>
     <string name="story_title_named">Ja i %1$s</string>
     <string name="story_empty">„Pierwsza linijka naszej historii jeszcze nie została napisana. Ale będzie.”</string>
+    <string name="soul_import_extractor_prompt">Wypisz, co o mnie wiesz, w krótkich punktach-faktach, pogrupowanych pod tymi DOKŁADNYMI angielskimi nagłówkami: Identity, Preferences, People, Work, Moments. Jeden fakt na punkt, do 200 znaków, bez spekulacji, bez danych wrażliwych (hasła, dokumenty, finanse). Tylko to, co sam(a) ci powiedziałem(-am). Odpowiadaj po polsku, ale nagłówki zostaw dokładnie jak wyżej.</string>
 </resources>

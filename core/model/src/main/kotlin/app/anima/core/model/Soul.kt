@@ -122,6 +122,19 @@ enum class JournalKind(
 
     /** v0.5: a time capsule came due and the creature handed it over. */
     CAPSULE_DELIVERED("capsule_delivered"),
+
+    /**
+     * v0.6: the owner flagged a creature reply as wrong/hurtful (Play
+     * GenAI policy, research-v6 §B.5). The reply itself is deleted; only
+     * the fact that one was flagged remains, locally.
+     */
+    REPLY_FLAGGED("reply_flagged"),
+
+    /**
+     * v0.6 (ideation №8): the owner freed noticeable disk space — the
+     * burrow got roomier; detail = freed fraction in percent points.
+     */
+    BURROW_CLEANED("burrow_cleaned"),
     ;
 
     companion object {

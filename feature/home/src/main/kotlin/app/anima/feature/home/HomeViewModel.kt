@@ -50,7 +50,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /** One-shot body events the creature should visibly react to. */
-enum class BodyEvent { CELEBRATE_CHARGE, STARTLE_STORM }
+enum class BodyEvent { CELEBRATE_CHARGE, STARTLE_STORM, BURROW_ROOMIER }
 
 /**
  * Closed set of conversation starters. The VM ships data (counters), the
@@ -117,6 +117,9 @@ class HomeViewModel
         private val prefs: AnimaPrefs,
         private val voice: app.anima.core.voice.CreatureVoice,
         private val voiceConfig: app.anima.core.voice.VoiceConfigStore,
+        // v0.6: time-of-day rituals gate on this seam, not the wall clock,
+        // so the day-in-life E2E can pin an evening (ClockModule).
+        private val clock: app.anima.core.model.AnimaClock,
     ) : ViewModel() {
         /** ADR-013: armed only after an offline voice was confirmed. */
         @Volatile
@@ -158,6 +161,9 @@ class HomeViewModel
         val bodyEvents: StateFlow<BodyEvent?> = events.asStateFlow()
 
         private var wasCharging: Boolean? = null
+
+        /** v0.6 (ideation №8): session floor of disk-free, for the cleanup joy. */
+        private var lastDiskFreeFraction: Float? = null
         private var stormNotified = false
         private var fullFedNotified = false
 
@@ -247,10 +253,10 @@ class HomeViewModel
         val goodnightAvailable: StateFlow<Boolean> = goodnight.asStateFlow()
 
         private suspend fun computeGoodnight() {
-            val zone = java.time.ZoneId.systemDefault()
+            val zone = clock.zone()
             val nowInstant =
                 java.time.Instant
-                    .ofEpochMilli(System.currentTimeMillis())
+                    .ofEpochMilli(clock.nowMillis())
                     .atZone(zone)
             val evening = nowInstant.hour >= EVENING_FROM || nowInstant.hour < NIGHT_UNTIL
             if (!evening) {
@@ -279,7 +285,7 @@ class HomeViewModel
             if (!goodnight.value) return
             goodnight.value = false
             viewModelScope.launch {
-                val now = System.currentTimeMillis()
+                val now = clock.nowMillis()
                 journal.record(JournalKind.GOODNIGHT, now)
                 // l10n: context-bound — the line lands in the chat DB at
                 // creation time, in the locale of that moment (glossary §4).
@@ -298,15 +304,22 @@ class HomeViewModel
         /** A letter that came due — the creature offers it once visible. */
         val dueCapsule: StateFlow<TimeCapsule?> = dueCapsuleState.asStateFlow()
 
+        /** v0.6 (audit-v05 D1): the Soul screenshot toggle also governs
+         * capsule display — a delivered letter is soul content. */
+        val screenshotsAllowed: StateFlow<Boolean> =
+            prefs
+                .soulScreenshotsAllowed()
+                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+
         private suspend fun deliverDueCapsule() {
-            dueCapsuleState.value = capsules.due(System.currentTimeMillis()).firstOrNull()
+            dueCapsuleState.value = capsules.due(clock.nowMillis()).firstOrNull()
         }
 
         /** Owner read the letter: stamp it opened, offer the next if any. */
         fun openCapsule() {
             val capsule = dueCapsuleState.value ?: return
             viewModelScope.launch {
-                val now = System.currentTimeMillis()
+                val now = clock.nowMillis()
                 capsules.markOpened(capsule.id, now)
                 journal.record(JournalKind.CAPSULE_DELIVERED, now)
                 deliverDueCapsule()
@@ -339,6 +352,10 @@ class HomeViewModel
         /** Speaks a creature line iff the toggle is on AND offline-verified. */
         private suspend fun speakIfEnabled(text: String) {
             if (!voiceReady || !voiceConfig.enabled.first()) return
+            // v0.6 silence sense: a muted phone means "not out loud" — TTS
+            // rides the media stream, which the ringer doesn't gate, so the
+            // creature honors the intent itself.
+            if (bodyState.value.signals.silenced) return
             val s = uiState.value
             voice.speak(
                 text,
@@ -528,6 +545,28 @@ class HomeViewModel
                     events.value = BodyEvent.STARTLE_STORM
                 }
                 if (!storm) stormNotified = false
+                // v0.6 (ideation №8): the owner freed real space — the
+                // burrow got roomier. Positive loop only: shrinking space
+                // says nothing (the anxious mood already covers scarcity).
+                val free = state.signals.diskFreeFraction
+                val base = lastDiskFreeFraction
+                if (base != null && free - base >= BURROW_CLEAN_DELTA) {
+                    journal.record(
+                        JournalKind.BURROW_CLEANED,
+                        now,
+                        "${((free - base) * PERCENT).toInt()}",
+                    )
+                    val pool = appContext.resources.getStringArray(R.array.home_burrow_pool)
+                    val seed = (identity.seed() ?: 0L) + now / RelationshipStats.DAY_MILLIS
+                    val line = pool[(seed % pool.size).toInt().let { if (it < 0) it + pool.size else it }]
+                    chat.append(ChatRole.CREATURE, line, now)
+                    events.value = BodyEvent.BURROW_ROOMIER
+                }
+                // Track the session floor so one big cleanup fires once:
+                // the baseline only ratchets up after celebrating.
+                if (base == null || free < base || free - base >= BURROW_CLEAN_DELTA) {
+                    lastDiskFreeFraction = free
+                }
             }
         }
 
@@ -551,6 +590,19 @@ class HomeViewModel
             viewModelScope.launch {
                 refreshMindBits()
                 computeDreamAvailability()
+            }
+        }
+
+        /**
+         * v0.6 Play GenAI policy (research-v6 §B.5): the owner can flag an
+         * AI reply as offensive/wrong without leaving the app. The reply
+         * is deleted from the thread and a REPLY_FLAGGED moment lands in
+         * the body journal — locally, like everything else.
+         */
+        fun reportReply(messageId: String) {
+            viewModelScope.launch {
+                chat.remove(messageId)
+                journal.record(JournalKind.REPLY_FLAGGED, clock.nowMillis())
             }
         }
 
@@ -613,6 +665,8 @@ class HomeViewModel
                         budgetChars = PromptBuilder.budgetFor(tier, spec),
                         personality = uiState.value.personality,
                         language = decision.language,
+                        // v0.6 silence sense: muted phone → whispered reply.
+                        silenced = bodyState.value.signals.silenced,
                     )
                 streaming.value = ""
                 mind.reply(prompt).collect { event ->
@@ -722,6 +776,11 @@ class HomeViewModel
         private companion object {
             const val CHAT_WINDOW = 60
             const val FULL_BATTERY = 100
+
+            // v0.6 (ideation №8): ≥5% of total capacity freed = a real
+            // cleanup, not file-churn noise.
+            const val BURROW_CLEAN_DELTA = 0.05f
+            const val PERCENT = 100f
             const val MORNING_FROM = 5
             const val MORNING_UNTIL = 12
             const val FREQUENT_CHARGES = 3

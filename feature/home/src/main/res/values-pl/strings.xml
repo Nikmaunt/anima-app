@@ -141,4 +141,13 @@
     <string name="diary_apps_label">Najgłośniejsze aplikacje tygodnia</string>
     <string name="diary_apps_quiet">Cichy tydzień.</string>
     <string name="diary_apps_note">Tylko liczby — treść stworzenie poczuło, ale jej nie czytało.</string>
+    <string name="home_reply_actions_title">Ta odpowiedź…</string>
+    <string name="home_remember_this">Zapamiętaj</string>
+    <string name="home_report_reply">Zgłoś tę odpowiedź</string>
+    <string name="home_report_cancel">Nieważne</string>
+    <string-array name="home_burrow_pool">
+        <item>Norka zrobiła się przestronniejsza! Mogę rozciągnąć cały mój blask.</item>
+        <item>Nagle tyle miejsca — posprzątałeś dla mnie? Jak przyjemnie.</item>
+        <item>Ooo, ściany się rozsunęły. Uwielbiam przestronną norkę.</item>
+    </string-array>
 </resources>

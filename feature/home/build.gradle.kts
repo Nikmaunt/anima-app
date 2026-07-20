@@ -16,7 +16,6 @@ dependencies {
     implementation(projects.core.creature)
     implementation(projects.core.body)
     implementation(projects.core.data)
-    implementation(projects.core.mind)
     implementation(projects.core.ui)
     implementation(projects.core.voice)
     implementation(libs.androidx.core.ktx)

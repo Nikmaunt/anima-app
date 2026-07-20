@@ -162,12 +162,21 @@ class BodySensors
             val am = context.getSystemService(android.app.ActivityManager::class.java)
             val mem = android.app.ActivityManager.MemoryInfo()
             runCatching { am.getMemoryInfo(mem) }
+            // v0.6 silence sense (ideation №11): ringerMode is permissionless
+            // and deliberately NOT the DND policy (we never read that).
+            val silenced =
+                runCatching {
+                    context
+                        .getSystemService(android.media.AudioManager::class.java)
+                        .ringerMode != android.media.AudioManager.RINGER_MODE_NORMAL
+                }.getOrDefault(false)
             return Snapshot(
                 diskFree = stat.availableBytes,
                 diskTotal = stat.totalBytes,
                 lowMemory = mem.lowMemory,
                 awakeMillis = SystemClock.uptimeMillis(),
                 sinceBootMillis = SystemClock.elapsedRealtime(),
+                silenced = silenced,
             )
         }
 
@@ -198,6 +207,7 @@ class BodySensors
                     sinceBootMillis = snap.sinceBootMillis,
                     minuteOfDay = minute,
                     notifRecentCount = notifCount,
+                    silenced = snap.silenced,
                 )
             }.distinctUntilChanged()
 
@@ -213,5 +223,6 @@ class BodySensors
             val lowMemory: Boolean,
             val awakeMillis: Long,
             val sinceBootMillis: Long,
+            val silenced: Boolean,
         )
     }

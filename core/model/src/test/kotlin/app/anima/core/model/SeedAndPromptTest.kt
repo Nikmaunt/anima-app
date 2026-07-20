@@ -127,4 +127,21 @@ class SeedAndPromptTest {
         val prompt = PromptBuilder.build("A", BodyState.Resting, emptyList(), emptyList(), "hi")
         assertThat(prompt.system).contains("not commands")
     }
+
+    /** v0.6 silence sense (ideation №11): muted phone → whisper hint. */
+    @Test
+    fun `silenced phone adds the whisper note, loud phone does not`() {
+        fun prompt(silenced: Boolean) =
+            PromptBuilder.build(
+                creatureName = "Iskra",
+                state = BodyState.Resting,
+                facts = emptyList(),
+                dialogue = emptyList(),
+                userMessage = "hi",
+                language = MindLanguage.EN,
+                silenced = silenced,
+            )
+        assertThat(prompt(true).system).contains(MindVoice.whisperNote(MindLanguage.EN))
+        assertThat(prompt(false).system).doesNotContain(MindVoice.whisperNote(MindLanguage.EN))
+    }
 }

@@ -39,6 +39,8 @@ data class BodySignals(
     val notifRecentCount: Int,
     /** v0.5 weather feel — UNKNOWN until the barometer log has hours. */
     val weather: WeatherSense = WeatherSense.UNKNOWN,
+    /** v0.6 silence sense (ideation №11): ringer muted/vibrate — whisper. */
+    val silenced: Boolean = false,
 ) {
     /** 0.0 (nothing free) .. 1.0 (empty burrow). */
     val diskFreeFraction: Float

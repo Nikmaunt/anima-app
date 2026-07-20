@@ -7,15 +7,22 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeUp
 import androidx.glance.appwidget.updateAll
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.anima.core.data.repo.IdentityRepository
 import app.anima.core.data.repo.JournalRepository
 import app.anima.core.data.repo.SoulRepository
+import app.anima.core.data.repo.TimeCapsuleRepository
+import app.anima.core.model.AnimaClock
 import app.anima.core.model.CreatureConcept
+import app.anima.core.model.JournalKind
 import app.anima.core.model.SoulPort
 import app.anima.feature.widget.AnimaWidget
 import app.anima.feature.widget.WidgetRefresh
@@ -63,6 +70,10 @@ class DayInLifeTest {
         fun soul(): SoulRepository
 
         fun journal(): JournalRepository
+
+        fun capsules(): TimeCapsuleRepository
+
+        fun clock(): AnimaClock
     }
 
     @Test
@@ -71,6 +82,18 @@ class DayInLifeTest {
 
         // --- First launch: onboarding, hatch stage (tap skips the episode).
         waitForTag("onboarding.hatch")
+
+        // v0.6: seed a capsule that is ALREADY DUE before Home's ViewModel
+        // ever exists — delivery runs once in its init, and recreate() keeps
+        // ViewModels alive, so this is the only honest seam. The letter must
+        // then arrive with the first visit.
+        val context0 = ApplicationProvider.getApplicationContext<Context>()
+        val entry0 = EntryPointAccessors.fromApplication(context0, DayEntryPoints::class.java)
+        runBlocking {
+            val now = entry0.clock().nowMillis()
+            entry0.capsules().write(CAPSULE_FROM_PAST, now - 60_000, now - HOLD_MILLIS)
+        }
+
         compose.onNodeWithTag("onboarding.hatch").performClick()
         waitForTag("onboarding.meet")
         compose.onNodeWithTag("onboarding.meet").performClick()
@@ -90,6 +113,16 @@ class DayInLifeTest {
         }
         compose.onNodeWithTag("onboarding.begin").performClick()
 
+        // --- Home: the letter from the past arrives with the first visit.
+        waitForTag("home.capsule.keep")
+        waitForCondition("the capsule's own words are on screen") {
+            nodes(hasText(CAPSULE_FROM_PAST, substring = true)).isNotEmpty()
+        }
+        compose.onNodeWithTag("home.capsule.keep").performClick()
+        waitForCondition("capsule card retires after being kept") {
+            nodes(hasTestTag("home.capsule.keep")).isEmpty()
+        }
+
         // --- Home: the fake mind is READY, so the chat input must be there.
         waitForTag("home.chat.input")
         compose.onNodeWithTag("home.chat.input").performTextInput(USER_LINE)
@@ -103,6 +136,29 @@ class DayInLifeTest {
         waitForCondition("fake mind's streamed reply completes") {
             nodes(hasTestTag("home.chat.message") and hasText(FakeMind.REPLY, substring = true)).isNotEmpty()
         }
+
+        // --- Diary: write a letter to the future; the creature holds it.
+        compose.onNodeWithTag("home.diary").performClick()
+        waitForTag("diary.capsule.input")
+        // The capsule section sits below the fold of the diary's scroll
+        // column. performScrollTo() DEADLOCKS under a paused mainClock (its
+        // scroll animation waits for frames only this thread can pump —
+        // caught live by jdb on the first v0.6 GMD run), so off-screen
+        // controls are driven through their semantics actions instead.
+        compose.onNodeWithTag("diary.capsule.input").performTextInput(CAPSULE_TO_FUTURE)
+        waitForTag("diary.capsule.week")
+        compose.onNodeWithTag("diary.capsule.week").performSemanticsAction(SemanticsActions.OnClick)
+        // Semantics click: after IME + text input the gesture pipeline
+        // proved unreliable under the paused clock (60s of pumped frames
+        // without the pop landing); the semantics action invokes onBack
+        // directly.
+        compose.onNodeWithTag("diary.back").performSemanticsAction(SemanticsActions.OnClick)
+        // The pop transition cross-fades both screens; wait until the diary
+        // is genuinely gone, not merely until home is back.
+        waitForCondition("diary fully leaves composition") {
+            nodes(hasTestTag("diary.capsule.input")).isEmpty()
+        }
+        waitForTag("home.chat.input")
 
         // --- Rest: open, start the shortest session, see it actually running.
         compose.onNodeWithTag("home.rest").performClick()
@@ -172,6 +228,92 @@ class DayInLifeTest {
         assertThat(markdown).contains(NAME)
         // The hatch moment recorded during onboarding must surface in export.
         assertThat(markdown).contains("hatched")
+
+        // --- Soul import (the v0.1 promise, re-verified): paste another
+        // AI's answer, find facts, keep one — only then is it persisted.
+        compose.onNodeWithTag("home.soul").performClick()
+        waitForTag("soul.list")
+        // The import card is deep in a LazyColumn — not composed until the
+        // list is scrolled there. Scroll by raw swipes + the frame pump:
+        // scrollTo-style actions animate against the paused clock and
+        // deadlock (jdb-caught on the first v0.6 GMD run).
+        waitForCondition("import card composes after swiping down the soul list") {
+            if (nodes(hasTestTag("soul.import.input")).isNotEmpty()) {
+                true
+            } else {
+                compose.onNodeWithTag("soul.list").performTouchInput { swipeUp() }
+                false
+            }
+        }
+        compose
+            .onNodeWithTag("soul.import.input")
+            .performTextInput("## Preferences\n- $IMPORTED_FACT")
+        waitForTag("soul.import.find")
+        compose.onNodeWithTag("soul.import.find").performSemanticsAction(SemanticsActions.OnClick)
+        // The candidate row lands BELOW the import card — swipe it into
+        // composition the same way.
+        waitForCondition("import candidate composes") {
+            if (nodes(hasTestTag("soul.import.keep")).isNotEmpty()) {
+                true
+            } else {
+                compose.onNodeWithTag("soul.list").performTouchInput { swipeUp() }
+                false
+            }
+        }
+        compose.onNodeWithTag("soul.import.keep").performSemanticsAction(SemanticsActions.OnClick)
+        waitForCondition("imported fact leaves the candidate list") {
+            nodes(hasTestTag("soul.import.keep")).isEmpty()
+        }
+        runBlocking {
+            val imported =
+                entry
+                    .soul()
+                    .liveFacts()
+                    .first()
+                    .first { it.text == IMPORTED_FACT }
+            assertThat(imported.source.wire).isEqualTo("import_confirmed")
+        }
+        compose.onNodeWithTag("soul.back").performClick()
+        waitForCondition("soul screen fully leaves composition") {
+            nodes(hasTestTag("soul.import.input")).isEmpty()
+        }
+        waitForTag("home.chat.input")
+
+        // --- The capsule ledger tells the whole story: the letter from the
+        // past was opened, the letter to the future is still held.
+        runBlocking {
+            val clockNow = entry.clock().nowMillis()
+            assertThat(entry.capsules().due(clockNow)).isEmpty()
+            assertThat(entry.capsules().heldCount(clockNow).first()).isEqualTo(1)
+            assertThat(entry.journal().countOf(JournalKind.CAPSULE_DELIVERED)).isEqualTo(1)
+        }
+
+        // --- Evening ritual: the test clock pins 21:30, so the moon is up.
+        // The farewell line is deterministic (seed + epoch day), which lets
+        // us assert the exact words the creature says back.
+        val expectedGoodnight =
+            runBlocking {
+                val pool =
+                    context.resources.getStringArray(
+                        app.anima.feature.home.R.array.home_goodnight_pool,
+                    )
+                val epochDay =
+                    entry.clock().nowMillis() /
+                        app.anima.core.model.RelationshipStats.DAY_MILLIS
+                val seed = (entry.identity().seed() ?: 0L) + epochDay
+                pool[(seed % pool.size).toInt().let { if (it < 0) it + pool.size else it }]
+            }
+        waitForTag("home.goodnight")
+        compose.onNodeWithTag("home.goodnight").performClick()
+        waitForCondition("the creature says its goodnight line") {
+            nodes(hasTestTag("home.chat.message") and hasText(expectedGoodnight, substring = true)).isNotEmpty()
+        }
+        waitForCondition("the moon retires — one farewell per evening") {
+            nodes(hasTestTag("home.goodnight")).isEmpty()
+        }
+        runBlocking {
+            assertThat(entry.journal().countOf(JournalKind.GOODNIGHT)).isEqualTo(1)
+        }
     }
 
     private fun nodes(matcher: SemanticsMatcher) =
@@ -203,6 +345,10 @@ class DayInLifeTest {
     private companion object {
         const val NAME = "Kiki"
         const val USER_LINE = "hello little one, this is our first day"
+        const val CAPSULE_FROM_PAST = "a letter from a braver morning"
+        const val IMPORTED_FACT = "keeps a tiny succulent alive"
+        const val CAPSULE_TO_FUTURE = "future us: remember this first day"
+        const val HOLD_MILLIS = 7L * 24 * 60 * 60 * 1000
         const val TIMEOUT_MILLIS = 60_000L
     }
 }

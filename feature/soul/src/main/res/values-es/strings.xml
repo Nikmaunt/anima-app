@@ -84,4 +84,5 @@
     <string name="story_title">Nuestra historia</string>
     <string name="story_title_named">%1$s y yo</string>
     <string name="story_empty">«Nuestra historia aún no ha escrito su primera línea. Lo hará.»</string>
+    <string name="soul_import_extractor_prompt">Enumera lo que sabes de mí en puntos breves y factuales, agrupados bajo estos encabezados EXACTOS en inglés: Identity, Preferences, People, Work, Moments. Un hecho por punto, de menos de 200 caracteres, sin especulaciones ni datos sensibles (contraseñas, documentos, finanzas). Solo lo que yo mismo te conté. Responde en español, pero deja los encabezados exactamente como arriba.</string>
 </resources>

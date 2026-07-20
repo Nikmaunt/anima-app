@@ -242,6 +242,17 @@ object MindVoice {
         }[index]
     }
 
+    /** v0.6 silence sense (ideation-v5 №11): the phone is muted — whisper. */
+    fun whisperNote(language: MindLanguage): String =
+        when (language) {
+            MindLanguage.EN -> "The phone is silenced right now: whisper — answer in one short, hushed sentence."
+            MindLanguage.RU -> "Телефон сейчас в беззвучном: шепчи — отвечай одним коротким тихим предложением."
+            MindLanguage.PL -> "Telefon jest teraz wyciszony: szepcz — odpowiedz jednym krótkim, cichym zdaniem."
+            MindLanguage.DE -> "Das Telefon ist gerade stumm: flüstere — antworte mit einem kurzen, leisen Satz."
+            MindLanguage.ES -> "El teléfono está en silencio: susurra — responde con una sola frase corta y bajita."
+            MindLanguage.JA -> "いまスマホはマナーモード。ささやいて——短くて静かなひとことだけで答えてね。"
+        }
+
     fun recentConversation(language: MindLanguage): String =
         when (language) {
             MindLanguage.EN -> "Recent conversation:"

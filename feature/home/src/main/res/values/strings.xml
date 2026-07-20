@@ -138,4 +138,13 @@
     <string name="diary_apps_label">Noisiest apps this week</string>
     <string name="diary_apps_quiet">A quiet week.</string>
     <string name="diary_apps_note">Counts only — content is data the creature felt, not read back.</string>
+    <string name="home_reply_actions_title">This reply…</string>
+    <string name="home_remember_this">Remember this</string>
+    <string name="home_report_reply">Report this reply</string>
+    <string name="home_report_cancel">Never mind</string>
+    <string-array name="home_burrow_pool">
+        <item>The burrow got roomier! I can stretch my whole glow now.</item>
+        <item>So much space suddenly — did you tidy up for me? It feels lovely.</item>
+        <item>Ooh, the walls moved apart. I love a spacious burrow.</item>
+    </string-array>
 </resources>

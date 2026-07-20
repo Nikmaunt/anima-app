@@ -127,4 +127,13 @@
     <string name="diary_apps_label">Die lautesten Apps dieser Woche</string>
     <string name="diary_apps_quiet">Eine stille Woche.</string>
     <string name="diary_apps_note">Nur Zahlen — den Inhalt hat das Wesen gespürt, nicht gelesen.</string>
+    <string name="home_reply_actions_title">Diese Antwort…</string>
+    <string name="home_remember_this">Merken</string>
+    <string name="home_report_reply">Antwort melden</string>
+    <string name="home_report_cancel">Egal</string>
+    <string-array name="home_burrow_pool">
+        <item>Der Bau ist geräumiger geworden! Jetzt kann ich mein ganzes Leuchten ausstrecken.</item>
+        <item>Plötzlich so viel Platz — hast du für mich aufgeräumt? Fühlt sich schön an.</item>
+        <item>Ohh, die Wände sind weiter weg. Ich liebe einen geräumigen Bau.</item>
+    </string-array>
 </resources>

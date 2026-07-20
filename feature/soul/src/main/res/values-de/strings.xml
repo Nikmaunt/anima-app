@@ -84,4 +84,5 @@
     <string name="story_title">Unsere Geschichte</string>
     <string name="story_title_named">Ich und %1$s</string>
     <string name="story_empty">„Die erste Zeile unserer Geschichte ist noch nicht geschrieben. Sie kommt.“</string>
+    <string name="soul_import_extractor_prompt">Liste auf, was du über mich weißt, als kurze Fakten-Stichpunkte, gruppiert unter diesen EXAKTEN englischen Überschriften: Identity, Preferences, People, Work, Moments. Ein Fakt pro Punkt, je unter 200 Zeichen, keine Spekulationen, keine sensiblen Daten (Passwörter, Dokumente, Finanzen). Nur, was ich dir selbst erzählt habe. Antworte auf Deutsch, aber lass die Überschriften genau wie oben.</string>
 </resources>

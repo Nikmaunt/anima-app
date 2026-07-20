@@ -6,7 +6,7 @@ import org.junit.Test
 import java.io.File
 
 /**
- * The network guarantee as a failing build, v4 (ADR-004 as amended by
+ * The network guarantee as a failing build, v6 (ADR-004 as amended by
  * ADR-005 and ADR-011; audit-v03 F6/F8/F1). What changed against v3:
  *
  *  1. The merged-manifest check now also covers the RELEASE variant when
@@ -117,6 +117,21 @@ class NetworkIsolationTest {
                     .that(file.readText().contains("CloudMindBackend"))
                     .isFalse()
             }
+    }
+
+    @Test
+    fun `body diary retelling speaks only to the local mind`() {
+        // v6 (audit-v05 D4, requirement first written in audit-v04): the
+        // diary's retelling prompt carries journal-derived counters — same
+        // ADR-011 data-scope argument as the digest, same tripwire shape.
+        val viewModel =
+            File(
+                repoRoot,
+                "feature/home/src/main/kotlin/app/anima/feature/home/BodyDiaryScreen.kt",
+            ).readText()
+        assertThat(viewModel).contains("LocalMindEngine")
+        assertThat(viewModel).doesNotContain("val mind: MindEngine")
+        assertThat(viewModel).doesNotContain("CloudMindBackend")
     }
 
     @Test

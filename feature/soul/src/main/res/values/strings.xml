@@ -91,4 +91,5 @@
     <string name="story_title">Our story</string>
     <string name="story_title_named">Me and %1$s</string>
     <string name="story_empty">\"Our story hasn\'t written its first line yet. It will.\"</string>
+    <string name="soul_import_extractor_prompt">Please list what you know about me as short factual bullet points, grouped under these exact English headings: Identity, Preferences, People, Work, Moments. One fact per bullet, each under 200 characters, no speculation, no sensitive data (passwords, documents, finances). Only include things I told you myself. Answer in my language, but keep the headings exactly as written above.</string>
 </resources>

@@ -141,4 +141,13 @@
     <string name="diary_apps_label">Самые шумные приложения недели</string>
     <string name="diary_apps_quiet">Тихая неделя.</string>
     <string name="diary_apps_note">Только количество — содержание существо почувствовало, но не читало.</string>
+    <string name="home_reply_actions_title">Этот ответ…</string>
+    <string name="home_remember_this">Запомнить</string>
+    <string name="home_report_reply">Пожаловаться на ответ</string>
+    <string name="home_report_cancel">Неважно</string>
+    <string-array name="home_burrow_pool">
+        <item>Норка стала просторнее! Теперь я могу растянуться всем свечением.</item>
+        <item>Сколько места вдруг — ты прибрался для меня? Так приятно.</item>
+        <item>Ух, стены раздвинулись. Люблю просторную норку.</item>
+    </string-array>
 </resources>

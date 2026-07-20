@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,6 +44,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
@@ -134,21 +136,20 @@ fun HomeScreen(
                 controller.onStartle()
                 richHaptics.startle()
             }
+            // v0.6 (ideation №8): a roomier burrow feels like a small feast.
+            BodyEvent.BURROW_ROOMIER -> {
+                controller.onCelebrate()
+                richHaptics.celebrate()
+            }
             null -> Unit
         }
         if (bodyEvent != null) viewModel.onBodyEventHandled()
     }
 
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(colors.background)
-                .statusBarsPadding()
-                .imePadding()
-                .navigationBarsPadding(),
-    ) {
-        // Header: quiet chrome, the creature owns the screen.
+    val hapticFeedback = LocalHapticFeedback.current
+
+    // Header: quiet chrome, the creature owns the screen.
+    val headerRow: @Composable () -> Unit = {
         Row(
             modifier =
                 Modifier
@@ -191,20 +192,20 @@ fun HomeScreen(
                 modifier = Modifier.testTag("home.settings"),
             )
         }
+    }
 
+    val creature: @Composable (Modifier) -> Unit = { creatureModifier ->
         CreatureSurface(
             controller = controller,
             night = colors.isNight,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(0.95f),
+            modifier = creatureModifier,
             reducedMotionOverride = if (state.calmMotion) true else null,
             contentDescription = creatureA11y(state),
         )
+    }
 
+    val cardsAndNotices: @Composable () -> Unit = {
         // Fact candidates: nothing enters the soul without a tap.
-        val hapticFeedback = LocalHapticFeedback.current
         if (state.candidates.isNotEmpty()) {
             CandidateBar(
                 candidate = state.candidates.first(),
@@ -221,7 +222,13 @@ fun HomeScreen(
 
         // v0.5 capsule delivery (ideation-v5 №3): a letter from the past
         // self came due — the creature hands it over, exactly once.
+        // v0.6 (audit-v05 D1): the letter is soul content — FLAG_SECURE
+        // while it's on screen, honoring the same Settings toggle as Soul.
         val dueCapsule by viewModel.dueCapsule.collectAsState()
+        val capsuleScreenshotsAllowed by viewModel.screenshotsAllowed.collectAsState()
+        app.anima.core.ui.components.SecureWhile(
+            dueCapsule != null && !capsuleScreenshotsAllowed,
+        )
         dueCapsule?.let { capsule ->
             Column(
                 Modifier
@@ -313,7 +320,9 @@ fun HomeScreen(
                 GhostButton(stringResource(R.string.home_ok), onClick = viewModel::dismissMindNotice)
             }
         }
+    }
 
+    val chat: @Composable (Modifier) -> Unit = { chatModifier ->
         ChatPanel(
             state = state,
             onSend = { text ->
@@ -331,10 +340,86 @@ fun HomeScreen(
                 hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                 viewModel.rememberThis(message)
             },
-            modifier = Modifier.weight(1f),
+            onReportReply = { message -> viewModel.reportReply(message.id) },
+            modifier = chatModifier,
         )
     }
+
+    HomeAdaptiveScaffold(
+        // LocalConfiguration, not BoxWithConstraints: subcomposition remeasures
+        // against CreatureSurface's endless frame loop and can trap a pumped
+        // test frame in a measure storm (caught live by the v0.6 E2E).
+        expanded = LocalConfiguration.current.screenWidthDp >= EXPANDED_MIN_WIDTH_DP,
+        headerRow = headerRow,
+        creature = creature,
+        cards = cardsAndNotices,
+        chat = chat,
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(colors.background)
+                .statusBarsPadding()
+                .imePadding()
+                .navigationBarsPadding(),
+    )
 }
+
+/**
+ * v0.6 tablets/folds: past the expanded threshold the creature gets its own
+ * pane (Samsung folds are this product's home turf) — chat and cards move
+ * beside it instead of squeezing it into a letterbox. Thresholds follow the
+ * WindowSizeClass dp bands; hand-rolled because one constant does not
+ * justify a library (repo convention). Stateless so the golden rig can
+ * drive both branches.
+ */
+@Composable
+internal fun HomeAdaptiveScaffold(
+    expanded: Boolean,
+    headerRow: @Composable () -> Unit,
+    creature: @Composable (Modifier) -> Unit,
+    cards: @Composable () -> Unit,
+    chat: @Composable (Modifier) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (expanded) {
+        Row(modifier) {
+            Column(
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+            ) {
+                headerRow()
+                creature(
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                )
+            }
+            Column(
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+            ) {
+                cards()
+                chat(Modifier.weight(1f))
+            }
+        }
+    } else {
+        Column(modifier) {
+            headerRow()
+            creature(
+                Modifier
+                    .fillMaxWidth()
+                    .weight(0.95f),
+            )
+            cards()
+            chat(Modifier.weight(1f))
+        }
+    }
+}
+
+/** WindowSizeClass "expanded" lower bound (dp) — the two-pane switch. */
+private const val EXPANDED_MIN_WIDTH_DP = 840
 
 @Composable
 internal fun ChatPanel(
@@ -345,10 +430,16 @@ internal fun ChatPanel(
     onOpenMind: () -> Unit,
     onRegenerate: () -> Unit,
     onRememberThis: (ChatMessage) -> Unit,
+    onReportReply: (ChatMessage) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalAnimaColors.current
     val listState = rememberLazyListState()
+    // v0.6: the long-press chooser for a creature reply (remember/report).
+    var actionMessage by androidx.compose.runtime.remember {
+        androidx.compose.runtime.mutableStateOf<ChatMessage?>(null)
+    }
+    val onMessageActions: (ChatMessage) -> Unit = { actionMessage = it }
     val itemCount = state.messages.size + (if (state.streamingReply != null) 1 else 0)
 
     LaunchedEffect(itemCount, state.streamingReply?.length) {
@@ -385,7 +476,15 @@ internal fun ChatPanel(
                     text = message.text,
                     mine = message.role == ChatRole.USER,
                     // v0.3: long-press → "remember this" (same confirm gate).
-                    onLongPress = { onRememberThis(message) },
+                    // v0.6: creature replies open a chooser instead — the
+                    // second action is the GenAI-policy report affordance.
+                    onLongPress = {
+                        if (message.role == ChatRole.USER) {
+                            onRememberThis(message)
+                        } else {
+                            onMessageActions(message)
+                        }
+                    },
                 )
             }
             if (state.streamingReply != null) {
@@ -394,6 +493,37 @@ internal fun ChatPanel(
                         text = state.streamingReply.ifEmpty { "…" },
                         mine = false,
                     )
+                }
+            }
+        }
+        // v0.6: chooser for a long-pressed creature reply — remember it, or
+        // report it (Play GenAI policy affordance; deletes the reply).
+        actionMessage?.let { message ->
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 6.dp),
+            ) {
+                Text(
+                    stringResource(R.string.home_reply_actions_title),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    GhostButton(stringResource(R.string.home_remember_this), onClick = {
+                        actionMessage = null
+                        onRememberThis(message)
+                    })
+                    GhostButton(
+                        stringResource(R.string.home_report_reply),
+                        onClick = {
+                            actionMessage = null
+                            onReportReply(message)
+                        },
+                        modifier = Modifier.testTag("home.chat.report"),
+                    )
+                    GhostButton(stringResource(R.string.home_report_cancel), onClick = {
+                        actionMessage = null
+                    })
                 }
             }
         }

@@ -77,4 +77,5 @@
     <string name="story_title">ふたりの物語</string>
     <string name="story_title_named">わたしと%1$s</string>
     <string name="story_empty">「ふたりの物語は、まだ最初の一行を書いていないよ。これからだよ」</string>
+    <string name="soul_import_extractor_prompt">わたしについて知っていることを、短い事実の箇条書きでまとめてください。見出しはこの英語のまま正確に：Identity, Preferences, People, Work, Moments。1項目につき事実1つ・200文字以内、推測なし、機密情報（パスワード・書類・お金のこと）なし。わたしが自分で話したことだけにしてください。本文は日本語で、見出しだけは上のとおり英語で。</string>
 </resources>

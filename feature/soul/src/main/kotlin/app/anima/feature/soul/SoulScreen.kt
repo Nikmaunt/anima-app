@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -46,6 +47,7 @@ import app.anima.core.ui.components.GhostButton
 import app.anima.core.ui.components.PillButton
 import app.anima.core.ui.components.SectionCard
 import app.anima.core.ui.components.SectionLabel
+import app.anima.core.ui.components.SecureWhile
 import app.anima.core.ui.theme.LocalAnimaColors
 
 /** The soul: counters, memory browser, edits, encrypted migration, story. */
@@ -63,15 +65,9 @@ fun SoulScreen(
     // Threat-model.md: the memory list is the most shoulder-surfable and
     // screenshot-leakable surface. FLAG_SECURE while this screen shows,
     // unless the user flipped the Settings toggle. Cleared on leave.
+    // v0.6: shared implementation (SecureWhile) — capsules use it too.
     val screenshotsAllowed by viewModel.screenshotsAllowed.collectAsState()
-    val activity = androidx.activity.compose.LocalActivity.current
-    androidx.compose.runtime.DisposableEffect(screenshotsAllowed, activity) {
-        val window = activity?.window
-        if (!screenshotsAllowed) {
-            window?.addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
-        }
-        onDispose { window?.clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE) }
-    }
+    SecureWhile(!screenshotsAllowed)
 
     var backupPassphrase by remember { mutableStateOf("") }
     val exportLauncher =
@@ -91,7 +87,11 @@ fun SoulScreen(
             .padding(horizontal = 20.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
-            GhostButton(stringResource(R.string.soul_back), onClick = onBack)
+            GhostButton(
+                stringResource(R.string.soul_back),
+                onClick = onBack,
+                modifier = Modifier.testTag("soul.back"),
+            )
             Text(
                 stringResource(R.string.soul_title),
                 style = MaterialTheme.typography.headlineMedium,
@@ -99,7 +99,10 @@ fun SoulScreen(
             )
         }
 
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+            modifier = Modifier.testTag("soul.list"),
+        ) {
             state.stats?.let { stats ->
                 item {
                     SectionCard {
@@ -271,8 +274,12 @@ fun SoulScreen(
                         stringResource(R.string.soul_import_steps),
                         style = MaterialTheme.typography.bodyMedium,
                     )
+                    // v0.6: the prompt is a localized resource — the other
+                    // AI is asked in the user's language, but the response
+                    // headings are pinned to English for the parser.
+                    val extractorPrompt = stringResource(R.string.soul_import_extractor_prompt)
                     GhostButton(stringResource(R.string.soul_import_copy_button), onClick = {
-                        clipboard.setText(AnnotatedString(viewModel.extractorPrompt()))
+                        clipboard.setText(AnnotatedString(extractorPrompt))
                     })
                     Box(
                         Modifier
@@ -293,13 +300,14 @@ fun SoulScreen(
                             onValueChange = viewModel::onImportTextChange,
                             textStyle = MaterialTheme.typography.bodyLarge.copy(color = colors.text),
                             cursorBrush = SolidColor(colors.accent),
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().testTag("soul.import.input"),
                         )
                     }
                     GhostButton(
                         stringResource(R.string.soul_import_find_button),
                         onClick = viewModel::parseImport,
                         enabled = state.importText.isNotBlank(),
+                        modifier = Modifier.testTag("soul.import.find"),
                     )
                 }
             }
@@ -327,6 +335,7 @@ fun SoulScreen(
                     GhostButton(
                         stringResource(R.string.soul_import_keep_button),
                         onClick = { viewModel.confirmImport(candidate) },
+                        modifier = Modifier.testTag("soul.import.keep"),
                     )
                 }
             }

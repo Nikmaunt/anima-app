@@ -115,6 +115,9 @@ class ChatRepository
             dao.insert(ChatMessageEntity(message.id, role.wire, text, atMillis))
             return message
         }
+
+        /** v0.6 GenAI policy: a reported reply is removed, not archived. */
+        suspend fun remove(id: String) = dao.delete(id)
     }
 
 @Singleton

@@ -48,12 +48,17 @@ object PromptBuilder {
         budgetChars: Int = MAX_PROMPT_CHARS,
         personality: Personality = Personality.Default,
         language: MindLanguage = MindLanguage.EN,
+        silenced: Boolean = false,
     ): MindPrompt {
         val system =
             buildString {
                 appendLine(MindVoice.persona(creatureName, personality, language))
                 appendLine()
                 appendLine(MindVoice.bodyReport(state, language))
+                if (silenced) {
+                    // v0.6 silence sense: muted phone → hushed, shorter reply.
+                    appendLine(MindVoice.whisperNote(language))
+                }
                 val liveFacts = facts.filter { it.isLive }.take(MAX_FACTS)
                 if (liveFacts.isNotEmpty()) {
                     appendLine()

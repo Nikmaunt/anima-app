@@ -85,29 +85,35 @@ object SoulPort {
         return result.distinctBy { it.text.lowercase() }.take(MAX_IMPORT_FACTS)
     }
 
-    /** The prompt the user copies into another AI to extract their soul. */
-    fun extractorPrompt(): String =
-        """
-        Please list what you know about me as short factual bullet points,
-        grouped under these exact headings: Identity, Preferences, People,
-        Work, Moments. One fact per bullet, each under 200 characters, no
-        speculation, no sensitive data (passwords, documents, finances).
-        Only include things I told you myself.
-        """.trimIndent()
+    // v0.6: the extractor prompt moved to feature:soul string resources so
+    // it speaks the user's language (l10n) — the parser here stays
+    // language-tolerant via headerCategory.
 
     private val tagPattern = Regex("^\\[(\\w+)]\\s*(.+)$")
+
+    // v0.6: the localized extractor prompt demands English headings, but
+    // assistants answering in the user's language often localize them
+    // anyway — recognize all six product languages (l10n-glossary).
+    private val headingMarkers: List<Pair<FactCategory, List<String>>> =
+        listOf(
+            FactCategory.IDENTITY to
+                listOf("identity", "личност", "identität", "identidad", "tożsamoś", "アイデンティティ", "自分"),
+            FactCategory.PREFERENCE to
+                listOf("preference", "предпочт", "vorlieben", "präferenz", "preferencia", "preferencj", "好み"),
+            FactCategory.PEOPLE to
+                listOf("people", "люди", "menschen", "leute", "persona", "gente", "ludzie", "人"),
+            FactCategory.WORK to
+                listOf("work", "работ", "arbeit", "trabajo", "praca", "仕事"),
+            FactCategory.MOMENT to
+                listOf("moment", "момент", "chwile", "思い出", "瞬間"),
+        )
 
     private fun headerCategory(line: String): FactCategory? {
         if (!line.startsWith("#")) return null
         val title = line.trimStart('#').trim().lowercase()
-        return when {
-            "identity" in title || "личност" in title -> FactCategory.IDENTITY
-            "preference" in title || "предпочт" in title -> FactCategory.PREFERENCE
-            "people" in title || "люди" in title -> FactCategory.PEOPLE
-            "work" in title || "работ" in title -> FactCategory.WORK
-            "moment" in title || "момент" in title -> FactCategory.MOMENT
-            else -> null
-        }
+        return headingMarkers
+            .firstOrNull { (_, markers) -> markers.any { it in title } }
+            ?.first
     }
 
     private fun categoryTitle(category: FactCategory): String =

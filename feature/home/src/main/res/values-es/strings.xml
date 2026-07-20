@@ -127,4 +127,13 @@
     <string name="diary_apps_label">Las apps más ruidosas de la semana</string>
     <string name="diary_apps_quiet">Una semana tranquila.</string>
     <string name="diary_apps_note">Solo recuentos — el contenido la criatura lo sintió, no lo leyó.</string>
+    <string name="home_reply_actions_title">Esta respuesta…</string>
+    <string name="home_remember_this">Recordar</string>
+    <string name="home_report_reply">Denunciar esta respuesta</string>
+    <string name="home_report_cancel">Da igual</string>
+    <string-array name="home_burrow_pool">
+        <item>¡La madriguera está más amplia! Ahora puedo estirar todo mi brillo.</item>
+        <item>Cuánto espacio de repente — ¿ordenaste para mí? Se siente precioso.</item>
+        <item>Ooh, las paredes se separaron. Me encanta una madriguera espaciosa.</item>
+    </string-array>
 </resources>

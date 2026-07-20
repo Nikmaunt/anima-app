@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -102,7 +104,14 @@ class BodyDiaryViewModel
         private val mind: LocalMindEngine,
         private val identity: IdentityRepository,
         private val capsules: TimeCapsuleRepository,
+        prefs: app.anima.core.data.prefs.AnimaPrefs,
     ) : ViewModel() {
+        /** v0.6 (audit-v05 D1): capsule drafting is soul content too. */
+        val screenshotsAllowed: StateFlow<Boolean> =
+            prefs
+                .soulScreenshotsAllowed()
+                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+
         private val state = MutableStateFlow(BodyDiaryUiState())
         val uiState: StateFlow<BodyDiaryUiState> = state.asStateFlow()
 
@@ -274,16 +283,24 @@ fun BodyDiaryScreen(
     val state by viewModel.uiState.collectAsState()
     val colors = LocalAnimaColors.current
 
+    // v0.6 tablets/folds: reading columns cap at a book-ish width instead
+    // of stretching edge to edge on expanded screens.
     Column(
         Modifier
             .fillMaxSize()
             .background(colors.background)
             .statusBarsPadding()
+            .wrapContentWidth()
+            .widthIn(max = 720.dp)
             .padding(horizontal = 20.dp)
             .verticalScroll(rememberScrollState()),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
-            GhostButton(stringResource(R.string.diary_back), onClick = onBack)
+            GhostButton(
+                stringResource(R.string.diary_back),
+                onClick = onBack,
+                modifier = Modifier.testTag("diary.back"),
+            )
             Text(
                 stringResource(R.string.diary_title),
                 style = MaterialTheme.typography.headlineMedium,
@@ -388,6 +405,11 @@ fun BodyDiaryScreen(
             SectionCard {
                 SectionLabel(stringResource(R.string.diary_capsule_label))
                 var draft by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf("") }
+                // v0.6 (audit-v05 D1): a letter in progress must not leak
+                // into screenshots/recents unless the Soul toggle allows it.
+                val screenshotsAllowed by viewModel.screenshotsAllowed.collectAsState()
+                app.anima.core.ui.components
+                    .SecureWhile(draft.isNotBlank() && !screenshotsAllowed)
                 androidx.compose.foundation.text.BasicTextField(
                     value = draft,
                     onValueChange = { draft = it.take(app.anima.core.model.TimeCapsule.MAX_TEXT_CHARS) },

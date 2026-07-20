@@ -77,6 +77,10 @@ interface ChatDao {
 
     @Query("SELECT COUNT(*) FROM chat_messages WHERE role = 'user'")
     fun userMessageCount(): Flow<Int>
+
+    /** v0.6 GenAI policy: reported creature replies are removed outright. */
+    @Query("DELETE FROM chat_messages WHERE id = :id")
+    suspend fun delete(id: String)
 }
 
 @Dao
