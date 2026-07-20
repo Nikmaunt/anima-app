@@ -1,6 +1,6 @@
 # Anima — Privacy Policy
 
-*Effective: 2026-07-18. This page is the policy of record for the Anima
+*Effective: 2026-07-19. This page is the policy of record for the Anima
 Android app; it is linked from the Play listing and from Settings → Why no
 internet, as Google Play requires even of apps that collect nothing.*
 
@@ -23,6 +23,9 @@ run no servers and cannot see anything you do.
 - Time-capsule letters you write to your future self (v0.5) — same
   encrypted database, delivered back to you by the creature, never sent
   anywhere.
+- Reports you make about an AI reply (v0.6, long-press → report): the
+  reply is deleted; only a local timestamped "a reply was flagged" note
+  stays in the body diary. Nothing about it leaves the phone.
 - A sparse log of barometer readings (v0.5, phones that have the sensor):
   timestamps and air-pressure values only, kept for 12 hours so the
   creature can "feel the weather in its bones". Air pressure is not

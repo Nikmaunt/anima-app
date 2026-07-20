@@ -110,7 +110,7 @@
     <string name="mind_notice_key_unconfigured">Guarda primero el endpoint y la clave.</string>
     <string name="mind_failure_needs_wifi">Esperando Wi-Fi: es un archivo grande. Activa el interruptor para usar datos móviles.</string>
     <string name="mind_failure_not_https">Aquí solo funcionan enlaces https:// directos.</string>
-    <string name="mind_failure_http">El servidor lo rechazó (%1$s). Los enlaces oficiales de Gemma requieren aceptar la licencia: descarga el archivo en el navegador y usa «Elegir archivo de mente».</string>
+    <string name="mind_failure_http">El servidor lo rechazó (%1$s). Algunos enlaces oficiales de modelos requieren aceptar la licencia: descarga el archivo en el navegador y usa «Elegir archivo de mente».</string>
     <string name="mind_failure_http_no_detail">sin detalles</string>
     <string name="mind_failure_interrupted">La transferencia se cortó. Inténtalo otra vez: se reanuda donde se detuvo.</string>
     <string name="mind_failure_checksum">El archivo no pasó la comprobación de integridad y fue descartado. (recibido %1$s…)</string>
@@ -149,4 +149,8 @@
     <string name="crashlog_none">Ningún fallo registrado. Que dure mucho.</string>
     <string name="crashlog_copy">Copiar</string>
     <string name="crashlog_clear">Borrar</string>
+    <string name="settings_licenses_open">Licencias de código abierto…</string>
+    <string name="licenses_title">Código abierto</string>
+    <string name="licenses_intro">Anima se apoya en %1$d bibliotecas de código abierto. Toca una para leer su licencia.</string>
+    <string name="licenses_close_text">Volver a la lista</string>
 </resources>

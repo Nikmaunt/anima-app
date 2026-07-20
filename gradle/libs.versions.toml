@@ -168,6 +168,12 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
+# v0.6 OSS licenses: BUILD-TIME ONLY — exports aboutlibraries.json into
+# res/raw; the licenses screen is hand-rolled on kotlinx-serialization.
+# No runtime artifact, so the network-library ban is untouched. 12.2.4 is
+# the newest line built against Kotlin 2.x-era toolchains (13+/15+ track
+# Kotlin 2.4 / AGP 9 — out of our pin range, research-v6 §B).
+aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version = "12.2.4" }
 
 # --- Convention plugins (defined in build-logic) ---
 anima-android-application = { id = "anima.android.application", version = "unspecified" }

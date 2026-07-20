@@ -11,3 +11,8 @@ captures/
 *.aab
 *.hprof
 .DS_Store
+# Signing material never enters the repo (docs/release/signing.md); the
+# canonical home is ../anima-keys/, these patterns are the second fence.
+*.keystore
+*.jks
+keystore.properties

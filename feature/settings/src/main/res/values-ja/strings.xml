@@ -110,7 +110,7 @@
     <string name="mind_notice_key_unconfigured">先にエンドポイントとキーを保存してね。</string>
     <string name="mind_failure_needs_wifi">Wi-Fiを待ってるよ — 大きなファイルだからね。モバイルデータを使うならスイッチをオンにしてね。</string>
     <string name="mind_failure_not_https">ここで使えるのは https:// の直リンクだけだよ。</string>
-    <string name="mind_failure_http">サーバーに断られちゃった（%1$s）。Gemmaの公式リンクはライセンスへの同意が必要だから、ブラウザでダウンロードして「あたまのファイルを選ぶ」を使ってね。</string>
+    <string name="mind_failure_http">サーバーに断られちゃった（%1$s）。公式のモデルのリンクにはライセンスへの同意が必要なことがあるから、ブラウザでダウンロードして「あたまのファイルを選ぶ」を使ってね。</string>
     <string name="mind_failure_http_no_detail">詳細なし</string>
     <string name="mind_failure_interrupted">転送が途切れちゃった。もう一度試してね — 止まったところから再開するよ。</string>
     <string name="mind_failure_checksum">ファイルが整合性チェックに通らなかったから、捨てたよ。（受け取ったのは %1$s…）</string>
@@ -149,4 +149,8 @@
     <string name="crashlog_none">クラッシュの記録はないよ。このまま長く続きますように。</string>
     <string name="crashlog_copy">コピー</string>
     <string name="crashlog_clear">消す</string>
+    <string name="settings_licenses_open">オープンソースライセンス…</string>
+    <string name="licenses_title">オープンソース</string>
+    <string name="licenses_intro">Animaは%1$d個のオープンソースライブラリでできています。タップするとライセンスを読めます。</string>
+    <string name="licenses_close_text">リストにもどる</string>
 </resources>

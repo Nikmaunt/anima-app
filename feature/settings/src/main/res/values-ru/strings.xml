@@ -110,7 +110,7 @@
     <string name="mind_notice_key_unconfigured">Сначала сохрани адрес и ключ.</string>
     <string name="mind_failure_needs_wifi">Жду Wi-Fi — файл большой. Включи переключатель, чтобы использовать мобильные данные.</string>
     <string name="mind_failure_not_https">Здесь работают только прямые ссылки https://</string>
-    <string name="mind_failure_http">Сервер отказал (%1$s). Официальным ссылкам Gemma нужно принятие лицензии — скачай файл в браузере и используй «Выбрать файл разума».</string>
+    <string name="mind_failure_http">Сервер отказал (%1$s). Некоторым официальным ссылкам на модели нужно принятие лицензии — скачай файл в браузере и используй «Выбрать файл разума».</string>
     <string name="mind_failure_http_no_detail">без подробностей</string>
     <string name="mind_failure_interrupted">Передача оборвалась. Попробуй ещё раз — она продолжится с того же места.</string>
     <string name="mind_failure_checksum">Файл не прошёл проверку целостности и был удалён. (получено %1$s…)</string>
@@ -149,4 +149,8 @@
     <string name="crashlog_none">Сбоев не записано. Пусть так и будет подольше.</string>
     <string name="crashlog_copy">Копировать</string>
     <string name="crashlog_clear">Очистить</string>
+    <string name="settings_licenses_open">Лицензии открытого кода…</string>
+    <string name="licenses_title">Открытый код</string>
+    <string name="licenses_intro">Anima построена на %1$d библиотеках с открытым кодом. Нажми, чтобы прочитать лицензию.</string>
+    <string name="licenses_close_text">Назад к списку</string>
 </resources>

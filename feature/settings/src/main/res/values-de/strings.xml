@@ -110,7 +110,7 @@
     <string name="mind_notice_key_unconfigured">Speichere zuerst Endpunkt und Schlüssel.</string>
     <string name="mind_failure_needs_wifi">Warte auf WLAN — die Datei ist groß. Leg den Schalter um, um mobile Daten zu nutzen.</string>
     <string name="mind_failure_not_https">Hier funktionieren nur direkte https://-Links.</string>
-    <string name="mind_failure_http">Der Server hat abgelehnt (%1$s). Offizielle Gemma-Links verlangen eine Lizenzannahme — lade die Datei im Browser herunter und nutze „Geist-Datei wählen".</string>
+    <string name="mind_failure_http">Der Server hat abgelehnt (%1$s). Manche offiziellen Modell-Links verlangen eine Lizenzannahme — lade die Datei im Browser herunter und nutze „Geist-Datei wählen“.</string>
     <string name="mind_failure_http_no_detail">keine Details</string>
     <string name="mind_failure_interrupted">Der Transfer ist abgerissen. Versuch es nochmal — er macht dort weiter, wo er stehen blieb.</string>
     <string name="mind_failure_checksum">Die Datei hat die Integritätsprüfung nicht bestanden und wurde verworfen. (erhalten: %1$s…)</string>
@@ -149,4 +149,8 @@
     <string name="crashlog_none">Keine Abstürze aufgezeichnet. Möge es so bleiben.</string>
     <string name="crashlog_copy">Kopieren</string>
     <string name="crashlog_clear">Leeren</string>
+    <string name="settings_licenses_open">Open-Source-Lizenzen…</string>
+    <string name="licenses_title">Open Source</string>
+    <string name="licenses_intro">Anima baut auf %1$d Open-Source-Bibliotheken auf. Tippe, um die Lizenz zu lesen.</string>
+    <string name="licenses_close_text">Zurück zur Liste</string>
 </resources>

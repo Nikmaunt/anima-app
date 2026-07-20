@@ -1,4 +1,10 @@
-# Google Play Data safety form — draft answers (2026-07-18)
+# Google Play Data safety form — FINAL answers (v0.6, 2026-07-19)
+
+Status: FINALIZED for closed-testing submission (was: draft v0.4).
+v0.6 re-check: the new report-a-reply mechanism is purely local (delete +
+local journal note) — changes NOTHING here; the silence sense reads
+ringerMode locally — nothing here; licenses screen is build-time data —
+nothing here. Answers below stand as the console entries.
 
 Grounded in the live policy pages (research-v4 §8):
 - "Collect" = "transmitting data from your app off a user's device".

@@ -18,11 +18,12 @@ dependencies {
     implementation(projects.core.creature)
     implementation(projects.core.body)
     implementation(projects.core.data)
-    implementation(projects.core.mind)
     implementation(projects.core.ui)
     implementation(projects.core.voice)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
+    // v0.6 licenses screen: parses the build-time aboutlibraries.json.
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.hilt.navigation.compose)

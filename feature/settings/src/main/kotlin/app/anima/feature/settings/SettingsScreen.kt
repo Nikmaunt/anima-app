@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -27,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -191,16 +194,20 @@ fun SettingsScreen(
     onOpenTrust: () -> Unit = {},
     onOpenCrashLog: () -> Unit = {},
     onOpenWardrobe: () -> Unit = {},
+    onOpenLicenses: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
     val colors = LocalAnimaColors.current
 
+    // v0.6 tablets/folds: settings reads as a capped column, not a banner.
     Column(
         Modifier
             .fillMaxSize()
             .background(colors.background)
             .statusBarsPadding()
+            .wrapContentWidth()
+            .widthIn(max = 720.dp)
             .padding(horizontal = 20.dp)
             .verticalScroll(rememberScrollState()),
     ) {
@@ -352,6 +359,12 @@ fun SettingsScreen(
                 SectionLabel(stringResource(R.string.settings_more_label))
                 GhostButton(stringResource(R.string.settings_trust_open), onClick = onOpenTrust)
                 GhostButton(stringResource(R.string.settings_crashlog_open), onClick = onOpenCrashLog)
+                // v0.6: OSS attribution (release engineering; license duty).
+                GhostButton(
+                    stringResource(R.string.settings_licenses_open),
+                    onClick = onOpenLicenses,
+                    modifier = Modifier.testTag("settings.licenses"),
+                )
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                     Column(Modifier.weight(1f)) {
                         Text(

@@ -4,12 +4,19 @@ Place ONE licensed model artifact here before building the AAB. The slot is
 model-agnostic (ADR-017): any `.task`/`.litertlm` file from the registry
 works; `MindModelRegistry` identifies it by file name.
 
-v0.5 default (ADR-017, docs/model-matrix.md):
+v0.6 default (ADR-018, produced by `tools/qwen-int4/convert.sh`):
 
-    qwen2.5-1.5b-instruct-*.task   (int4 build ~1.1 GB — Play's fast-follow
-                                    pack limit is 1.5 GB; the int8 artifact
-                                    (1.6 GB) does NOT fit the pack and goes
-                                    through download/SAF instead)
+    qwen2.5-1.5b-instruct-int4.litertlm
+        (int4 ≈1.0–1.1 GB — fits Play's 1.5 GB fast-follow pack limit;
+         `.litertlm` because Qwen has no SentencePiece tokenizer and the
+         legacy .task bundler can't package it — research-v6 §A.3.
+         Verify sha256 against the conversion's MANIFEST.txt. The q8
+         artifacts (~1.6 GB) do NOT fit the pack: download/SAF only.)
+
+If the artifact hasn't been produced yet, ship the slot EMPTY (ADR-018
+outcome 3): first run offers the sanctioned download/SAF paths — that is
+strictly more honest than bundling the English-only Gemma under a
+localized listing.
 
 Legacy alternative (still recognized, English-only routing):
 

@@ -1,9 +1,29 @@
 // :app — composition root: DI wiring, navigation, MainActivity. No logic.
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.anima.android.application)
     alias(libs.plugins.anima.android.compose)
     alias(libs.plugins.anima.hilt)
     alias(libs.plugins.baselineprofile)
+    // v0.6: build-time license aggregation only (no runtime artifact).
+    alias(libs.plugins.aboutlibraries)
+}
+
+// OSS licenses (docs/adr/…, settings screen): regenerate with
+//   gradlew :app:exportLibraryDefinitions
+// after any dependency change; DoD diffs the committed file against a
+// fresh export. offlineMode keeps the build free of network calls.
+aboutLibraries {
+    offlineMode = true
+    export {
+        outputFile = file("src/main/res/raw/aboutlibraries.json")
+        prettyPrint = true
+    }
+    collect {
+        fetchRemoteLicense = false
+        fetchRemoteFunding = false
+    }
 }
 
 android {
@@ -11,11 +31,37 @@ android {
 
     defaultConfig {
         applicationId = "app.anima"
-        versionCode = 5
-        versionName = "0.5.0"
+        // Scheme: CHANGELOG.md header — pre-1.0 versionCode = run number.
+        versionCode = 6
+        versionName = "0.6.0"
         // v0.5 day-in-life E2E: Hilt swaps the mind for a deterministic fake.
         testInstrumentationRunner = "app.anima.HiltTestRunner"
     }
+
+    // v0.6 release engineering: the upload key lives OUTSIDE the repo
+    // (../anima-keys/, sibling of the checkout; see docs/release/signing.md).
+    // Present → release signs locally; absent (CI, fresh clones) → release
+    // builds unsigned and Play App Signing remains the only owner of the
+    // app signing key. Path override: -PanimaKeystoreProps=<file>.
+    val keystoreProps =
+        (findProperty("animaKeystoreProps") as String?)
+            ?.let(::File)
+            ?: rootProject.file("../anima-keys/keystore.properties")
+    val uploadSigning =
+        if (keystoreProps.exists()) {
+            val props =
+                Properties().apply {
+                    keystoreProps.inputStream().use { load(it) }
+                }
+            signingConfigs.create("upload") {
+                storeFile = File(props.getProperty("storeFile"))
+                storePassword = props.getProperty("storePassword")
+                keyAlias = props.getProperty("keyAlias")
+                keyPassword = props.getProperty("keyPassword")
+            }
+        } else {
+            null
+        }
 
     buildTypes {
         debug {
@@ -25,6 +71,7 @@ android {
             isPseudoLocalesEnabled = true
         }
         release {
+            signingConfig = uploadSigning
             // v0.2: full R8 + resource shrinking. JNI/reflection keeps live
             // in proguard-rules.pro; everything else relies on consumer rules.
             isMinifyEnabled = true

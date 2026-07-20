@@ -144,6 +144,31 @@ Schema v2 landed (time_capsules) plus three surface changes; the pass:
   app-private noBackupFilesDir. The engine's load smoke test remains the
   gate against malformed weights. Accepted.
 
+## Addendum v0.6 (2026-07-19)
+
+- **Capsule FLAG_SECURE gap CLOSED** (audit-v05 D1): the v0.5 addendum
+  claimed FLAG_SECURE gated capsule display — it did not. Now the delivery
+  card (Home), the drafting field (Diary) and the Soul screen share one
+  `SecureWhile` implementation, all honoring the same Settings toggle.
+- **Reply report** (repudiation/content): long-press → report DELETES the
+  creature reply and journals `reply_flagged` (no text retained). Nothing
+  leaves the device; the mechanism exists for the owner and Play policy,
+  not for any collector. Accepted.
+- **Silence sense** (information disclosure): `AudioManager.ringerMode` is
+  a permissionless tri-state; we read the mode only, never DND policies or
+  rules. It enters the prompt as one fixed instruction line. Accepted.
+- **Upload-key signing** (key management): the upload key lives OUTSIDE
+  the repo (../anima-keys), gitignore carries a second fence
+  (`*.keystore`, `keystore.properties`); CI holds no secrets and builds
+  release unsigned. Compromise of the upload key is recoverable via Play
+  key reset; the app signing key never leaves Google. Accepted.
+- **Licenses screen** (supply chain): aggregation happens at BUILD time
+  (AboutLibraries plugin, offline mode); no runtime dependency, no
+  network. The committed JSON is diffed in CI against a fresh export, so
+  a dependency change cannot silently ship unattributed. Accepted.
+- **Launcher icon/monochrome, adaptive layouts, predictive back**: pure
+  presentation, no new surfaces. Not threat-relevant.
+
 ## Review triggers
 
 Re-run this model when: a third network module is ever proposed (expect NO),

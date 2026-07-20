@@ -110,7 +110,7 @@
     <string name="mind_notice_key_unconfigured">Najpierw zapisz adres i klucz.</string>
     <string name="mind_failure_needs_wifi">Czekam na Wi-Fi — to duży plik. Przestaw przełącznik, aby użyć danych komórkowych.</string>
     <string name="mind_failure_not_https">Działają tu tylko bezpośrednie linki https://</string>
-    <string name="mind_failure_http">Serwer odmówił (%1$s). Oficjalne linki Gemmy wymagają akceptacji licencji — pobierz plik w przeglądarce i użyj opcji „Wybierz plik umysłu".</string>
+    <string name="mind_failure_http">Serwer odmówił (%1$s). Niektóre oficjalne linki modeli wymagają akceptacji licencji — pobierz plik w przeglądarce i użyj opcji „Wybierz plik umysłu”.</string>
     <string name="mind_failure_http_no_detail">brak szczegółów</string>
     <string name="mind_failure_interrupted">Transfer się urwał. Spróbuj jeszcze raz — wznowi się w tym samym miejscu.</string>
     <string name="mind_failure_checksum">Plik nie przeszedł kontroli integralności i został odrzucony. (otrzymano %1$s…)</string>
@@ -149,4 +149,8 @@
     <string name="crashlog_none">Brak zapisanych awarii. Oby tak dalej.</string>
     <string name="crashlog_copy">Kopiuj</string>
     <string name="crashlog_clear">Wyczyść</string>
+    <string name="settings_licenses_open">Licencje open source…</string>
+    <string name="licenses_title">Open source</string>
+    <string name="licenses_intro">Anima korzysta z %1$d bibliotek open source. Dotknij, aby przeczytać licencję.</string>
+    <string name="licenses_close_text">Wróć do listy</string>
 </resources>
