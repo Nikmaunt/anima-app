@@ -34,6 +34,9 @@
     <string name="settings_privacy_cloud_on">Gerade ist der CLOUD-Geist an: Deine Nachrichten, der Körperbericht des Wesens und die für eine Antwort nötigen Erinnerungen gehen an den Anbieter, den du eingerichtet hast. Alles andere — die Seelen-Datenbank, das Benachrichtigungstagebuch — bleibt verschlüsselt auf diesem Handy. Leg den Geist-Schalter oben um, und Anima ist wieder komplett offline.</string>
     <string name="settings_privacy_local">Das Netz wird für genau zwei Dinge genutzt, beide unter deiner Kontrolle: die Lieferung der Geist-Datei (Google Play oder ein Download, den du startest) und den optionalen Cloud-Geist — der AUS ist. Keine Konten, keine Analytik, keine Absturzberichte; ein Test beim Bauen der App schlägt fehl, wenn irgendein anderer Teil das Netz anfasst. Die Erinnerung lebt in einer verschlüsselten Datenbank; ihr Schlüssel verlässt nie die sichere Hardware dieses Handys. Gedacht wird auf diesem Gerät — oder gar nicht.</string>
     <string name="settings_more_label">Mehr</string>
+    <string name="settings_developer_label">Für Entwickler</string>
+    <string name="settings_dev_litertlm_title">LiteRT-LM-Engine (experimentell)</string>
+    <string name="settings_dev_litertlm_hint">Der lokale Geist läuft auf der LiteRT-LM-Runtime statt der bewährten. Nur CPU, nur Debug-Builds. Aus = die mitgelieferte Engine.</string>
     <string name="settings_trust_open">Warum kein Internet…</string>
     <string name="settings_crashlog_open">Letzter Absturz (nur lokal)…</string>
     <string name="settings_soul_screenshots_title">Screenshots des Seelen-Bildschirms</string>
@@ -68,8 +71,8 @@
     <string name="mind_direct_link_label">Oder per Direktlink laden</string>
     <string name="mind_sha_placeholder">SHA-256 (optional, prüft die Datei)</string>
     <string name="mind_metered_title">Mobile Daten erlauben</string>
-    <string name="mind_metered_hint">Aus = nur WLAN (es sind ~530 MB)</string>
-    <string name="mind_download_button">Herunterladen (~530 MB, einmalig)</string>
+    <string name="mind_metered_hint">Aus = nur WLAN (der Standard-Geist ist ~%1$s)</string>
+    <string name="mind_download_button">Herunterladen (~%1$s, einmalig)</string>
     <string name="mind_pack_incoming_label">Der Geist ist unterwegs</string>
     <string name="mind_pack_progress">%1$.0f / %2$.0f MB — Google Play liefert ihn von selbst; du musst hier nicht warten.</string>
     <string name="mind_pack_packed_label">Ein Geist liegt der App bei</string>

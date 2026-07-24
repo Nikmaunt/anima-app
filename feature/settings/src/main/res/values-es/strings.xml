@@ -34,6 +34,9 @@
     <string name="settings_privacy_cloud_on">Ahora mismo la mente en la NUBE está activada: tus mensajes, el informe del cuerpo de la criatura y los datos de memoria necesarios para una respuesta van al proveedor que configuraste. Todo lo demás —la base de datos del alma, el diario de notificaciones— se queda en este teléfono, cifrado. Apaga el interruptor de la mente arriba y Anima vuelve a estar totalmente sin conexión.</string>
     <string name="settings_privacy_local">La red se usa exactamente para dos cosas, ambas bajo tu control: entregar el archivo de mente (Google Play o una descarga que tú inicias) y la mente en la nube opcional, que está APAGADA. Sin cuentas, sin analítica, sin informes de fallos; una prueba en tiempo de compilación falla si cualquier otra parte de la app toca la red. La memoria vive en una base de datos cifrada; su clave nunca sale del hardware seguro de este teléfono. Pensar ocurre en este dispositivo o no ocurre.</string>
     <string name="settings_more_label">Más</string>
+    <string name="settings_developer_label">Para desarrolladores</string>
+    <string name="settings_dev_litertlm_title">Motor LiteRT-LM (experimental)</string>
+    <string name="settings_dev_litertlm_hint">La mente local funciona con el runtime LiteRT-LM en vez del probado. Solo CPU, solo compilaciones debug. Apagado = el motor de serie.</string>
     <string name="settings_trust_open">Por qué sin internet…</string>
     <string name="settings_crashlog_open">Último fallo (solo local)…</string>
     <string name="settings_soul_screenshots_title">Capturas de la pantalla del alma</string>
@@ -68,8 +71,8 @@
     <string name="mind_direct_link_label">O descarga por enlace directo</string>
     <string name="mind_sha_placeholder">SHA-256 (opcional, verifica el archivo)</string>
     <string name="mind_metered_title">Permitir datos móviles</string>
-    <string name="mind_metered_hint">Apagado = solo Wi-Fi (son ~530 MB)</string>
-    <string name="mind_download_button">Descargar (~530 MB, una sola vez)</string>
+    <string name="mind_metered_hint">Apagado = solo Wi-Fi (la mente por defecto ocupa ~%1$s)</string>
+    <string name="mind_download_button">Descargar (~%1$s, una sola vez)</string>
     <string name="mind_pack_incoming_label">La mente viene de camino</string>
     <string name="mind_pack_progress">%1$.0f / %2$.0f MB — Google Play la entrega por sí solo; no hace falta esperar aquí.</string>
     <string name="mind_pack_packed_label">Una mente viene empaquetada con la app</string>

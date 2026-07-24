@@ -55,3 +55,6 @@ include(":baselineprofile")
 include(":core:model-delivery")
 include(":core:cloud-mind")
 include(":mind-pack")
+// Host-only tooling (ADR-020 §5): JVM inference smoke, env-gated, never in
+// the default check/CI loop.
+include(":tools:litertlm-smoke")

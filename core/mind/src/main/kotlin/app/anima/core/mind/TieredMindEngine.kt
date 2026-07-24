@@ -4,6 +4,7 @@ import app.anima.core.model.CloudMindBackend
 import app.anima.core.model.FactCandidate
 import app.anima.core.model.LocalMindEngine
 import app.anima.core.model.MindEngine
+import app.anima.core.model.MindEngineSwitch
 import app.anima.core.model.MindEvent
 import app.anima.core.model.MindFailure
 import app.anima.core.model.MindInventory
@@ -15,8 +16,11 @@ import app.anima.core.model.MindStatus
 import app.anima.core.model.MindTier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import java.util.Optional
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.inject.Singleton
 
 /**
@@ -36,8 +40,22 @@ class TieredMindEngine
         private val nano: NanoMindEngine,
         private val gemma: GemmaMindEngine,
         private val locator: MindModelLocator,
+        private val switch: MindEngineSwitch,
+        @AltLocalEngine private val alt: Optional<Provider<MindEngine>>,
     ) : MindEngine,
         MindInventory {
+        /**
+         * ADR-020: which runtime executes the already-selected local tier.
+         * The ladder itself (TierSelection) never sees the switch — the flag
+         * can change the engine, never the tier contour.
+         */
+        private suspend fun localEngine(): MindEngine =
+            if (LocalEngineChoice.useAlt(flagOn = switch.altLocalEngine.first(), altPresent = alt.isPresent)) {
+                alt.get().get()
+            } else {
+                gemma
+            }
+
         private suspend fun active(includeCloud: Boolean = true): Pair<MindTier, MindEngine>? =
             when (
                 TierSelection.pick(
@@ -48,7 +66,7 @@ class TieredMindEngine
             ) {
                 MindTier.CLOUD -> MindTier.CLOUD to cloud
                 MindTier.NANO -> MindTier.NANO to nano
-                MindTier.GEMMA -> MindTier.GEMMA to gemma
+                MindTier.GEMMA -> MindTier.GEMMA to localEngine()
                 else -> null
             }
 
@@ -71,7 +89,11 @@ class TieredMindEngine
 
         override suspend fun requestDownload(): Boolean = active()?.second?.requestDownload() ?: false
 
-        override suspend fun releaseResources() = gemma.releaseResources()
+        override suspend fun releaseResources() {
+            gemma.releaseResources()
+            // ADR-020: the alt engine (if bound) may hold a loaded model too.
+            if (alt.isPresent) alt.get().get().releaseResources()
+        }
 
         override fun reply(prompt: MindPrompt): Flow<MindEvent> = replyVia(prompt, includeCloud = true)
 
@@ -105,7 +127,11 @@ class TieredMindEngine
                 override suspend fun requestDownload(): Boolean =
                     active(includeCloud = false)?.second?.requestDownload() ?: false
 
-                override suspend fun releaseResources() = gemma.releaseResources()
+                override suspend fun releaseResources() {
+                    gemma.releaseResources()
+                    // ADR-020: the alt engine (if bound) may hold a loaded model too.
+                    if (alt.isPresent) alt.get().get().releaseResources()
+                }
 
                 override fun reply(prompt: MindPrompt): Flow<MindEvent> = replyVia(prompt, includeCloud = false)
 
@@ -138,4 +164,16 @@ internal object TierSelection {
             hasLocalModel -> MindTier.GEMMA
             else -> MindTier.NONE
         }
+}
+
+/**
+ * ADR-020, as a pure function: the alt runtime serves the local tier only
+ * when the developer flag is ON AND the debug-only binding exists. Release
+ * builds have no binding, so the flag alone can never change the engine.
+ */
+internal object LocalEngineChoice {
+    fun useAlt(
+        flagOn: Boolean,
+        altPresent: Boolean,
+    ): Boolean = flagOn && altPresent
 }

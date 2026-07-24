@@ -17,6 +17,16 @@ import javax.inject.Singleton
 
 private val Context.animaDataStore by preferencesDataStore(name = "anima_settings")
 
+/** ADR-020: the engine switch as read by the mind module, backed by prefs. */
+@Singleton
+class PrefsMindEngineSwitch
+    @Inject
+    constructor(
+        prefs: AnimaPrefs,
+    ) : app.anima.core.model.MindEngineSwitch {
+        override val altLocalEngine: Flow<Boolean> = prefs.litertlmEngine()
+    }
+
 /** Non-secret app preferences. Anything personal lives in the encrypted DB. */
 @Singleton
 class AnimaPrefs
@@ -113,6 +123,20 @@ class AnimaPrefs
 
         suspend fun markDreamTold(nightKey: Long) {
             context.animaDataStore.edit { it[lastDreamNight] = nightKey }
+        }
+
+        private val litertlmEngine = booleanPreferencesKey("litertlm_engine")
+
+        /**
+         * ADR-020 developer flag: serve the local model tier through the
+         * LiteRT-LM runtime instead of tasks-genai. Default OFF — the shipped
+         * runtime stays tasks-genai; the toggle is exposed only in debug
+         * builds' developer section (default pinned by AnimaPrefsDefaultsTest).
+         */
+        fun litertlmEngine(): Flow<Boolean> = context.animaDataStore.data.map { it[litertlmEngine] ?: false }
+
+        suspend fun setLitertlmEngine(value: Boolean) {
+            context.animaDataStore.edit { it[litertlmEngine] = value }
         }
 
         private val lastBirthdayYear = longPreferencesKey("last_birthday_year")

@@ -6,6 +6,8 @@ import app.anima.core.data.AnimaDatabase
 import app.anima.core.data.crypto.KeystoreSoulKeySource
 import app.anima.core.data.crypto.SoulKeyHolder
 import app.anima.core.data.crypto.SoulKeySource
+import app.anima.core.data.prefs.PrefsMindEngineSwitch
+import app.anima.core.model.MindEngineSwitch
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -20,6 +22,10 @@ import javax.inject.Singleton
 internal abstract class DataBindings {
     @Binds
     abstract fun soulKeySource(impl: KeystoreSoulKeySource): SoulKeySource
+
+    /** ADR-020: the local-engine developer switch, backed by AnimaPrefs. */
+    @Binds
+    abstract fun mindEngineSwitch(impl: PrefsMindEngineSwitch): MindEngineSwitch
 }
 
 @Module

@@ -48,6 +48,12 @@ mediapipeTasksGenai = "0.10.35"
 # Play Store app, not an HTTP stack — the network-library ban stands. 2.3.0
 # verified latest on Google Maven 2026-07-17.
 playAssetDelivery = "2.3.0"
+# LiteRT-LM (ADR-020): the designated tasks-genai successor. 0.14.0 verified
+# latest on Google Maven 2026-07-24 (freshness-2026-07 §A). On-device/on-host
+# inference over a local .litertlm file — NOT a network library. The Android
+# artifact is debug-only (:core:mind debugImplementation, flag OFF); the JVM
+# artifact serves the host smoke test (tools/litertlm-smoke).
+litertlm = "0.14.0"
 # --- Kotlinx ---
 coroutines = "1.10.2"
 serialization = "1.8.1"
@@ -136,6 +142,8 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 # --- On-device GenAI (confined to :core:mind) ---
 mlkit-genai-prompt = { group = "com.google.mlkit", name = "genai-prompt", version.ref = "mlkitGenaiPrompt" }
 mediapipe-tasks-genai = { group = "com.google.mediapipe", name = "tasks-genai", version.ref = "mediapipeTasksGenai" }
+litertlm-android = { group = "com.google.ai.edge.litertlm", name = "litertlm-android", version.ref = "litertlm" }
+litertlm-jvm = { group = "com.google.ai.edge.litertlm", name = "litertlm-jvm", version.ref = "litertlm" }
 
 # --- Performance ---
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }

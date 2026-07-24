@@ -9,6 +9,11 @@ plugins {
 
 android {
     namespace = "app.anima.feature.settings"
+    buildFeatures {
+        // ADR-020: BuildConfig.DEBUG gates the developer section — the
+        // LiteRT-LM engine toggle must not exist in release UI at all.
+        buildConfig = true
+    }
 }
 
 dependencies {

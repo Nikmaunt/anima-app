@@ -34,6 +34,9 @@
     <string name="settings_privacy_cloud_on">Right now the CLOUD mind is on: your messages, the creature\'s body report and the memory facts needed for an answer go to the provider you configured. Everything else — the soul database, the notification diary — stays on this phone, encrypted. Flip the mind switch above and Anima is fully offline again.</string>
     <string name="settings_privacy_local">The network is used for exactly two things, both under your control: delivering the mind file (Google Play or a download you start) and the optional cloud mind — which is OFF. No accounts, no analytics, no crash reporting; a build-time test fails if any other part of the app touches the network. Memory lives in an encrypted database; its key never leaves this phone\'s secure hardware. Thinking happens on this device or not at all.</string>
     <string name="settings_more_label">More</string>
+    <string name="settings_developer_label">Developer</string>
+    <string name="settings_dev_litertlm_title">LiteRT-LM engine (experimental)</string>
+    <string name="settings_dev_litertlm_hint">Runs the local mind on the LiteRT-LM runtime instead of the proven one. CPU only, debug builds only. Off = the shipped engine.</string>
     <string name="settings_trust_open">Why no internet…</string>
     <string name="settings_crashlog_open">Last crash (local only)…</string>
     <string name="settings_soul_screenshots_title">Soul screen screenshots</string>
@@ -69,8 +72,8 @@
     <string name="mind_url_placeholder" translatable="false">https://… (.task / .litertlm)</string>
     <string name="mind_sha_placeholder">SHA-256 (optional, verifies the file)</string>
     <string name="mind_metered_title">Allow mobile data</string>
-    <string name="mind_metered_hint">Off = Wi-Fi only (it\'s ~530 MB)</string>
-    <string name="mind_download_button">Download (~530 MB, once)</string>
+    <string name="mind_metered_hint">Off = Wi-Fi only (the default mind is ~%1$s)</string>
+    <string name="mind_download_button">Download (~%1$s, once)</string>
     <string name="mind_pack_incoming_label">The mind is on its way</string>
     <string name="mind_pack_progress">%1$.0f / %2$.0f MB — Google Play delivers it by itself; no need to wait here.</string>
     <string name="mind_pack_packed_label">A mind is packed with the app</string>

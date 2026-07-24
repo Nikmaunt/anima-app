@@ -34,6 +34,9 @@
     <string name="settings_privacy_cloud_on">Teraz działa umysł w CHMURZE: twoje wiadomości, raport o ciele stworzenia i fakty z pamięci potrzebne do odpowiedzi idą do dostawcy, którego skonfigurowano. Cała reszta — baza duszy, dziennik powiadomień — zostaje na tym telefonie, zaszyfrowana. Przestaw przełącznik umysłu powyżej, a Anima znów będzie w pełni offline.</string>
     <string name="settings_privacy_local">Sieć służy dokładnie do dwóch rzeczy, obu pod twoją kontrolą: dostarczenia pliku umysłu (Google Play albo pobieranie, które sam uruchamiasz) i opcjonalnego umysłu w chmurze — który jest WYŁĄCZONY. Żadnych kont, analityki, raportów o awariach; test podczas budowania aplikacji nie przechodzi, jeśli jakakolwiek inna jej część dotyka sieci. Pamięć mieszka w zaszyfrowanej bazie; jej klucz nigdy nie opuszcza bezpiecznego sprzętu tego telefonu. Myślenie dzieje się na tym urządzeniu albo wcale.</string>
     <string name="settings_more_label">Więcej</string>
+    <string name="settings_developer_label">Dla dewelopera</string>
+    <string name="settings_dev_litertlm_title">Silnik LiteRT-LM (eksperymentalny)</string>
+    <string name="settings_dev_litertlm_hint">Lokalny umysł działa na środowisku LiteRT-LM zamiast sprawdzonego. Tylko CPU, tylko kompilacje debug. Wył = silnik standardowy.</string>
     <string name="settings_trust_open">Dlaczego bez internetu…</string>
     <string name="settings_crashlog_open">Ostatnia awaria (tylko lokalnie)…</string>
     <string name="settings_soul_screenshots_title">Zrzuty ekranu duszy</string>
@@ -68,8 +71,8 @@
     <string name="mind_direct_link_label">Albo pobierz z bezpośredniego linku</string>
     <string name="mind_sha_placeholder">SHA-256 (opcjonalnie, weryfikuje plik)</string>
     <string name="mind_metered_title">Zezwól na dane komórkowe</string>
-    <string name="mind_metered_hint">Wył = tylko Wi-Fi (to ~530 MB)</string>
-    <string name="mind_download_button">Pobierz (~530 MB, jednorazowo)</string>
+    <string name="mind_metered_hint">Wył = tylko Wi-Fi (domyślny umysł to ~%1$s)</string>
+    <string name="mind_download_button">Pobierz (~%1$s, jednorazowo)</string>
     <string name="mind_pack_incoming_label">Umysł jest w drodze</string>
     <string name="mind_pack_progress">%1$.0f / %2$.0f MB — Google Play dostarczy go sam; nie musisz tu czekać.</string>
     <string name="mind_pack_packed_label">Umysł jest zapakowany z aplikacją</string>

@@ -34,6 +34,9 @@
     <string name="settings_privacy_cloud_on">いまはクラウドのあたまがオン。あなたのメッセージ、いきものの体のようす、返事に必要なおぼえたことは、あなたが設定したプロバイダーに送られるよ。それ以外 — たましいのデータベースも、通知の日記も — 暗号化されてこのスマホに残る。上のスイッチを切れば、Animaはまた完全オフラインだよ。</string>
     <string name="settings_privacy_local">ネットを使うのは2つだけ。どちらもあなたの手の中にあるよ。あたまのファイルの配達（Google Playか、あなたが始めるダウンロード）と、任意のクラウドのあたま — いまはオフ。アカウントなし、分析なし、クラッシュ報告なし。ほかの部分がネットに触れたら、ビルド時のテストが落ちる仕組み。記憶は暗号化されたデータベースの中にいて、その鍵はこのスマホの安全なハードウェアから出ない。考えごとはこの端末の上だけ — それ以外では、しない。</string>
     <string name="settings_more_label">その他</string>
+    <string name="settings_developer_label">開発者向け</string>
+    <string name="settings_dev_litertlm_title">LiteRT-LMエンジン（実験的）</string>
+    <string name="settings_dev_litertlm_hint">ローカルのあたまを、実績あるランタイムの代わりにLiteRT-LMで動かします。CPUのみ・debugビルドのみ。オフ＝通常のエンジン。</string>
     <string name="settings_trust_open">どうしてインターネットなしなの…</string>
     <string name="settings_crashlog_open">最後のクラッシュ（この中だけ）…</string>
     <string name="settings_soul_screenshots_title">たましい画面のスクリーンショット</string>
@@ -68,8 +71,8 @@
     <string name="mind_direct_link_label">または直リンクでダウンロード</string>
     <string name="mind_sha_placeholder">SHA-256（任意、ファイルを検証）</string>
     <string name="mind_metered_title">モバイルデータを許可</string>
-    <string name="mind_metered_hint">オフ = Wi-Fiのみ（約530MBあるからね）</string>
-    <string name="mind_download_button">ダウンロード（約530MB、一度だけ）</string>
+    <string name="mind_metered_hint">オフ = Wi-Fiのみ（標準のあたまは約%1$s）</string>
+    <string name="mind_download_button">ダウンロード（約%1$s、一度だけ）</string>
     <string name="mind_pack_incoming_label">あたまが向かってるよ</string>
     <string name="mind_pack_progress">%1$.0f / %2$.0f MB — Google Playがひとりで届けてくれる。ここで待たなくても大丈夫。</string>
     <string name="mind_pack_packed_label">アプリにあたまが同梱されてるよ</string>

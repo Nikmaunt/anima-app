@@ -126,6 +126,14 @@ class SettingsViewModel
 
         fun ttsSettingsIntent() = voice.ttsSettingsIntent()
 
+        /** ADR-020 developer flag; the section renders in debug builds only. */
+        val litertlmEngine: StateFlow<Boolean> =
+            prefs.litertlmEngine().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+
+        fun setLitertlmEngine(value: Boolean) {
+            viewModelScope.launch { prefs.setLitertlmEngine(value) }
+        }
+
         private val seed = MutableStateFlow(0L)
 
         val uiState: StateFlow<SettingsUiState> =
@@ -385,6 +393,37 @@ fun SettingsScreen(
                                 checkedThumbColor = colors.background,
                             ),
                     )
+                }
+            }
+
+            // ADR-020: developer section — debug builds only. Release UI has
+            // no toggle AND release DI has no engine (double gate).
+            if (BuildConfig.DEBUG) {
+                val litertlm by viewModel.litertlmEngine.collectAsState()
+                SectionCard {
+                    SectionLabel(stringResource(R.string.settings_developer_label))
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                stringResource(R.string.settings_dev_litertlm_title),
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                            Text(
+                                stringResource(R.string.settings_dev_litertlm_hint),
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
+                        Switch(
+                            checked = litertlm,
+                            onCheckedChange = viewModel::setLitertlmEngine,
+                            modifier = Modifier.testTag("settings.dev.litertlm"),
+                            colors =
+                                SwitchDefaults.colors(
+                                    checkedTrackColor = colors.accent,
+                                    checkedThumbColor = colors.background,
+                                ),
+                        )
+                    }
                 }
             }
         }

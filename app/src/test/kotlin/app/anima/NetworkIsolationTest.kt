@@ -265,6 +265,44 @@ class NetworkIsolationTest {
     }
 
     @Test
+    fun `mind module dependencies are the audited allowlist`() {
+        // ADR-020: :core:mind carries three on-device inference runtimes
+        // (ML Kit GenAI binder, MediaPipe tasks-genai, LiteRT-LM debug-only).
+        // None is a network library; anything NEW appearing here fails the
+        // build until it is audited into this list. The merged-manifest
+        // budget test above additionally pins whatever their manifests merge.
+        val buildFile = File(repoRoot, "core/mind/build.gradle.kts").readText()
+        val dependencyLines =
+            buildFile
+                .lineSequence()
+                .map { it.trim() }
+                .filter {
+                    it.startsWith("implementation(") ||
+                        it.startsWith("api(") ||
+                        it.startsWith("debugImplementation(")
+                }.toList()
+        val allowed =
+            listOf(
+                "projects.core.model",
+                "libs.androidx.core.ktx",
+                "libs.kotlinx.coroutines.android",
+                "libs.kotlinx.serialization.json",
+                "libs.mlkit.genai.prompt",
+                "libs.mediapipe.tasks.genai",
+                "libs.litertlm.android",
+            )
+        dependencyLines.forEach { line ->
+            assertWithMessage("unexpected dependency in mind module: $line")
+                .that(allowed.any { line.contains(it) })
+                .isTrue()
+        }
+        // The LiteRT-LM runtime must stay debug-only (ADR-020): the release
+        // APK ships exactly one local runtime.
+        assertThat(buildFile).contains("debugImplementation(libs.litertlm.android)")
+        assertThat(buildFile).doesNotContain("implementation(libs.litertlm.android)")
+    }
+
+    @Test
     fun `cloud-mind module dependencies are the audited allowlist`() {
         val buildFile = File(repoRoot, "core/cloud-mind/build.gradle.kts").readText()
         val dependencyLines =

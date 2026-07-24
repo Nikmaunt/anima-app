@@ -250,7 +250,9 @@ fun MindScreen(
                                 style = MaterialTheme.typography.bodyLarge,
                             )
                             Text(
-                                stringResource(R.string.mind_metered_hint),
+                                // v0.7 (audit-v06 DEGRADED №1): registry-fed
+                                // size — copy can never go stale again.
+                                stringResource(R.string.mind_metered_hint, packDefaultSize()),
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                         }
@@ -264,7 +266,10 @@ fun MindScreen(
                                 ),
                         )
                     }
-                    GhostButton(stringResource(R.string.mind_download_button), onClick = viewModel::download)
+                    GhostButton(
+                        stringResource(R.string.mind_download_button, packDefaultSize()),
+                        onClick = viewModel::download,
+                    )
                 }
             }
 
@@ -677,6 +682,17 @@ private fun MindTextField(
         }
     }
 }
+
+/**
+ * Registry-default artifact size for copy (audit-v06 DEGRADED №1). Same
+ * Formatter as the home banner, so both screens quote the same number.
+ */
+@Composable
+private fun packDefaultSize(): String =
+    android.text.format.Formatter.formatShortFileSize(
+        androidx.compose.ui.platform.LocalContext.current,
+        app.anima.core.model.MindModelRegistry.packDefault.approxSizeBytes,
+    )
 
 private const val MB = 1024.0 * 1024.0
 private const val GB = MB * 1024.0

@@ -24,6 +24,12 @@ dependencies {
     // (ADR-005 GEMMA tier). The model file arrives via :core:model-delivery;
     // this module sees it through the MindModelLocator interface only.
     implementation(libs.mediapipe.tasks.genai)
+    // ADR-020: LiteRT-LM as the OPTIONAL second local runtime — debug builds
+    // only (developer flag, default OFF); release APKs never carry it. Like
+    // tasks-genai it runs a local model file and is NOT a network library;
+    // NetworkIsolationTest pins this module's dependency allowlist and the
+    // merged-manifest permission budget.
+    debugImplementation(libs.litertlm.android)
 
     testImplementation(libs.junit4)
     testImplementation(libs.truth)

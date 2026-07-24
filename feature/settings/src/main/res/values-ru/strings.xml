@@ -34,6 +34,9 @@
     <string name="settings_privacy_cloud_on">Сейчас включён ОБЛАЧНЫЙ разум: твои сообщения, отчёт о теле существа и факты памяти, нужные для ответа, уходят выбранному тобой провайдеру. Всё остальное — база души, дневник уведомлений — остаётся на этом телефоне, в зашифрованном виде. Переключи разум выше — и Anima снова полностью офлайн.</string>
     <string name="settings_privacy_local">Сеть используется ровно для двух вещей, обе под твоим контролем: доставка файла разума (Google Play или загрузка, которую запускаешь ты) и необязательный облачный разум — он ВЫКЛЮЧЕН. Ни аккаунтов, ни аналитики, ни отчётов о сбоях; сборочный тест падает, если любая другая часть приложения трогает сеть. Память живёт в зашифрованной базе; её ключ никогда не покидает защищённое железо этого телефона. Мысли рождаются на этом устройстве — или нигде.</string>
     <string name="settings_more_label">Ещё</string>
+    <string name="settings_developer_label">Для разработчика</string>
+    <string name="settings_dev_litertlm_title">Движок LiteRT-LM (экспериментально)</string>
+    <string name="settings_dev_litertlm_hint">Локальный разум работает на рантайме LiteRT-LM вместо проверенного. Только CPU, только debug-сборки. Выкл = штатный движок.</string>
     <string name="settings_trust_open">Почему без интернета…</string>
     <string name="settings_crashlog_open">Последний сбой (только локально)…</string>
     <string name="settings_soul_screenshots_title">Скриншоты экрана души</string>
@@ -68,8 +71,8 @@
     <string name="mind_direct_link_label">Или скачай по прямой ссылке</string>
     <string name="mind_sha_placeholder">SHA-256 (необязательно, проверяет файл)</string>
     <string name="mind_metered_title">Разрешить мобильные данные</string>
-    <string name="mind_metered_hint">Выкл = только Wi-Fi (это ~530 МБ)</string>
-    <string name="mind_download_button">Скачать (~530 МБ, один раз)</string>
+    <string name="mind_metered_hint">Выкл = только Wi-Fi (дефолтный разум ~%1$s)</string>
+    <string name="mind_download_button">Скачать (~%1$s, один раз)</string>
     <string name="mind_pack_incoming_label">Разум уже в пути</string>
     <string name="mind_pack_progress">%1$.0f / %2$.0f МБ — Google Play доставит его сам; ждать здесь не обязательно.</string>
     <string name="mind_pack_packed_label">Разум упакован вместе с приложением</string>
