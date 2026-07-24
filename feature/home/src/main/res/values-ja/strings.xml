@@ -43,7 +43,7 @@
     <string name="home_banner_downloadable">この電話であたまが目ざめられるよ — システムが一度だけ取りにいく必要があるんだ。</string>
     <string name="home_banner_wake">あたまを起こす</string>
     <string name="home_banner_downloading">あたまが目ざめている…（システムのダウンロード）</string>
-    <string name="home_banner_asleep">あたまはおやすみ中。この電話にはアプリ用のあたまが入っていないけれど、持ってくることができるよ — 約530MBのファイルひとつで目ざめて、ぜんぶ端末の中だけで動く（設定 → あたま）。</string>
+    <string name="home_banner_asleep">あたまはおやすみ中。この電話にはアプリ用のあたまが入っていないけれど、持ってくることができるよ — 約%1$sのファイルひとつで目ざめて、ぜんぶ端末の中だけで動く（設定 → あたま）。</string>
     <string name="home_banner_bring">あたまを持ってくる</string>
     <string name="home_input_hint">なにか話して…</string>
     <string name="home_send">送る</string>

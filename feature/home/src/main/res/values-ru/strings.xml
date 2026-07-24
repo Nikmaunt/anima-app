@@ -46,7 +46,7 @@
     <string name="home_banner_downloadable">Его разум может проснуться на этом телефоне — системе нужно один раз его загрузить.</string>
     <string name="home_banner_wake">Разбудить разум</string>
     <string name="home_banner_downloading">Разум просыпается… (системная загрузка)</string>
-    <string name="home_banner_asleep">Разум спит. В этом телефоне нет встроенного разума для приложений, но его можно принести — один файл ~530 МБ разбудит его, полностью на устройстве (Настройки → Разум).</string>
+    <string name="home_banner_asleep">Разум спит. В этом телефоне нет встроенного разума для приложений, но его можно принести — один файл (~%1$s) разбудит его, полностью на устройстве (Настройки → Разум).</string>
     <string name="home_banner_bring">Принести разум</string>
     <string name="home_input_hint">Скажи что-нибудь…</string>
     <string name="home_send">Отправить</string>

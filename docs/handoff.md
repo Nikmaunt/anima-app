@@ -14,12 +14,31 @@ Mandate: deep audit of v0.6 + LiteRT-LM engine as additive second runtime
   18 stale "~530 MB" strings (3 keys × 6 locales).
   GMD: first run FAILED — AVD went to full C: (needs 7.2 GB); rerun in
   flight with ANDROID_AVD_HOME=D:\Android\avd (the v0.6 lesson, now twice).
-- [ ] Phase 1 — three research agents in flight (runtime/policy/deps).
-  Results → docs/freshness-2026-07.md + ADR-020 + addenda.
-- [ ] Phase 2 — LiteRtLmMindEngine (flag OFF, CPU-only enforced by test),
-  NetworkIsolationTest coverage, JVM smoke (ANIMA_JVM_LLM_SMOKE=1).
-- [ ] Phase 3 — fixes: ConceptGallery labels; 530 MB → registry-driven
-  size; patch bumps per research; README/CHANGELOG 0.7.0/7.
+- [x] Phase 1 — research done and committed (fb9daa9):
+  docs/freshness-2026-07.md (§A runtime, §B policy, §C deps) + ADR-020.
+- [x] Phase 2 — BUILT, verification loop in flight at handoff-write time:
+  LiteRtLmMindEngine in core/mind/src/debug (CPU-only; API verified
+  against the actual AAR via javap — Engine/EngineConfig/Conversation/
+  Contents.of, package com.google.ai.edge.litertlm); debugImplementation
+  only; @BindsOptionalOf @AltLocalEngine + LocalEngineChoice routing in
+  TieredMindEngine; MindEngineSwitch over AnimaPrefs (default OFF,
+  pinned by AnimaPrefsDefaultsTest); developer section in Settings
+  (BuildConfig.DEBUG-gated, strings ×6); tests: LiteRtLmCpuOnlyTest,
+  LocalEngineChoiceTest, NetworkIsolationTest mind-allowlist (now 14).
+  JVM smoke PASSED live this session: tools/litertlm-smoke,
+  litertlm-jvm 0.14.0 + CPU + Qwen2.5-1.5B q8 .litertlm (1 597 931 520
+  bytes; gemma3-270m is HF-license-gated → 401, the v0.2 lesson) →
+  reply "Hello there! How can I assist you today?" (4m incl. download).
+  Model cache: D:\Android\llm-cache (C: full!), env ANIMA_JVM_LLM_CACHE.
+- [~] Phase 3 — 3.1 done in tree: ConceptGallery labels (weight(1f) fix),
+  530MB → registry-driven size (%1$s + mind_size_gb ×6 locales,
+  packDefaultSize() in MindScreen, Formatter in HomeScreen), GMD
+  DayInLifeTest safety-net 60s→240s. 3.2 vacuous (claim absent — see
+  NOTE). Remaining: 3.3 patch bumps (AGP 8.13.2; lifecycle 2.9.4;
+  navigation 2.9.8; work 2.10.5; truth 1.4.5; turbine 1.2.1 — three
+  batches, full loop each), exportLibraryDefinitions refresh (litertlm
+  added!), 3.4 version 0.7.0/7 + README/CHANGELOG; GMD re-run; DoD
+  subagent. manual-checklist-s24-v7.md already written.
   NOTE Phase 3.2: exhaustive search shows the live-wallpaper battery claim
   DOES NOT EXIST in docs/store/* (no "wallpaper" match in any listing file,
   6 locales, nor screenshot-scenario) — the §0b listing-claim obligation is

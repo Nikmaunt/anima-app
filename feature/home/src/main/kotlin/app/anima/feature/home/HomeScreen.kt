@@ -551,7 +551,16 @@ internal fun ChatPanel(
             MindStatus.DOWNLOADING -> MindBanner(text = stringResource(R.string.home_banner_downloading))
             MindStatus.ASLEEP ->
                 MindBanner(
-                    text = stringResource(R.string.home_banner_asleep),
+                    // v0.7 (audit-v06 DEGRADED №1): the size comes from the
+                    // registry default, never a hardcoded number in copy.
+                    text =
+                        stringResource(
+                            R.string.home_banner_asleep,
+                            android.text.format.Formatter.formatShortFileSize(
+                                LocalContext.current,
+                                app.anima.core.model.MindModelRegistry.packDefault.approxSizeBytes,
+                            ),
+                        ),
                     action = { PillButton(stringResource(R.string.home_banner_bring), onClick = onOpenMind) },
                 )
         }

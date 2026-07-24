@@ -46,7 +46,7 @@
     <string name="home_banner_downloadable">Jego umysł może obudzić się na tym telefonie — system musi go raz pobrać.</string>
     <string name="home_banner_wake">Obudź umysł</string>
     <string name="home_banner_downloading">Umysł się budzi… (pobieranie systemowe)</string>
-    <string name="home_banner_asleep">Umysł śpi. Ten telefon nie ma wbudowanego umysłu dla aplikacji, ale możesz go przynieść — jeden plik ~530 MB obudzi go, w całości na urządzeniu (Ustawienia → Umysł).</string>
+    <string name="home_banner_asleep">Umysł śpi. Ten telefon nie ma wbudowanego umysłu dla aplikacji, ale możesz go przynieść — jeden plik (~%1$s) obudzi go, w całości na urządzeniu (Ustawienia → Umysł).</string>
     <string name="home_banner_bring">Przynieś umysł</string>
     <string name="home_input_hint">Powiedz coś…</string>
     <string name="home_send">Wyślij</string>

@@ -44,7 +44,7 @@
     <string name="home_banner_downloadable">Sein Geist kann auf diesem Handy erwachen — das System muss ihn einmal holen.</string>
     <string name="home_banner_wake">Den Geist wecken</string>
     <string name="home_banner_downloading">Der Geist wacht auf… (System-Download)</string>
-    <string name="home_banner_asleep">Der Geist schläft. Dieses Handy hat keinen eingebauten Geist für Apps, aber du kannst einen bringen — eine einzige Datei mit ~530 MB weckt ihn, komplett auf dem Gerät (Einstellungen → Geist).</string>
+    <string name="home_banner_asleep">Der Geist schläft. Dieses Handy hat keinen eingebauten Geist für Apps, aber du kannst einen bringen — eine einzige Datei (~%1$s) weckt ihn, komplett auf dem Gerät (Einstellungen → Geist).</string>
     <string name="home_banner_bring">Einen Geist bringen</string>
     <string name="home_input_hint">Sag etwas…</string>
     <string name="home_send">Senden</string>

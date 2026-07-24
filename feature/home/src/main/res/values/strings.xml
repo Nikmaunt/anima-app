@@ -52,7 +52,7 @@
     <string name="home_banner_downloadable">Its mind can wake on this phone — the system needs to fetch it once.</string>
     <string name="home_banner_wake">Wake the mind</string>
     <string name="home_banner_downloading">The mind is waking up… (system download)</string>
-    <string name="home_banner_asleep">The mind sleeps. This phone has no built-in mind for apps, but you can bring one — a single ~530 MB file wakes it, fully on-device (Settings → Mind).</string>
+    <string name="home_banner_asleep">The mind sleeps. This phone has no built-in mind for apps, but you can bring one — a single file (~%1$s) wakes it, fully on-device (Settings → Mind).</string>
     <string name="home_banner_bring">Bring a mind</string>
     <string name="home_input_hint">Say something…</string>
     <string name="home_send">Send</string>

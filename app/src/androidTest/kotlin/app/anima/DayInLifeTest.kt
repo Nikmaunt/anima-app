@@ -349,6 +349,13 @@ class DayInLifeTest {
         const val IMPORTED_FACT = "keeps a tiny succulent alive"
         const val CAPSULE_TO_FUTURE = "future us: remember this first day"
         const val HOLD_MILLIS = 7L * 24 * 60 * 60 * 1000
-        const val TIMEOUT_MILLIS = 60_000L
+
+        // v0.7: 60s did not survive a COLD emulator boot from a slow disk
+        // (GMD boots fresh every run; first-after-boot run needs >60s to the
+        // first frame, warm runs pass in seconds — diagnosed live, audit-v06).
+        // This is a wall-clock SAFETY NET only; progress is still driven
+        // exclusively by the paused main clock, so a larger net changes
+        // nothing about determinism — it only stops punishing cold starts.
+        const val TIMEOUT_MILLIS = 240_000L
     }
 }

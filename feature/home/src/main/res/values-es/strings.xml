@@ -44,7 +44,7 @@
     <string name="home_banner_downloadable">Su mente puede despertar en este teléfono — el sistema necesita traerla una sola vez.</string>
     <string name="home_banner_wake">Despertar la mente</string>
     <string name="home_banner_downloading">La mente está despertando… (descarga del sistema)</string>
-    <string name="home_banner_asleep">La mente duerme. Este teléfono no trae una mente integrada para apps, pero puedes traer una — un solo archivo de ~530 MB la despierta, todo en el dispositivo (Ajustes → Mente).</string>
+    <string name="home_banner_asleep">La mente duerme. Este teléfono no trae una mente integrada para apps, pero puedes traer una — un solo archivo (~%1$s) la despierta, todo en el dispositivo (Ajustes → Mente).</string>
     <string name="home_banner_bring">Traer una mente</string>
     <string name="home_input_hint">Di algo…</string>
     <string name="home_send">Enviar</string>

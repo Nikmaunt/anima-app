@@ -69,13 +69,17 @@ fun ConceptGallery(
             ) {
                 val controller = rememberCreature(concept, seed)
                 controller.setBodyState(BodyState.Resting)
+                // v0.7 (audit-v06 EYES-ONLY №1): the creature takes what is
+                // LEFT after the label, not an aspect-driven height — with
+                // aspectRatio(1.25f) a 411dp-wide screen left the label ~2dp
+                // and onboarding shipped with invisible concept names.
                 CreatureSurface(
                     controller = controller,
                     night = true,
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .aspectRatio(1.25f),
+                            .weight(1f),
                     interactive = false,
                 )
                 Text(
