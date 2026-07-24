@@ -71,8 +71,8 @@ ktlintPlugin = "13.1.0"
 ktlintEngine = "1.7.1"
 # --- Test ---
 junit4 = "4.13.2"
-truth = "1.4.4"
-turbine = "1.2.0"
+truth = "1.4.5"
+turbine = "1.2.1"
 robolectric = "4.14.1"
 # Screenshot regression (v0.4 Phase 0.4): Roborazzi rides the existing
 # Robolectric+Compose test stack; goldens live in src/test/screenshots.
