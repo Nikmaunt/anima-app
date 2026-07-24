@@ -1,40 +1,51 @@
-# Handoff — v0.6 autonomous run, 2026-07-19/20
+# Handoff — v0.7 autonomous run, 2026-07-24 (IN PROGRESS)
 
-Run COMPLETED in-session; this file is retained as the protocol requires.
-Final state = the committed tree plus the session's final report. Key
-documents this run: docs/audit-v05.md, docs/research-v6.md, ADR-018/019,
-CHANGELOG.md, docs/release/{signing,closed-testing-plan}.md,
-docs/manual-checklist-s24-v6.md, docs/store/store-listing-v6.md,
-data-safety FINAL, threat-model addendum v0.6, tools/qwen-int4/.
+Mandate: deep audit of v0.6 + LiteRT-LM engine as additive second runtime
+(ADR-016 executed, not revised) + freshness research + claim hygiene.
 
-- Phases 0–3 done; Phase 1's ARTIFACT itself blocked by environment (C:
-  disk filled during toolchain install → WSL service wedged; host reboot
-  required, out of session mandate). convert.sh is the one-command
-  deliverable; ADR-018 outcome row 3 applies to this build (empty pack).
-- v0.6 versionCode 6; release APK/AAB build SIGNED locally (upload key in
-  ../anima-keys, docs/release/signing.md).
-- CI is REAL now: .github/workflows/ci.yml (actionlint-clean). Badge URL
-  in README needs the owner's GitHub org/repo substituted on first push.
-- Run findings (the E2E discipline paying rent again):
-  (1) performScrollTo DEADLOCKS under the paused-clock frame-pump regime —
-  jdb-verified; semantics actions / raw swipes are the law now (recorded
-  in DayInLifeTest comments).
-  (2) BoxWithConstraints was replaced by LocalConfiguration in the home
-  scaffold before (1) was proven the real culprit; the replacement is
-  kept — it is simpler and subcomposition buys nothing there.
-  (3) Two ideation cards (№5 petting haptics, №13 hatch day) were already
-  shipped in v0.3 — stale backlog cards, remarked in ideation-v5.
-  (4) The app had NO launcher icon through v0.5 (platform default robot);
-  fixed only now. Audits: check the obvious next time.
-- Environment lessons for future runs on this machine: WSL VHDX lives on
-  an always-nearly-full C: — big toolchains go to /mnt/d (convert.sh now
-  defaults there); GMD emulators are qemu-system-x86_64-HEADLESS.exe (the
-  non-headless name misses them in tasklist); killed gradle invocations
-  leave zombie executions holding the GMD device — always
-  `gradlew --stop` + kill emulators + reset
-  `gradle-managed/active_gradle_devices` (MDLockCount) before rerunning;
-  TaskStop of a piped gradle run does NOT stop the daemon's execution.
-- Unproven risks carried to S24 checklist v6: §0 int4-Qwen on Exynos
-  (artifact first!), §0b wallpaper night battery (THIRD carry — v0.7 must
-  cut the listing claim if unrun), §0c RU quality on int4, §0d live-data
-  upgrade, §0e signed-release R8 behavior, §0f folds.
+## Progress
+
+- [x] Phase 0 — fresh read-only audit of v0.6: docs/audit-v06.md.
+  First run with ZERO fabricated claims. Full local loop green (92 units
+  forced re-run, 46 goldens verified, detekt/ktlint/lintVital/bundle).
+  Live-emulator eyes pass (AVD `eyes34` google_apis-34 on D:) — launcher
+  icon real, FLAG_SECURE live-proven (soul screencap = 0 bytes), two
+  defects queued: ConceptGallery onboarding labels crushed to ~2dp;
+  18 stale "~530 MB" strings (3 keys × 6 locales).
+  GMD: first run FAILED — AVD went to full C: (needs 7.2 GB); rerun in
+  flight with ANDROID_AVD_HOME=D:\Android\avd (the v0.6 lesson, now twice).
+- [ ] Phase 1 — three research agents in flight (runtime/policy/deps).
+  Results → docs/freshness-2026-07.md + ADR-020 + addenda.
+- [ ] Phase 2 — LiteRtLmMindEngine (flag OFF, CPU-only enforced by test),
+  NetworkIsolationTest coverage, JVM smoke (ANIMA_JVM_LLM_SMOKE=1).
+- [ ] Phase 3 — fixes: ConceptGallery labels; 530 MB → registry-driven
+  size; patch bumps per research; README/CHANGELOG 0.7.0/7.
+  NOTE Phase 3.2: exhaustive search shows the live-wallpaper battery claim
+  DOES NOT EXIST in docs/store/* (no "wallpaper" match in any listing file,
+  6 locales, nor screenshot-scenario) — the §0b listing-claim obligation is
+  satisfiable only vacuously; record in report, fix checklist wording.
+
+## Environment facts (this session)
+
+- C: is 100% full (2.1 GB free) — everything big goes to D:.
+  GMD AVD: ANDROID_AVD_HOME=D:\Android\avd. Eyes-pass AVD `eyes34` also
+  lives there (delete when done).
+- Emulator for eyes pass: `emulator -avd eyes34 -no-window` + adb
+  screencap/uiautomator works fine for screen review; FLAG_SECURE screens
+  yield 0-byte screencaps (by design).
+
+## Key architecture notes for Phase 2 (read before coding)
+
+- MindEngine / LocalMindEngine in core/model/Mind.kt; tier ladder in
+  core/mind/TieredMindEngine.kt injects GemmaMindEngine directly — the
+  local-engine flag must swap the GEMMA-tier implementation, not the
+  ladder (TierSelection stays engine-agnostic via locator.installed).
+- Prompt budgets already registry-driven: MindModelSpec.{maxTokens,
+  promptFormat, stopTokens, promptCharBudget} (MindModelRegistry.kt).
+- Prefs: core/data/prefs/AnimaPrefs.kt (DataStore); no developer section
+  exists yet in Settings.
+- NetworkIsolationTest (app/src/test) walks ALL module sources excluding
+  paths containing "test" and all *.gradle.kts for network needles — the
+  JVM smoke's download code must live under src/test of its module.
+- Direct-link download field already accepts .litertlm
+  (`mind_url_hint`: "https://… (.task / .litertlm)").
