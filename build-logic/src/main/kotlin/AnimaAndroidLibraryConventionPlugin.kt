@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.LibraryExtension
+import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -24,6 +25,16 @@ class AnimaAndroidLibraryConventionPlugin : Plugin<Project> {
                     // Debug only — release output is untouched.
                     isPseudoLocalesEnabled = true
                 }
+            }
+        }
+        extensions.configure<LibraryAndroidComponentsExtension> {
+            // v0.7: modules without androidTest sources must not build a
+            // test APK at all — an empty one lacks the instrumentation
+            // runner dependency and DIES with ClassNotFoundException on the
+            // device (surfaced by the GMD suite after the AGP 8.13.2 bump).
+            beforeVariants {
+                it.androidTest.enable = it.androidTest.enable &&
+                    projectDir.resolve("src/androidTest").exists()
             }
         }
     }

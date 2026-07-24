@@ -23,6 +23,23 @@ ADR-020, docs/manual-checklist-s24-v7.md, CHANGELOG 0.7.0.
 - §0b wallpaper listing claim: verified ABSENT from all store texts ×6
   locales — obligation vacuous; measurement stays on the S24 list.
 
+OPEN test-infra defect (v0.8 backlog, full diagnostic trail below):
+DayInLifeTest on THIS machine. (1) ATD GMD: emulator screen stays 100%
+black for the test's whole life (frame-by-frame screencap, all pixels
+0,0,0) — no frames render at all; recreating the GMD device from
+scratch does not help; the SAME apk on a google_apis AVD renders and
+passes onboarding→import. Environment defect of ATD-on-this-machine —
+CI's Linux KVM GMD is a different environment (untested this session).
+(2) The virtual-frame pump needed a 2ms yield (committed) — without it
+slow images starve the main looper and the FIRST composition never
+lands. (3) The yield surfaced a deterministic IME race in the soul
+import step — fixed (closeSoftKeyboard + swipe wait, committed) and
+proven to pass. (4) The scenario tail (post-export) still hangs here —
+NOT diagnosed to root cause; candidates: another gesture-vs-IME block
+in the export/share step. The unit/golden/lint loop and the other four
+device suites are green; the E2E needs one more debugging session,
+ideally on the CI runner or a faster host.
+
 Environment lessons (this machine, this session):
 - C: is 100% full: GMD AVD → ANDROID_AVD_HOME=D:\Android\avd (without it
   GMD fails needing 7.2 GB on C:); LLM smoke cache → ANIMA_JVM_LLM_CACHE.

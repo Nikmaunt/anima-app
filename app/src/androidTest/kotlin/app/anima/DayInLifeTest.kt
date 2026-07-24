@@ -248,7 +248,23 @@ class DayInLifeTest {
         compose
             .onNodeWithTag("soul.import.input")
             .performTextInput("## Preferences\n- $IMPORTED_FACT")
-        waitForTag("soul.import.find")
+        // v0.7: focusing the input raises the IME, which resizes the Lazy
+        // viewport and pushes the import card (find button included) out of
+        // composition — reproducibly, once the pump got its 2ms yield and
+        // the starved main looper started processing the IME show at all.
+        // Close the keyboard instead of swiping: touch gestures with the
+        // IME up block under the paused clock (the performScrollTo lesson
+        // in a new costume — a swipe-loop here hung past every deadline).
+        androidx.test.espresso.Espresso
+            .closeSoftKeyboard()
+        waitForCondition("import find button recomposes after IME hides") {
+            if (nodes(hasTestTag("soul.import.find")).isNotEmpty()) {
+                true
+            } else {
+                compose.onNodeWithTag("soul.list").performTouchInput { swipeUp() }
+                false
+            }
+        }
         compose.onNodeWithTag("soul.import.find").performSemanticsAction(SemanticsActions.OnClick)
         // The candidate row lands BELOW the import card — swipe it into
         // composition the same way.
@@ -339,6 +355,15 @@ class DayInLifeTest {
                 throw AssertionError("Timed out after ${timeoutMillis}ms waiting until: $what")
             }
             compose.mainClock.advanceTimeByFrame()
+            // v0.7: a 2ms real-time yield between virtual frames. Without it
+            // the unthrottled pump saturates the main looper and STARVES the
+            // app's own startup work on slow software-rendered ATD images —
+            // the first composition never lands and the very first
+            // waitForTag times out at any deadline (diagnosed live: warm
+            // google_apis passes, ATD hangs; GC churn with zero progress).
+            // Determinism is untouched: virtual time still advances only
+            // through this pump.
+            SystemClock.sleep(2)
         }
     }
 
