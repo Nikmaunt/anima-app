@@ -6,6 +6,45 @@ while pre-1.0 (MINOR = run number); `versionCode` = MINOR while pre-1.0,
 switching to `MAJOR*10000 + MINOR*100 + PATCH` at 1.0.0 (documented ahead of
 time so the pre-1.0 codes 1…N stay forever below any post-1.0 code).
 
+## [0.7.0] — 2026-07-24
+
+The runtime-future run: audited past, prepared successor.
+
+### Added
+- LiteRT-LM engine (`LiteRtLmMindEngine`) as the additive second local
+  runtime behind the same `MindEngine` interface (ADR-020): debug builds
+  only, developer flag default OFF, CPU backend enforced by test
+  (`LiteRtLmCpuOnlyTest`); tasks-genai remains the shipped runtime.
+- JVM inference smoke (`tools/litertlm-smoke`, env-gated): the project's
+  first no-phone inference — litertlm-jvm 0.14.0 + CPU + Qwen2.5-1.5B q8
+  `.litertlm`, run green in-session.
+- NetworkIsolationTest v7: mind-module dependency allowlist (14 tests);
+  litertlm pinned debug-only.
+- Developer section in Settings (debug builds), 6 locales.
+- docs: audit-v06 (first audit with zero fabricated claims — and the
+  first with a live-emulator eyes pass), freshness-2026-07 (runtime /
+  Play policy / EU AI Act / dependency research with dated citations),
+  ADR-020, manual checklist v7.
+
+### Fixed
+- Onboarding concept labels were crushed to ~2dp on 411dp-wide screens
+  (ConceptGallery fixed-height cell) — invisible since v0.1, caught by
+  the first live-emulator eyes pass.
+- Stale "~530 MB" model-size copy (3 keys × 6 locales) now formats the
+  registry default (~1.2 GB) — copy can no longer drift from ADR-018.
+- Day-in-life E2E wall-clock safety net 60s→240s: cold-emulator first
+  runs from a slow disk exceeded 60s to first frame (test-infra, not an
+  app regression; virtual-clock determinism unchanged).
+
+### Changed
+- Same-line patch bumps (no security-mandated bumps existed this cycle):
+  AGP 8.13.2, lifecycle 2.9.4, navigation 2.9.8, WorkManager 2.10.5,
+  truth 1.4.5, turbine 1.2.1. OSS licenses export refreshed (227 libs).
+- Store-materials sweep: the live-wallpaper battery claim mandated for
+  removal by §0b turned out to NEVER have existed in any listing text
+  (6 locales searched) — obligation closed as vacuous, rule "no
+  battery/wallpaper marketing until measured" stands.
+
 ## [0.6.0] — 2026-07-19
 
 The release-engineering run: the path to Play closed testing.

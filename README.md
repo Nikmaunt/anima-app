@@ -17,11 +17,12 @@ encrypted database, and whose "soul" exports as a single file.
 Localized end to end: EN · RU · PL · DE · ES · JA (per-app language switch,
 localized mind routing with an honest English-fallback badge).
 
-## Hard guarantees (v0.6)
+## Hard guarantees (v0.7)
 
 | Guarantee | Mechanism |
 |---|---|
-| Two-module network world | `INTERNET` originates from exactly `:core:model-delivery` (model bytes in) and `:core:cloud-mind` (opt-in BYOK) — enforced by `NetworkIsolationTest` v6 (13 tests over manifests, merged manifest, sources, version catalog, build files); no third-party HTTP stack exists in the catalog at all |
+| Two-module network world | `INTERNET` originates from exactly `:core:model-delivery` (model bytes in) and `:core:cloud-mind` (opt-in BYOK) — enforced by `NetworkIsolationTest` v7 (14 tests over manifests, merged manifest, sources, version catalog, build files, per-module dependency allowlists); no third-party HTTP stack exists in the catalog at all |
+| One shipped local runtime | The GEMMA tier runs on MediaPipe tasks-genai; the LiteRT-LM successor exists as a debug-only second engine behind a developer flag (default OFF, CPU-only by test — ADR-020). Release APKs carry no LiteRT-LM runtime: the dependency is `debugImplementation` and the DI binding lives in the debug source set |
 | Local-first mind | Nano → registry model (pack/download/SAF) → honest sleep; the CLOUD tier speaks **only** when the user enables it with their own endpoint + key, is always labeled on screen, and degrades to local when offline |
 | Zero-setup model | Play Asset Delivery fast-follow pack (ADR-010/017/018); sideloads fall through to download/SAF |
 | Local encrypted storage | SQLCipher (4.17.0), random passphrase wrapped by Android Keystore; corrupt key files fail loudly; migrations device-tested on a ciphered lived-in v1 database (`EncryptedUpgradeDeviceTest`) |
