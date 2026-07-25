@@ -1,7 +1,21 @@
 # ADR-018: what rides the mind pack by default (v0.6)
 
-Status: accepted
+Status: accepted, **SUPERSEDED IN PART by [ADR-021](ADR-021-pack-fits-q8.md) (v0.8)**
 Date: 2026-07-19
+
+> **Read ADR-021 first if you are here for a decision.** Two premises of
+> this ADR were tested in v0.8 and one of them is FALSE:
+> - «q8 is ~1.57–1.60 GB — over the 1.5 GB per-pack budget» — **FALSE.**
+>   Play applies the limit to the *compressed download* size; measured,
+>   the q8 lands 8.1% UNDER it. Size never was the blocker.
+> - «tasks-genai 0.10.35 documentation implies `.litertlm` support; the
+>   minimum version that reads it is undocumented — smoke-gated on
+>   device» — **the gate ran, and the answer is NO**: the runtime demands
+>   a SentencePiece tokenizer and refuses Qwen `.litertlm` outright.
+>
+> Net effect on the outcome matrix below: **row 2 applies, not row 3**,
+> and the int4 conversion is no longer the owner's blocker #1 because it
+> would not lift this one.
 
 ## Context
 

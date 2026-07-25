@@ -1,5 +1,9 @@
-This asset pack ships one on-device language model artifact. Whichever
-recognized model rides the slot, the matching notice below applies.
+This asset pack MAY carry one on-device language model artifact. In the
+current build the slot is EMPTY (ADR-021) and the model is obtained by
+the app at first run instead. The notices below are shipped
+unconditionally so that whichever recognized model comes to ride the
+slot — or is downloaded by the app — its notice has already travelled
+with the application.
 
 --- Qwen models (Qwen2.5 / Qwen3 family) ---
 
