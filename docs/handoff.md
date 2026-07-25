@@ -111,8 +111,9 @@ ADR-020, docs/manual-checklist-s24-v7.md, CHANGELOG 0.7.0.
   JVM-СМОУКА, а НЕ «нашим продуктовым дефолт-паком» — на тот момент
   дефолтом пака был пустой слот, а целевым артефактом int4-конверсия
   (ADR-018, матрица исходов, строка 3). Судьба содержимого пака решена
-  заново измерением в **ADR-021**: официальный q8 влезает в лимит Play
-  с запасом 8.1%, пак наполняется им, int4 уходит с критического пути.
+  заново в **ADR-021**: официальный q8 влезает в лимит Play с запасом
+  8.1%, НО дефолтный движок tasks-genai его не читает — **пак остаётся
+  ПУСТЫМ**, int4 уходит с критического пути как не решающая проблему.
 - Phase 3: ConceptGallery weight(1f) fix; 530MB→registry-fed size (one
   Formatter path, live "~1.2 GB"); patch bumps ×3 batches each with a
   full green loop; licenses export 227 libs (litertlm included);
