@@ -16,3 +16,13 @@ captures/
 *.keystore
 *.jks
 keystore.properties
+
+# Model weights never enter the repo (ADR-010/021). mind-pack/.gitignore
+# already fences the pack's asset dir; this is the repo-wide net, because
+# v0.8 copies real 1.5 GB artifacts into the tree to measure bundle size
+# and pushes them to devices — one stray path must not be able to commit
+# a gigabyte. Cache lives outside the repo (D:\Android\llm-cache).
+*.litertlm
+*.task
+*.gguf
+*.tflite

@@ -6,6 +6,63 @@ while pre-1.0 (MINOR = run number); `versionCode` = MINOR while pre-1.0,
 switching to `MAJOR*10000 + MINOR*100 + PATCH` at 1.0.0 (documented ahead of
 time so the pre-1.0 codes 1…N stay forever below any post-1.0 code).
 
+## [0.8.0] — 2026-07-25
+
+The unblocking run: no new features, only owner blockers taken off the
+critical path and process holes from v0.7 closed.
+
+### Changed
+- **The size blocker is disproved; a harder one took its place (ADR-021).**
+  ADR-018 had compared the model's on-disk size against Play's per-pack
+  limit; Play measures *compressed download size*. Measured with the real
+  official q8 in the pack: it deflates to 1,378,024,613 bytes (14%), and
+  `bundletool get-size total` reports 1,393,939,118 bytes MAX including
+  the base — **8.1% under** the strict decimal reading of the 1.5 GB limit
+  (14.4% under the binary one), so the decimal-vs-binary ambiguity decides
+  nothing. Then Phase D asked the runtime directly: **tasks-genai 0.10.35,
+  the shipped default engine, refuses the file** — `INVALID_ARGUMENT:
+  SentencePiece tokenizer is not found in the model`, in 0.14 s. So the
+  pack still ships EMPTY, now under ADR-018's outcome row 2 instead of
+  row 3. `tools/qwen-int4` leaves the critical path not because size is
+  solved but because an int4 Qwen would carry the same HF tokenizer and
+  hit the same wall (hypothesis, marked UNVERIFIED — no int4 artifact
+  exists to test).
+  LiteRT-LM on the same file is **inconclusive**: it ran 76 s, well past
+  where tasks-genai died, then `lowmemorykiller` took the process — a
+  2 GB emulator against a 1.6 GB model, an environment limit, not a
+  verdict.
+- Documentation corrected where v0.7 mis-stated fact: "q8 = our product
+  default pack" contradicted ADR-017/018 (q8 was the JVM smoke's model);
+  the EU AI Act Art. 50 "obvious from context" conclusion is a legal
+  interpretation and is now marked UNVERIFIED.
+
+### Added
+- `docs/audit-v07.md` — independent re-check of v0.7. Its "no FABRICATED"
+  claim is confirmed, and all three unexplained number discrepancies are
+  resolved by tool output (92→103 units = +11 tests added by v0.7, named
+  per file; goldens were 46 at every release commit, none added in v0.7;
+  licenses 222→227 = litertlm plus bumps).
+- `core/mind/src/androidTest/.../AndroidRuntimeReadsLitertlmTest.kt` — an
+  emulator-runnable check that an *Android* runtime reads our `.litertlm`,
+  exercising **both** engines against one file. Self-gating on the pushed
+  model, so the default CI skips it. Enabled by a fact established this
+  run: tasks-genai 0.10.35 ships `jni/x86_64` (and x86), litertlm-android
+  0.14.0 ships `jni/x86_64` — so this question no longer needs a phone.
+  It says nothing about speed; the S24 gate §0 stays open.
+- Mandatory pre-flight disk procedure in `docs/handoff.md`, with the
+  40 GB threshold and the exact clean-up list — the condition that killed
+  v0.6's conversion and produced v0.7's false-red DoD.
+- Process rule: the lead agent may not clear its own red DoD item; it
+  takes a second fresh read-only subagent, or the item stays red.
+
+### Known issue (found this run, not fixed)
+- The committed `aboutlibraries.json` (227 entries) is **shadowed at
+  packaging** by a per-variant generated file: the debug APK carries 202
+  and the release bundle 192. Nobody ever sees 227, and CI's licenses
+  freshness check diffs an artifact that does not ship. This also explains
+  v0.6's "197" as a true observation. Choosing the correct number is an
+  owner/legal call, so it is documented rather than changed.
+
 ## [0.7.0] — 2026-07-24
 
 The runtime-future run: audited past, prepared successor.

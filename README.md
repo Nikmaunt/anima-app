@@ -17,7 +17,7 @@ encrypted database, and whose "soul" exports as a single file.
 Localized end to end: EN · RU · PL · DE · ES · JA (per-app language switch,
 localized mind routing with an honest English-fallback badge).
 
-## Hard guarantees (v0.7)
+## Hard guarantees (v0.8)
 
 | Guarantee | Mechanism |
 |---|---|
@@ -59,8 +59,16 @@ ANDROID_AVD_HOME=<see docs>  ./gradlew atd34DebugAndroidTest   # GMD suites
 ./gradlew :app:exportLibraryDefinitions   # refresh the OSS licenses JSON
 ```
 
-Model weights are **not** in git: the pack slot takes
-`qwen2.5-1.5b-instruct-int4.litertlm` produced by
-[tools/qwen-int4/convert.sh](tools/qwen-int4/convert.sh) (ADR-018), or stays
-empty — the app falls through to download/SAF paths honestly
+Model weights are **not** in git (`.gitignore` fences `*.litertlm`,
+`*.task`, `*.gguf`, `*.tflite` repo-wide, and `mind-pack/.gitignore` fences
+the asset dir again). **The pack slot currently ships EMPTY** and the app
+falls through to the download/SAF paths honestly
 (see `mind-pack/src/main/assets/README.md`).
+
+Why empty, as of v0.8 (ADR-021 — the reason changed, the outcome did not):
+size is no longer the obstacle — the official q8 measures 8.1% *under*
+Play's 1.5 GB per-pack limit once compressed. The obstacle is the runtime:
+`tasks-genai` 0.10.35, the shipped default engine, refuses to initialize on
+a Qwen `.litertlm` (`SentencePiece tokenizer is not found in the model`).
+[tools/qwen-int4/convert.sh](tools/qwen-int4/convert.sh) therefore no longer
+gates a release — an int4 build would carry the same tokenizer.
