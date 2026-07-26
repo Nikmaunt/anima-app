@@ -10,20 +10,41 @@ import com.google.ai.edge.litertlm.Backend
 import com.google.ai.edge.litertlm.Content
 import com.google.ai.edge.litertlm.Engine
 import com.google.ai.edge.litertlm.EngineConfig
+import com.google.ai.edge.litertlm.Message
+import com.google.ai.edge.litertlm.MessageCallback
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 import java.io.File
 import java.lang.management.ManagementFactory
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * v0.9 Phase B — the quality harness. The smoke next door answers "does this
  * version pair run at all"; this answers "is what it says worth shipping",
  * which is a different question and needs product prompts, not `Say hello`.
  *
- * Speed numbers come from the runtime's own [com.google.ai.edge.litertlm.BenchmarkInfo]
- * (`getLastPrefillTokensPerSecond` / `getLastDecodeTokensPerSecond` and real
- * token counts) rather than from wall-clock divided by a guess at the
- * tokenizer — prefill and decode are genuinely separated, not estimated.
+ * HOW THE SPEEDS ARE MEASURED, precisely — because the obvious route is
+ * closed. `Conversation.getBenchmarkInfo()` exists and would give the
+ * runtime's own prefill/decode counters, but calling it throws
+ * `INTERNAL: Benchmark is not enabled. Please make sure the BenchmarkParams
+ * is set in the EngineSettings`, and `EngineConfig` in litertlm-jvm 0.14.0
+ * has no such parameter (javap: its constructor is modelPath + three
+ * Backends + two Integers + String). So the native counters are unreachable
+ * from the Kotlin API at this version.
+ *
+ * Streaming here goes through the raw [MessageCallback] overload, not the
+ * `Flow` one: litertlm-jvm 0.14.0 was built against an older kotlinx-coroutines
+ * and its Flow wrapper dies with `NoSuchMethodError: SendChannel.close$default`
+ * against our pinned 1.10.2. Exactly the 0.x breakage ADR-020 signed up for.
+ *
+ * Instead prefill and decode are separated by streaming: time-to-first-chunk
+ * is the prefill side (and is the latency the user actually feels), and the
+ * remaining chunks over the remaining time are the decode side. Reply tokens
+ * are counted as emitted chunks; prompt tokens are `getTokenCount()` after
+ * the exchange minus those chunks. Both are the runtime's own tokenization,
+ * not a chars/4 guess — but they are wall-clock derived, so treat them as
+ * good to a few percent, not as instrument-grade.
  *
  * NUMBERS FROM THIS HARNESS DO NOT TRANSFER TO A PHONE. They are measured on
  * a desktop x86_64 CPU. Checklist gate §0 (Exynos 2400) stays open no matter
@@ -36,7 +57,6 @@ import java.lang.management.ManagementFactory
  *   ANIMA_JVM_LLM_BENCH_OUT=docs/model-bench-2026-07.md \
  *   gradlew :tools:litertlm-smoke:test --tests '*LocalMindBenchTest*'
  */
-@OptIn(com.google.ai.edge.litertlm.ExperimentalApi::class)
 class LocalMindBenchTest {
     @Test
     fun `benchmark every supplied model on product prompts`() {
@@ -83,25 +103,53 @@ class LocalMindBenchTest {
             // costs that would otherwise be charged to prompt #1.
             engine.createConversation().use { it.sendMessage(WARM_UP) }
 
-            speeds.appendLine("| # | prompt | prefill tok | prefill tok/s | decode tok | decode tok/s | TTFT s |")
+            speeds.appendLine("| # | prompt | prompt tok | prefill tok/s | reply tok | decode tok/s | TTFT s |")
             speeds.appendLine("|---|---|---:|---:|---:|---:|---:|")
             CASES.forEachIndexed { index, case ->
                 engine.createConversation().use { conversation ->
                     val reply = StringBuilder()
-                    conversation
-                        .sendMessage(case.prompt())
-                        .contents.contents
-                        .filterIsInstance<Content.Text>()
-                        .forEach { reply.append(it.text) }
-                    // Declared as a function, not a property (javap on the
-                    // 0.14.0 jar) — the ADR-020 rule stands: write against the
-                    // artifact, not against the blog.
-                    val b = conversation.getBenchmarkInfo()
+                    var chunks = 0
+                    val started = System.nanoTime()
+                    var firstChunkAt = 0L
+                    val done = CountDownLatch(1)
+                    val failure = AtomicReference<Throwable>()
+                    conversation.sendMessageAsync(
+                        case.prompt(),
+                        object : MessageCallback {
+                            override fun onMessage(message: Message) {
+                                val text =
+                                    message.contents.contents
+                                        .filterIsInstance<Content.Text>()
+                                        .joinToString("") { it.text }
+                                if (text.isEmpty()) return
+                                if (firstChunkAt == 0L) firstChunkAt = System.nanoTime()
+                                chunks++
+                                reply.append(text)
+                            }
+
+                            override fun onDone() = done.countDown()
+
+                            override fun onError(t: Throwable) {
+                                failure.set(t)
+                                done.countDown()
+                            }
+                        },
+                    )
+                    done.await()
+                    failure.get()?.let { throw it }
+                    val endAt = System.nanoTime()
+                    val ttft = (firstChunkAt - started) / 1e9
+                    val decodeSeconds = (endAt - firstChunkAt) / 1e9
+                    // getTokenCount() is the conversation's whole context after
+                    // the exchange, so the prompt side is that minus what we
+                    // counted coming back.
+                    val contextTokens = conversation.getTokenCount()
+                    val promptTokens = (contextTokens - chunks).coerceAtLeast(0)
                     speeds.appendLine(
-                        "| ${index + 1} | ${case.label} | ${b.lastPrefillTokenCount} | " +
-                            "%.1f".format(b.lastPrefillTokensPerSecond) + " | ${b.lastDecodeTokenCount} | " +
-                            "%.1f".format(b.lastDecodeTokensPerSecond) + " | " +
-                            "%.2f".format(b.timeToFirstTokenInSecond) + " |",
+                        "| ${index + 1} | ${case.label} | $promptTokens | " +
+                            "%.1f".format(if (ttft > 0) promptTokens / ttft else 0.0) + " | $chunks | " +
+                            "%.1f".format(if (decodeSeconds > 0) (chunks - 1) / decodeSeconds else 0.0) + " | " +
+                            "%.2f".format(ttft) + " |",
                     )
                     texts.appendLine("\n**${index + 1}. ${case.label}** — ${case.why}\n")
                     texts.appendLine("> " + reply.toString().trim().replace("\n", "\n> "))

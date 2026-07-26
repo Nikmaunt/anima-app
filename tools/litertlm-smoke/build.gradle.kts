@@ -23,6 +23,10 @@ dependencies {
     // benchmarking wording we do not ship would measure the wrong thing.
     // :core:model is a pure JVM module with no network surface.
     testImplementation(projects.core.model)
+    // The bench separates prefill from decode by streaming, which means
+    // collecting the engine's Flow (getBenchmarkInfo is unreachable — see the
+    // class KDoc), and that needs runBlocking at compile time.
+    testImplementation(libs.kotlinx.coroutines.core)
 }
 
 tasks.withType<Test>().configureEach {
