@@ -18,6 +18,11 @@ dependencies {
     testImplementation(libs.litertlm.jvm)
     testImplementation(libs.junit4)
     testImplementation(libs.truth)
+    // v0.9 Phase B: the bench feeds the model the PRODUCT's prompts
+    // (MindVoice.persona + MindPrompts.combine), not invented ones —
+    // benchmarking wording we do not ship would measure the wrong thing.
+    // :core:model is a pure JVM module with no network surface.
+    testImplementation(projects.core.model)
 }
 
 tasks.withType<Test>().configureEach {
