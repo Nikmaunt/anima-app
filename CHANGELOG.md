@@ -6,6 +6,73 @@ while pre-1.0 (MINOR = run number); `versionCode` = MINOR while pre-1.0,
 switching to `MAJOR*10000 + MINOR*100 + PATCH` at 1.0.0 (documented ahead of
 time so the pre-1.0 codes 1…N stay forever below any post-1.0 code).
 
+## [0.9.0] — 2026-07-26
+
+The run that asked the runtime the right question. No new features; one
+long-standing conclusion overturned by experiment, and two owner decisions
+returned to the agent that should have made them.
+
+### Changed
+- **The blocker was the CONTAINER, not the tokenizer (ADR-022).** Since
+  v0.6 the story was "Qwen has no SentencePiece tokenizer, so our engine
+  can't run it". v0.8 hardened that into "the shipped default engine
+  refuses the file" on the strength of a single measurement. The matrix
+  separates the variables and the story is wrong: `tasks-genai` 0.10.35
+  refuses *any* `.litertlm`, but reads the **same Qwen family in a
+  `.task` container** and answers — Qwen2.5-0.5B q8 `.task` in 2.9 s and
+  the product model Qwen2.5-1.5B q8 `.task` in 7.0 s, on the shipped
+  default engine, on an emulator. Tokenizer held constant, container
+  varied, so the container is the cause; the `SentencePiece tokenizer is
+  not found` text is the engine failing to parse the container.
+  Consequences: the six-language model is available **today** with no
+  engine change, no flag flip and no conversion; `.task` also packs
+  *smaller* than `.litertlm` (1,377,210,476 bytes, 8.2% under Play's
+  limit); and ADR-021's UNVERIFIED hypothesis that int4 would not have
+  helped is now **measured** — mixed-int4 `.litertlm` was refused exactly
+  like q8, so `tools/qwen-int4` closes with a proof instead of fatigue.
+- **LiteRT-LM does read `.litertlm` on Android.** v0.8's INCONCLUSIVE was
+  a 2 GB emulator against a 1.6 GB model, not the engine: on an 8 GB AVD
+  it initialized and produced a real reply in 29.8 s. ADR-020 is
+  unchanged all the same — the flag stays OFF and debug-only, because the
+  default engine now needs no replacing.
+- **Licence attribution: an arithmetic question, wrongly escalated.**
+  v0.8 handed the owner "decide which of 227/202/192 is legally
+  complete". Resolving both configurations programmatically shows all 35
+  delta libraries are test/androidTest/`debugImplementation`/tooling and
+  that release is a strict **subset** of the committed export — **zero**
+  shipped libraries lack attribution. 192 is correct, publication was
+  never blocked, and the thing that needed fixing was the CI check.
+
+### Added
+- `docs/adr/ADR-022-container-not-tokenizer.md` — the matrix, verbatim,
+  with the boundary stated in bold: an x86 emulator on a desktop CPU says
+  nothing about an Exynos 2400, so checklist gate §0 stays closed.
+- `:app:verifyReleaseLicenseAttribution` — CI now checks the artifact that
+  actually ships. The per-variant generated resource shadows the committed
+  export at resource merge, and the plugin's variant export tasks emit 227
+  regardless, so this is the only file carrying the shipping set. Proven
+  by negative control: deleting `androidx.room:room-runtime` from the
+  export fails the build by name.
+- `docs/model-bench-2026-07.md` + `LocalMindBenchTest` — the quality
+  harness, on the product's own prompts (`MindVoice.persona` +
+  `MindPrompts.combine`) in EN/RU/PL/JA, including a prompt-injection case
+  from notification text and a refuse-to-store-a-fact case.
+- `docs/audit-v08.md`, `docs/license-attribution-2026-07.md`,
+  `docs/manual-checklist-s24-v9.md`.
+- Background-process rule in `docs/handoff.md`: a v0.8 emulator task
+  outlived its run by nine hours writing verbose log to a full disk.
+
+### Known issues (found this run, not fixed)
+- **The emulator on this host stops booting after a hard kill** — qemu
+  wedges at ~0.2 GB, no console port, 2 s CPU per minute; recreating the
+  AVD does not help. Cost: the `litertlm-android` × 1.5 GB `.litertlm`
+  matrix cell is unfinished and `DayInLifeTest` (the E2E floor, open since
+  v0.7) could not be attempted at all.
+- `Conversation.getBenchmarkInfo()` is unreachable from litertlm-jvm
+  0.14.0: it throws `Benchmark is not enabled … BenchmarkParams … in the
+  EngineSettings`, and `EngineConfig` has no such parameter. The bench
+  therefore derives prefill/decode from streaming wall-clock.
+
 ## [0.8.0] — 2026-07-25
 
 The unblocking run: no new features, only owner blockers taken off the
