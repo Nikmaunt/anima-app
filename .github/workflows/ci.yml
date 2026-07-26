@@ -52,14 +52,17 @@ jobs:
           ./gradlew :app:exportLibraryDefinitions
           git diff --exit-code app/src/main/res/raw/aboutlibraries.json
 
-      - name: Release attribution covers everything that ships
-        run: ./gradlew :app:verifyReleaseLicenseAttribution
-
       - name: Release lint (lintVital)
         run: ./gradlew :app:lintVitalRelease
 
       - name: Debug APK + unsigned release bundle
         run: ./gradlew :app:assembleDebug :app:bundleRelease
+
+      # Must follow the bundle step: it reads the per-variant attribution that
+      # the release build generates, and is deliberately not wired to generate
+      # it itself (see the task's comment in app/build.gradle.kts).
+      - name: Release attribution covers everything that ships
+        run: ./gradlew :app:verifyReleaseLicenseAttribution
 
       - name: Upload golden diffs on failure
         if: failure()

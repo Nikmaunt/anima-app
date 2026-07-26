@@ -16,6 +16,7 @@ import org.junit.Assume.assumeTrue
 import org.junit.Test
 import java.io.File
 import java.lang.management.ManagementFactory
+import java.time.LocalDate
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
 
@@ -65,7 +66,8 @@ class LocalMindBenchTest {
             System.getenv("ANIMA_JVM_LLM_BENCH") == "1",
         )
         val models =
-            System.getenv("ANIMA_JVM_LLM_BENCH_MODELS")
+            System
+                .getenv("ANIMA_JVM_LLM_BENCH_MODELS")
                 .orEmpty()
                 .split(';', ',')
                 .map { it.trim() }
@@ -156,36 +158,40 @@ class LocalMindBenchTest {
                 }
             }
         }
-        out.append(speeds).appendLine()
-        out.appendLine("Peak JVM heap after this model: ${peakHeapMb()} MiB " +
-            "(process RSS is larger — native weights live outside the heap).\n")
+        out.append(speeds)
+        out.appendLine()
+        out.appendLine(
+            "Peak JVM heap after this model: ${peakHeapMb()} MiB " +
+                "(process RSS is larger — native weights live outside the heap).\n",
+        )
         out.appendLine("### Replies, verbatim").append(texts)
         return out.toString()
     }
 
     private fun header(): String {
-        val runtime = Runtime.getRuntime()
+        val today = LocalDate.now().toString()
+        val cpus = Runtime.getRuntime().availableProcessors()
+        val os = System.getProperty("os.name")
+        val arch = System.getProperty("os.arch")
+        val jvm = System.getProperty("java.version")
         return """
-            # Local-mind bench — host CPU, ${'$'}{java.time.LocalDate.now()}
+            # Local-mind bench — host CPU, $today
 
             > **These numbers say nothing about a phone.** Measured on a desktop
             > x86_64 CPU; the product target is an Exynos 2400. Checklist gate §0
             > stays open. What DOES transfer is the *text* — reply quality is a
             > property of the model, not of the silicon.
 
-            Host: ${System.getProperty("os.name")} ${System.getProperty("os.arch")},
-            ${runtime.availableProcessors()} logical CPUs, JVM
-            ${System.getProperty("java.version")}, engine litertlm-jvm 0.14.0,
-            backend CPU (ADR-020).
+            Host: $os $arch, $cpus logical CPUs, JVM $jvm, engine
+            litertlm-jvm 0.14.0, backend CPU (ADR-020).
 
             Prompts are the product's own: the system persona comes from
             `MindVoice.persona` and is assembled by `MindPrompts.combine`, so what
             the model sees here is what it sees in the app.
-        """.trimIndent().replace("${'$'}{java.time.LocalDate.now()}", java.time.LocalDate.now().toString())
+            """.trimIndent()
     }
 
-    private fun peakHeapMb(): Long =
-        ManagementFactory.getMemoryMXBean().heapMemoryUsage.used / (1024 * 1024)
+    private fun peakHeapMb(): Long = ManagementFactory.getMemoryMXBean().heapMemoryUsage.used / (1024 * 1024)
 
     private class Case(
         val label: String,

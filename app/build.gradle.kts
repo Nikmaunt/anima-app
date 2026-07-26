@@ -50,12 +50,18 @@ val verifyReleaseLicenseAttribution by tasks.registering {
     // Ordering is not optional: run before the generator and the "shipped"
     // file is stale or absent, which is how this task first went red on a
     // tree that was actually clean.
-    dependsOn("generateLibraryDefinitionsRelease")
     val committed = layout.projectDirectory.file("src/main/res/raw/aboutlibraries.json")
     val shipped =
         layout.buildDirectory.file("generated/aboutLibraries/release/res/raw/aboutlibraries.json")
-    inputs.file(committed)
-    inputs.file(shipped)
+    // Deliberately NOT wired with dependsOn/inputs.file on `shipped`. That
+    // path is an output of the aboutlibraries plugin which
+    // `packageReleaseResources` already consumes WITHOUT declaring a
+    // dependency; pulling the generator into the same task graph as
+    // `bundleRelease` makes Gradle fail the whole build on that pre-existing
+    // plugin wiring rather than on anything this check does.
+    // So this task reads what a release build has already produced, and says
+    // so plainly if that has not happened. CI runs it after the bundle step.
+    outputs.upToDateWhen { false }
     doLast {
         fun ids(f: File): Set<String> =
             Regex("\"uniqueId\"\\s*:\\s*\"([^\"]+)\"")
@@ -63,8 +69,15 @@ val verifyReleaseLicenseAttribution by tasks.registering {
                 .map { it.groupValues[1] }
                 .toSet()
 
+        val shippedFile = shipped.get().asFile
+        if (!shippedFile.isFile) {
+            throw GradleException(
+                "No release attribution to check at $shippedFile — build the release " +
+                    "variant first (gradlew :app:bundleRelease), then run this task.",
+            )
+        }
         val committedIds = ids(committed.asFile)
-        val shippedIds = ids(shipped.get().asFile)
+        val shippedIds = ids(shippedFile)
         val uncovered = (shippedIds - committedIds).sorted()
         logger.lifecycle(
             "license attribution: committed=${committedIds.size} shipped(release)=${shippedIds.size} " +
