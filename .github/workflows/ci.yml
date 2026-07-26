@@ -41,10 +41,19 @@ jobs:
       - name: Screenshot regression (Roborazzi verify)
         run: ./gradlew verifyRoborazziDebug
 
+      # Two checks, because they answer different questions. The first is a
+      # dependency-change detector on the committed export. The second is the
+      # legal one: the file the user actually sees is generated per variant
+      # and shadows the committed one at resource merge (v0.9 Phase L —
+      # committed 227, release 192), so freshness of the committed export
+      # says nothing about whether the shipping attribution is complete.
       - name: Licenses export is fresh (fails if a dep changed without it)
         run: |
           ./gradlew :app:exportLibraryDefinitions
           git diff --exit-code app/src/main/res/raw/aboutlibraries.json
+
+      - name: Release attribution covers everything that ships
+        run: ./gradlew :app:verifyReleaseLicenseAttribution
 
       - name: Release lint (lintVital)
         run: ./gradlew :app:lintVitalRelease

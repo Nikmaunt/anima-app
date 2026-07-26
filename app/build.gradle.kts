@@ -26,6 +26,60 @@ aboutLibraries {
     }
 }
 
+// v0.9 Phase L. The committed export above is NOT what the user sees. The
+// plugin also generates a per-variant file into
+// build/generated/aboutLibraries/<variant>/res/raw/, and at resource merge
+// THAT one wins — the licenses screen renders it, and it is what ships.
+// The two sets differ (measured 2026-07-26: committed 227, debug 202,
+// release 192), so diffing only the committed export — as CI did through
+// v0.8 — leaves the shipping attribution unchecked.
+//
+// Note the export tasks cannot substitute for this: `exportLibraryDefinitions`
+// AND `exportLibraryDefinitionsRelease` both emit 227 (verified by running
+// them), i.e. the plugin's variant filter does not apply to the export path.
+// The generated resource is the only artifact carrying the shipping set.
+//
+// The invariant worth enforcing is legal, not cosmetic: every library that
+// actually ships must be covered by the attribution we publish. A superset
+// is fine (over-attribution harms nobody); a missing entry is a compliance
+// hole. So this fails on shipped-minus-committed, and only reports the
+// reverse.
+val verifyReleaseLicenseAttribution by tasks.registering {
+    description = "Fails if a library in the RELEASE artifact is missing from the committed attribution."
+    group = "verification"
+    // Ordering is not optional: run before the generator and the "shipped"
+    // file is stale or absent, which is how this task first went red on a
+    // tree that was actually clean.
+    dependsOn("generateLibraryDefinitionsRelease")
+    val committed = layout.projectDirectory.file("src/main/res/raw/aboutlibraries.json")
+    val shipped =
+        layout.buildDirectory.file("generated/aboutLibraries/release/res/raw/aboutlibraries.json")
+    inputs.file(committed)
+    inputs.file(shipped)
+    doLast {
+        fun ids(f: File): Set<String> =
+            Regex("\"uniqueId\"\\s*:\\s*\"([^\"]+)\"")
+                .findAll(f.readText())
+                .map { it.groupValues[1] }
+                .toSet()
+
+        val committedIds = ids(committed.asFile)
+        val shippedIds = ids(shipped.get().asFile)
+        val uncovered = (shippedIds - committedIds).sorted()
+        logger.lifecycle(
+            "license attribution: committed=${committedIds.size} shipped(release)=${shippedIds.size} " +
+                "committed-only=${(committedIds - shippedIds).size}",
+        )
+        if (uncovered.isNotEmpty()) {
+            throw GradleException(
+                "Release ships ${uncovered.size} librar(ies) with no entry in the committed " +
+                    "attribution — regenerate it (gradlew :app:exportLibraryDefinitions):\n" +
+                    uncovered.joinToString("\n") { "  - $it" },
+            )
+        }
+    }
+}
+
 android {
     namespace = "app.anima"
 
