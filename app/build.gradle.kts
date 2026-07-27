@@ -98,7 +98,9 @@ android {
 
     defaultConfig {
         applicationId = "app.anima"
-        // Scheme: CHANGELOG.md header — pre-1.0 versionCode = run number.
+        // Scheme: CHANGELOG.md header. versionCode stays the run number at
+        // 1.0.0 — the planned switch to MAJOR*10000+MINOR*100+PATCH is
+        // deferred there, with the reasoning, not silently skipped.
         versionCode = 10
         versionName = "1.0.0"
         // v0.5 day-in-life E2E: Hilt swaps the mind for a deterministic fake.
