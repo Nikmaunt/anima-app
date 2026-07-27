@@ -55,12 +55,21 @@ class GlowSkin {
                 (color.alpha * intensity).coerceIn(0f, 1f),
             )
             val b = brush ?: ShaderBrush(s).also { brush = it }
+            // v1.1 (defect D5): the rect must be wide enough that the shader
+            // has already faded to zero alpha before its own edge, otherwise
+            // the crop IS the edge and the creature sits on a hard-edged
+            // square. The shader's outer falloff is edge*2 where
+            // edge = uRadius*(1.35 + ripple), ripple <= RIPPLE_MAX — so alpha
+            // survives out to 2*(1.35 + 0.24) = 3.18 radii, and the corner of
+            // a 2.2-radius half-side rect sits at 2.2*sqrt(2) = 3.11 radii.
+            // The old half-side of 2.2 clipped a live gradient on all four
+            // sides. HALF_SIDE covers the diagonal with margin.
             drawRect(
                 brush = b,
-                topLeft = Offset(center.x - radius * 2.2f, center.y - radius * 2.2f),
+                topLeft = Offset(center.x - radius * HALF_SIDE, center.y - radius * HALF_SIDE),
                 size =
                     androidx.compose.ui.geometry
-                        .Size(radius * 4.4f, radius * 4.4f),
+                        .Size(radius * HALF_SIDE * 2f, radius * HALF_SIDE * 2f),
             )
         } else {
             drawCircle(
@@ -81,7 +90,21 @@ class GlowSkin {
         }
     }
 
-    private companion object {
+    internal companion object {
+        /** Upper bound of the shader's `ripple` term; mirrored in AGSL below. */
+        const val RIPPLE_MAX = 0.24f
+
+        /** Where the shader's alpha reaches zero, in radii: 2*(1.35 + ripple). */
+        const val FALLOFF_RADII = 2f * (1.35f + RIPPLE_MAX)
+
+        /**
+         * Half-side of the rect the shader is painted into, in radii. Must
+         * exceed FALLOFF_RADII so the fade completes before the crop; the
+         * corner of the rect is HALF_SIDE*sqrt(2) away, which is further
+         * still. Proven by GlowSkinFalloffTest.
+         */
+        const val HALF_SIDE = 3.4f
+
         /**
          * Radial glow with a breathing, noise-rippled rim. Cheap: one hash
          * noise sample per pixel inside the glow rect only.

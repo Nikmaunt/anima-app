@@ -114,10 +114,22 @@ fun AnimaTheme(
     // Pinnable for screenshot goldens (Phase 0.4): the seasonal tint reads
     // the wall clock, which would break goldens at season boundaries.
     seasonOverride: Season? = null,
+    /**
+     * v1.1: the creature's own hue, from its genome (docs/design-system-v11.md
+     * §2). Given one, the whole chrome — accent, background, surfaces — is
+     * derived from it, so each phone's app is coloured by the creature living
+     * in it. Left null the theme keeps the v1.0 fixed palette, which is what
+     * every existing golden was pinned against; additive by design.
+     */
+    creatureHueDeg: Float? = null,
     content: @Composable () -> Unit,
 ) {
     val season = seasonOverride ?: remember { Season.fromMonth(LocalDate.now().monthValue) }
-    val colors = (if (darkTheme) animaDarkColors() else animaLightColors()).seasoned(season)
+    val base =
+        creatureHueDeg
+            ?.let { SignatureHue.colors(it, night = darkTheme) }
+            ?: if (darkTheme) animaDarkColors() else animaLightColors()
+    val colors = base.seasoned(season)
     val scheme =
         if (darkTheme) {
             darkColorScheme(

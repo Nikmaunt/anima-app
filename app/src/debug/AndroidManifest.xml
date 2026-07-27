@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Debug-only surfaces. Nothing here reaches a release build: this manifest is
+  merged into the debug variant only, so CatalogActivity cannot ship.
+
+  CatalogActivity renders the v1.1 design system on a real device so it can be
+  screenshotted and looked at (docs/design-system-v11.md). It is the reason
+  this source set exists.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <activity
+            android:name=".DesignCatalogActivity"
+            android:exported="true"
+            android:label="Anima design catalog"
+            android:theme="@style/Theme.Anima" />
+    </application>
+</manifest>
