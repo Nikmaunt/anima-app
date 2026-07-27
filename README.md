@@ -80,9 +80,24 @@ Why empty, as of v0.9 — and this is now a **choice, not an obstacle**
   requirement.
 
 So the six-language model is available today on the default engine, with no
-engine change and no conversion. What remains before the slot is filled is
-**speed and quality on real silicon** (S24 checklist §0) plus a first Play
-Console upload — an owner decision, not an engineering blocker.
+engine change and no conversion — and v1.0 then asked the next question and
+got a harder answer.
+
+**What the model SAYS is not yet the creature (v1.0, ADR-023).** Measured
+with product prompts, five scenarios per language, verbatim replies in
+[docs/lang-matrix-2026-07.md](docs/lang-matrix-2026-07.md): English holds
+character; Russian, German, Spanish and Japanese are understandable but
+thin; **Polish is ungrammatical**, so the registry no longer claims it and
+Polish users get English behind a visible badge. Eight prompt revisions,
+each measured, took the acceptance score from 164/180 to 173/180 and
+eliminated the two v0.9 defects (a leaked system prompt, and the creature
+telling people it had saved a fact it had not). What no revision fixed is
+Qwen's assistant boilerplate — that is the model, not the wording.
+
+So before the pack slot is filled there is now a product decision as well
+as the measurements: **speed on real silicon** (S24 checklist §0) and
+**whether a creature that sometimes says "how can I assist you" is worth
+shipping 1.4 GB for** (§0g).
 [tools/qwen-int4/convert.sh](tools/qwen-int4/convert.sh) is closed for good:
 mixed-int4 `.litertlm` was refused exactly like q8, proving the conversion
 never addressed the real cause.

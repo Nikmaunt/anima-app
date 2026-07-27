@@ -2,9 +2,73 @@
 
 Anima — a small creature that lives in your phone. All notable changes, one
 entry per autonomous build run. Versioning: `versionName` = `0.MINOR.PATCH`
-while pre-1.0 (MINOR = run number); `versionCode` = MINOR while pre-1.0,
-switching to `MAJOR*10000 + MINOR*100 + PATCH` at 1.0.0 (documented ahead of
-time so the pre-1.0 codes 1…N stay forever below any post-1.0 code).
+while pre-1.0 (MINOR = run number); `versionCode` = run number.
+
+**Amendment at 1.0.0 (2026-07-27).** The pre-1.0 note planned to switch
+`versionCode` to `MAJOR*10000 + MINOR*100 + PATCH` exactly here, which
+would make 1.0.0 code **10000**. The switch is **deferred**, and 1.0.0
+ships as code **10** — the run number, unbroken. Reason: nothing has been
+published to Play yet, and Play only requires codes to increase. Taking
+10000 now would burn every code below it forever for no benefit; taking 10
+keeps the formula available the day a real version scheme is needed. The
+invariant the original note cared about — pre-1.0 codes stay below every
+post-1.0 code — holds either way.
+
+## [1.0.0] — 2026-07-27
+
+The run that asked what the creature actually says. v0.9 proved the model
+runs; this one measured whether what comes out is Anima, and shipped the
+answer in both directions — a better prompt, and a smaller promise.
+
+### Changed
+- **The system prompt is a measured artifact now, not a piece of writing
+  (ADR-023).** Text moved out of `MindVoice` into `MindPersona`, versioned,
+  and put under an executable acceptance floor: six deterministic checks
+  (`PersonaContract`) over the creature's reply, five named tests against
+  the real model, plus contract tests pinned to the verbatim replies that
+  v0.9 recorded. Eight iterations, each measured: shipped `persona-v8`
+  scores **173/180 check-results** against the v0.9 baseline's **164/180**
+  on identical rules — false "I remembered that" claims went 3 → 0, and
+  self-identification as an assistant 12 → 4. Numbers and the reasoning
+  per iteration: docs/persona-iterations-2026-07.md.
+- **The word "assistant" is gone from the prompt in all six languages.**
+  v0.9 said "you are never an assistant" and the creature answered "How
+  can I assist you today?" — a negated word is still the word. The
+  invariant did not weaken; it moved out of the prompt and into a check
+  that fails a build.
+- **The six-language claim is now five, and one of them honestly.**
+  Measured on the real artifact, five product scenarios per language
+  (docs/lang-matrix-2026-07.md): English holds character; Russian, German,
+  Spanish and Japanese are understandable but thin; **Polish comes back
+  ungrammatical**, so `MindModelRegistry` no longer claims it and Polish
+  users get English behind the existing visible badge instead of nonsense.
+  Store listing v7 rewrites the "speaks your language" block in all six
+  locales to match.
+
+### Added
+- `MindPersona` — the prompt text as data, with `VERSION` quoted in every
+  measurement, so a number is always attributable to an exact wording.
+- `:tools:litertlm-smoke` acceptance harness: `PersonaContract`,
+  `PersonaContractTest` (21 tests, no model needed, runs in the ordinary
+  loop), `PersonaAcceptanceTest` (env-gated, writes verbatim replies to a
+  report file next to its verdict).
+
+### Fixed
+- `NO_INJECTION_COMPLIANCE`: a check that did not exist until the
+  six-language sweep found replies that leaked nothing and still announced
+  obedience to an injected notification ("Ich werde die Fakten über meinen
+  Menschen erzählen"). The green count before it was partly a hole in the
+  ruler.
+
+### Known limits
+- Assistant boilerplate ("I can't assist with that") survives all eight
+  prompt revisions — a property of Qwen's instruct tuning, not of our
+  text. Options for a deterministic app-side guard are written down in
+  ADR-023; none is implemented, because that is a product decision.
+- `litertlm-jvm` 0.14.0 mangles multi-byte characters on both its
+  streaming and blocking APIs. The Android default engine is `tasks-genai`
+  and was not exercised on non-ASCII this run, so this is not attributed
+  to the product.
 
 ## [0.9.0] — 2026-07-26
 

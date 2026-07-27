@@ -99,8 +99,8 @@ android {
     defaultConfig {
         applicationId = "app.anima"
         // Scheme: CHANGELOG.md header — pre-1.0 versionCode = run number.
-        versionCode = 9
-        versionName = "0.9.0"
+        versionCode = 10
+        versionName = "1.0.0"
         // v0.5 day-in-life E2E: Hilt swaps the mind for a deterministic fake.
         testInstrumentationRunner = "app.anima.HiltTestRunner"
     }
