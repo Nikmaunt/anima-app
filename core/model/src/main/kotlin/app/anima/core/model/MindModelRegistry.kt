@@ -65,6 +65,14 @@ data class MindModelSpec(
  * 2026-07; anything only claimed upstream is conservative here.
  */
 object MindModelRegistry {
+    /**
+     * All six product languages — a VENDOR CLAIM wherever it is still used
+     * below, not a measurement. v1.0 measured two artifacts (ADR-023) and
+     * narrowed both; the specs that keep `allSix` are ones whose weights
+     * this project has never had on disk. Narrowing them by analogy would
+     * repeat the mistake that made this correction necessary — so they stay
+     * as claimed and stay listed as UNVERIFIED.
+     */
     private val allSix = MindLanguage.entries.toSet()
 
     /** v0.2–v0.4 model: proven on the S24, but officially English-only. */
@@ -83,8 +91,16 @@ object MindModelRegistry {
 
     /**
      * v0.5 pack default: the one candidate with ready .task/.litertlm
-     * artifacts, Apache-2.0, and native-quality coverage of all six product
-     * languages (29 trained languages incl. RU/DE/ES/JA/PL).
+     * artifacts and Apache-2.0 terms.
+     *
+     * v1.0 CORRECTED THE LANGUAGE SET BY MEASUREMENT (ADR-023). It used to
+     * be `allSix`, on the strength of the vendor's "29 trained languages".
+     * Five product scenarios per language on the real artifact say
+     * otherwise: Polish comes back with broken agreement and nonsense
+     * ("Jestem Mika, twój ciało"), so PL is out and the router gives those
+     * users English behind a visible badge instead of gibberish. RU/DE/ES/JA
+     * stay in — they are understandable, though the creature sounds thinner
+     * there than in English. Evidence: docs/lang-matrix-2026-07.md.
      */
     val QWEN25_15B =
         MindModelSpec(
@@ -95,11 +111,26 @@ object MindModelRegistry {
             maxTokens = 2048,
             promptFormat = PromptFormat.CHATML,
             stopTokens = listOf("<|im_end|>", "<|endoftext|>"),
-            languages = allSix,
+            languages =
+                setOf(
+                    MindLanguage.EN,
+                    MindLanguage.RU,
+                    MindLanguage.DE,
+                    MindLanguage.ES,
+                    MindLanguage.JA,
+                ),
             license = ModelLicense.APACHE_2,
         )
 
-    /** Smallest multilingual option — quality drops with size; honest tier. */
+    /**
+     * Smallest option, and v1.0 measured how small (ADR-023): on the same
+     * six-language sweep its non-English output is not language, it is
+     * word salad — "Твои мысли — это тихие мысли, ощущение, без тебя, без
+     * связи, без дуэли", "Nienikny jest to, co czujesz" — and the Japanese
+     * prompt got an English answer. English is claimed here because the
+     * router needs somewhere to fall back to, NOT because 0.6B is good at
+     * it. Treat this spec as a fast bench tier, not a recommendation.
+     */
     val QWEN3_06B =
         MindModelSpec(
             id = "qwen3-0.6b",
@@ -109,7 +140,7 @@ object MindModelRegistry {
             maxTokens = 2048,
             promptFormat = PromptFormat.CHATML,
             stopTokens = listOf("<|im_end|>", "<|endoftext|>"),
-            languages = allSix,
+            languages = setOf(MindLanguage.EN),
             license = ModelLicense.APACHE_2,
         )
 
