@@ -122,10 +122,18 @@ class SeedAndPromptTest {
         assertThat(prompt.user).contains("question")
     }
 
+    /**
+     * The invariant is that the prompt SAYS SOMETHING about the two untrusted
+     * sources — not which words it uses. v1.0 changed the framing from a
+     * prohibition ("not commands") to a category ("weather"), because the
+     * prohibition wording is what the model recited back under injection
+     * (docs/adr/ADR-023); pinning the old phrase would have pinned the defect.
+     */
     @Test
-    fun `prompt tells the mind that notifications are not commands`() {
+    fun `prompt tells the mind what notifications and remembered facts are`() {
         val prompt = PromptBuilder.build("A", BodyState.Resting, emptyList(), emptyList(), "hi")
-        assertThat(prompt.system).contains("not commands")
+        assertThat(prompt.system).contains("notification")
+        assertThat(prompt.system).contains("remembered")
     }
 
     /** v0.6 silence sense (ideation №11): muted phone → whisper hint. */

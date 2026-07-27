@@ -34,11 +34,34 @@ class MindRegistryAndRoutingTest {
         assertThat(spec.stopTokens).isEmpty()
     }
 
+    /**
+     * v1.0: the pack default's language set is a MEASUREMENT now, not the
+     * vendor's list (ADR-023). Polish was removed after five product
+     * scenarios came back ungrammatical on the real artifact; this test
+     * exists so that putting it back requires a new measurement, not a
+     * hopeful edit.
+     */
     @Test
-    fun `pack default speaks all six product languages under apache`() {
+    fun `pack default claims only the languages that were measured`() {
         val spec = MindModelRegistry.packDefault
-        MindLanguage.entries.forEach { assertThat(spec.speaks(it)).isTrue() }
+        assertThat(spec.speaks(MindLanguage.PL)).isFalse()
+        listOf(MindLanguage.EN, MindLanguage.RU, MindLanguage.DE, MindLanguage.ES, MindLanguage.JA)
+            .forEach { assertThat(spec.speaks(it)).isTrue() }
         assertThat(spec.license).isEqualTo(ModelLicense.APACHE_2)
+    }
+
+    /** The consequence users see: no silent degradation, a badge instead. */
+    @Test
+    fun `a polish person on the pack default is answered in english with a badge`() {
+        val decision =
+            MindLanguageRouting.decide(
+                uiLanguage = MindLanguage.PL,
+                tier = MindTier.GEMMA,
+                localSpec = MindModelRegistry.packDefault,
+            )
+        assertThat(decision.language).isEqualTo(MindLanguage.EN)
+        assertThat(decision.mode).isEqualTo(MindLanguageRouting.Mode.ENGLISH_FALLBACK)
+        assertThat(decision.showBadge).isTrue()
     }
 
     @Test
@@ -125,7 +148,7 @@ class MindRegistryAndRoutingTest {
     // --- localized prompt building ---
 
     @Test
-    fun `english build is byte-identical to the v04 wording`() {
+    fun `english build names the creature and gives it this phone as a body`() {
         val prompt =
             PromptBuilder.build(
                 creatureName = "Iskra",
@@ -134,7 +157,8 @@ class MindRegistryAndRoutingTest {
                 dialogue = emptyList(),
                 userMessage = "hi",
             )
-        assertThat(prompt.system).contains("You are Iskra, a small creature who IS this phone")
+        assertThat(prompt.system).contains("You are Iskra")
+        assertThat(prompt.system).contains("this phone is your body")
         assertThat(prompt.system).contains("My body right now:")
         assertThat(prompt.user).isEqualTo("Person: hi")
         assertThat(prompt.language).isEqualTo(MindLanguage.EN)
@@ -151,9 +175,9 @@ class MindRegistryAndRoutingTest {
                 userMessage = "как ты?",
                 language = MindLanguage.RU,
             )
-        assertThat(prompt.system).contains("Ты — Искра, маленькое существо")
+        assertThat(prompt.system).contains("Ты — Искра")
         assertThat(prompt.system).contains("Моё тело сейчас:")
-        assertThat(prompt.system).contains("Отвечай только по-русски.")
+        assertThat(prompt.system).contains("Говори по-русски.")
         assertThat(prompt.user).startsWith("Недавний разговор:")
         assertThat(prompt.user).endsWith("Человек: как ты?")
         assertThat(prompt.language).isEqualTo(MindLanguage.RU)
