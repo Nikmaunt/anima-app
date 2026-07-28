@@ -48,20 +48,34 @@ fun PillButton(
     }
 }
 
-/** Quiet secondary action. */
+/**
+ * Quiet secondary action.
+ *
+ * v1.1 adds [quiet]. A row of four identical accent links has no hierarchy —
+ * it was defect D7 in miniature on Home, where "Отдых" and "Настройки" shouted
+ * equally loudly despite being a daily thing and a chrome thing. `quiet` drops
+ * the label to `textDim`, which keeps it a real target and a real affordance
+ * while letting the accent mean "this is what you came for".
+ */
 @Composable
 fun GhostButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    quiet: Boolean = false,
 ) {
     val colors = LocalAnimaColors.current
     TextButton(onClick = onClick, modifier = modifier, enabled = enabled) {
         Text(
             text,
             style = MaterialTheme.typography.labelLarge,
-            color = if (enabled) colors.accent else colors.textDim,
+            color =
+                when {
+                    !enabled -> colors.textDim
+                    quiet -> colors.textDim
+                    else -> colors.accent
+                },
         )
     }
 }

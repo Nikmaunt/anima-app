@@ -176,7 +176,12 @@ fun HomeScreen(
                     .padding(horizontal = AnimaSpacing.m, vertical = AnimaSpacing.s)
                     .enterStaggered(0),
         ) {
-            Text(state.creatureName, style = MaterialTheme.typography.headlineMedium)
+            // displayMedium (32 Light), not headlineMedium (24 Normal): at 24
+            // the name sat only two steps above its own caption and the top of
+            // the screen had no anchor at all. The 44sp `hero` step is
+            // deliberately NOT used here — on this screen the hero is the
+            // body, and a giant number would compete with it.
+            Text(state.creatureName, style = MaterialTheme.typography.displayMedium)
             val days = state.daysTogether.toInt().coerceAtLeast(0)
             val daysText = pluralStringResource(R.plurals.home_days_together, days, days)
             Text(
@@ -198,7 +203,7 @@ fun HomeScreen(
         ActionRow(
             Modifier
                 .padding(horizontal = AnimaSpacing.m, vertical = AnimaSpacing.s)
-                .enterStaggered(3),
+                .enterStaggered(NOTICE_STAGGER_BASE + 3),
         ) {
             GhostButton(
                 stringResource(R.string.home_nav_rest),
@@ -219,6 +224,7 @@ fun HomeScreen(
                 stringResource(R.string.home_nav_settings),
                 onClick = onOpenSettings,
                 modifier = Modifier.testTag("home.settings"),
+                quiet = true,
             )
         }
     }
@@ -295,7 +301,7 @@ fun HomeScreen(
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                     viewModel.sayGoodnight()
                 },
-                index = 1,
+                index = NOTICE_STAGGER_BASE,
                 testTag = "home.goodnight",
             )
         }
@@ -309,7 +315,7 @@ fun HomeScreen(
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                     viewModel.wakeForDream()
                 },
-                index = 2,
+                index = NOTICE_STAGGER_BASE + 1,
                 testTag = "home.dream",
             )
         }
@@ -324,7 +330,7 @@ fun HomeScreen(
                     },
                 action = stringResource(R.string.home_ok),
                 onAction = viewModel::dismissMindNotice,
-                index = 2,
+                index = NOTICE_STAGGER_BASE + 2,
                 testTag = "home.notice",
             )
         }
@@ -407,8 +413,16 @@ internal fun HomeAdaptiveScaffold(
                     .fillMaxWidth()
                     .weight(1f),
             )
-            cards()
-            navRow()
+            // The notices and the way out are two different things and used to
+            // be one undifferentiated pile in the bottom quarter. `xl` between
+            // them is the same gap the design system uses everywhere else to
+            // mean "new group", and it is four times the spacing inside either
+            // one, so the boundary reads without a rule or a card.
+            Column(verticalArrangement = Arrangement.spacedBy(AnimaSpacing.xl)) {
+                Column { cards() }
+                navRow()
+            }
+            Spacer(Modifier.height(AnimaSpacing.m))
         }
     }
 }
@@ -446,6 +460,13 @@ private fun Notice(
         GhostButton(action, onClick = onAction, modifier = Modifier.testTag(testTag))
     }
 }
+
+/**
+ * The header enters first (0), then each notice, then the way out. Distinct
+ * indices matter: two blocks sharing one index appear simultaneously, which
+ * is the one thing a stagger is supposed to prevent.
+ */
+private const val NOTICE_STAGGER_BASE = 1
 
 /** WindowSizeClass "expanded" lower bound (dp) — the two-pane switch. */
 private const val EXPANDED_MIN_WIDTH_DP = 840
