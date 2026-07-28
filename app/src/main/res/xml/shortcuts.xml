@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- ADR-015: static App Shortcuts — Talk / Diary / Rest. Three of four
-     launcher slots; deterministic statics first (no dynamic mood icon in
-     v0.4). Actions are handled by MainActivity's action channel. -->
+<!-- ADR-015: static App Shortcuts. v1.1 drops "Talk": chat left Home for
+     its own route behind an off-by-default toggle, and the shortcut only
+     ever opened MainActivity anyway, so it would now be a launcher entry
+     promising a screen most installs cannot reach. Diary and Rest remain,
+     and their actions are handled by MainActivity's action channel. -->
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
-    <shortcut
-        android:shortcutId="talk"
-        android:enabled="true"
-        android:icon="@drawable/ic_shortcut_talk"
-        android:shortcutShortLabel="@string/shortcut_talk">
-        <intent
-            android:action="android.intent.action.MAIN"
-            android:targetPackage="app.anima"
-            android:targetClass="app.anima.MainActivity" />
-    </shortcut>
     <shortcut
         android:shortcutId="diary"
         android:enabled="true"

@@ -139,6 +139,24 @@ class AnimaPrefs
             context.animaDataStore.edit { it[litertlmEngine] = value }
         }
 
+        private val experimentalChat = booleanPreferencesKey("experimental_chat")
+
+        /**
+         * v1.1: chat and the Mind screen are demoted, not deleted. Off by
+         * default, and reachable only from Settings — Home no longer carries
+         * a chat slot at all. The creature is the product; a text box that
+         * needs a 1.2 GB download to say anything was competing with it for
+         * the screen and losing.
+         *
+         * Default pinned by AnimaPrefsDefaultsTest, same as every other flag
+         * whose default is a promise rather than a preference.
+         */
+        fun experimentalChat(): Flow<Boolean> = context.animaDataStore.data.map { it[experimentalChat] ?: false }
+
+        suspend fun setExperimentalChat(value: Boolean) {
+            context.animaDataStore.edit { it[experimentalChat] = value }
+        }
+
         private val lastBirthdayYear = longPreferencesKey("last_birthday_year")
 
         /** v0.3: hatch-anniversary celebration, once per calendar year. */

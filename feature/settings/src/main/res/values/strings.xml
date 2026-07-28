@@ -158,4 +158,8 @@
     <string name="licenses_title">Open source</string>
     <string name="licenses_intro">Anima is built on %1$d open source libraries. Tap one to read its license.</string>
     <string name="licenses_close_text">Back to the list</string>
+    <string name="settings_experimental_label">Experimental</string>
+    <string name="settings_chat_toggle">Talking in words</string>
+    <string name="settings_chat_desc">Off. The creature lives through its body, not through a chat box — words need a mind file and still come out rougher than the rest of it. Turning this on adds a Chat screen and the Mind screen.</string>
+    <string name="settings_chat_open">Chat…</string>
 </resources>

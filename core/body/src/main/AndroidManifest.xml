@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  core:body reads the connectivity *state* of the phone so the creature can
+  feel whether it is online — it never opens a connection, and the network
+  invariant is unchanged: INTERNET is still declared by exactly two modules
+  (:core:model-delivery and :core:cloud-mind), and NetworkIsolationTest still
+  fails the build otherwise.
+
+  This declaration was previously only in the app manifest, which meant
+  `:core:body:lintDebug` could not see it and reported MissingPermission on
+  BodySensors.kt:106-107 as an error. That failure predates v1.1 (verified by
+  running the task on an unmodified tree) and was masked by Gradle's task
+  cache. Declaring it here is the accurate fix: this module is what needs the
+  permission. ACCESS_NETWORK_STATE is already in NetworkIsolationTest's exact
+  merged-permission allowlist, so the merged set does not change.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+</manifest>

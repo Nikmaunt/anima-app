@@ -156,4 +156,8 @@
     <string name="licenses_title">Open source</string>
     <string name="licenses_intro">Anima korzysta z %1$d bibliotek open source. Dotknij, aby przeczytać licencję.</string>
     <string name="licenses_close_text">Wróć do listy</string>
+    <string name="settings_experimental_label">Eksperymentalne</string>
+    <string name="settings_chat_toggle">Rozmowa słowami</string>
+    <string name="settings_chat_desc">Wyłączone. Stworzenie żyje ciałem, a nie oknem czatu — słowa wymagają pliku umysłu i i tak wychodzą surowsze niż reszta. Po włączeniu pojawią się ekran rozmowy i ekran Umysł.</string>
+    <string name="settings_chat_open">Rozmowa…</string>
 </resources>

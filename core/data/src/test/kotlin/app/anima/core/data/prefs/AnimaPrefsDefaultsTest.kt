@@ -31,6 +31,23 @@ class AnimaPrefsDefaultsTest {
         }
 
     @Test
+    fun `experimental chat defaults to OFF`() =
+        runTest {
+            // v1.1: chat is demoted. A fresh install has no way into it and
+            // no chat surface on Home; only Settings can turn it on.
+            assertThat(prefs.experimentalChat().first()).isFalse()
+        }
+
+    @Test
+    fun `experimental chat can be turned on and back off`() =
+        runTest {
+            prefs.setExperimentalChat(true)
+            assertThat(prefs.experimentalChat().first()).isTrue()
+            prefs.setExperimentalChat(false)
+            assertThat(prefs.experimentalChat().first()).isFalse()
+        }
+
+    @Test
     fun `switch implementation mirrors the flag`() =
         runTest {
             val switch = PrefsMindEngineSwitch(prefs)

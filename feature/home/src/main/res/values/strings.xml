@@ -147,4 +147,9 @@
         <item>So much space suddenly — did you tidy up for me? It feels lovely.</item>
         <item>Ooh, the walls moved apart. I love a spacious burrow.</item>
     </string-array>
+    <string name="chat_title">Chat</string>
+    <string name="chat_back">Back</string>
+    <string name="chat_experimental_note">Experimental. The creature can talk only if a mind file is installed on this phone; the words are rougher than everything else here.</string>
+    <string name="chat_no_mind_voice">«My mind is asleep. Without a mind file I can feel you, but I cannot find words.»</string>
+    <string name="chat_no_mind_action">Bring a mind</string>
 </resources>

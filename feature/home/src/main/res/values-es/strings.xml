@@ -136,4 +136,9 @@
         <item>Cuánto espacio de repente — ¿ordenaste para mí? Se siente precioso.</item>
         <item>Ooh, las paredes se separaron. Me encanta una madriguera espaciosa.</item>
     </string-array>
+    <string name="chat_title">Conversación</string>
+    <string name="chat_back">Atrás</string>
+    <string name="chat_experimental_note">Experimental. La criatura solo puede hablar si hay un archivo de mente instalado en este teléfono; las palabras salen más toscas que todo lo demás aquí.</string>
+    <string name="chat_no_mind_voice">«Mi mente duerme. Sin un archivo de mente te siento, pero no encuentro palabras.»</string>
+    <string name="chat_no_mind_action">Traer una mente</string>
 </resources>

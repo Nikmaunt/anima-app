@@ -1,5 +1,9 @@
 package app.anima
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,9 +18,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import app.anima.core.data.prefs.AnimaPrefs
+import app.anima.core.ui.theme.AnimaMotion
 import app.anima.core.ui.theme.AnimaTheme
 import app.anima.core.ui.theme.LocalAnimaColors
 import app.anima.feature.home.BodyDiaryScreen
+import app.anima.feature.home.ChatScreen
 import app.anima.feature.home.HomeScreen
 import app.anima.feature.notifications.NotificationsScreen
 import app.anima.feature.onboarding.OnboardingScreen
@@ -91,9 +97,30 @@ private fun AnimaNavHost(
             }
         }
     }
+    // v1.1 (defect D11: nothing moved anywhere). Screens slide a short
+    // distance and cross-fade rather than being swapped instantly. Spring
+    // tokens are Material 3 Expressive's own numbers, transcribed in
+    // AnimaMotion; the fade uses the effects token, which has damping 1.0 and
+    // therefore never overshoots past full opacity.
     NavHost(
         navController = nav,
         startDestination = if (startAtHome) Routes.HOME else Routes.ONBOARDING,
+        enterTransition = {
+            slideInHorizontally(AnimaMotion.spatialDefaultOffset()) { it / NAV_SLIDE_FRACTION } +
+                fadeIn(AnimaMotion.effectsDefault())
+        },
+        exitTransition = {
+            slideOutHorizontally(AnimaMotion.spatialDefaultOffset()) { -it / NAV_SLIDE_FRACTION } +
+                fadeOut(AnimaMotion.effectsDefault())
+        },
+        popEnterTransition = {
+            slideInHorizontally(AnimaMotion.spatialDefaultOffset()) { -it / NAV_SLIDE_FRACTION } +
+                fadeIn(AnimaMotion.effectsDefault())
+        },
+        popExitTransition = {
+            slideOutHorizontally(AnimaMotion.spatialDefaultOffset()) { it / NAV_SLIDE_FRACTION } +
+                fadeOut(AnimaMotion.effectsDefault())
+        },
     ) {
         composable(Routes.ONBOARDING) {
             OnboardingScreen(onFinished = {
@@ -123,6 +150,13 @@ private fun AnimaNavHost(
                 onOpenCrashLog = { nav.navigate(Routes.CRASHLOG) },
                 onOpenWardrobe = { nav.navigate(Routes.WARDROBE) },
                 onOpenLicenses = { nav.navigate(Routes.LICENSES) },
+                onOpenChat = { nav.navigate(Routes.CHAT) },
+            )
+        }
+        composable(Routes.CHAT) {
+            ChatScreen(
+                onBack = { nav.popBackStack() },
+                onOpenMind = { nav.navigate(Routes.MIND) },
             )
         }
         composable(Routes.LICENSES) {
@@ -158,6 +192,9 @@ private fun AnimaNavHost(
 /** Shortcut action mirrored in res/xml/shortcuts.xml. */
 const val ACTION_OPEN_DIARY = "app.anima.action.DIARY"
 
+/** An eighth of the screen: enough to read as movement, not as a swipe. */
+private const val NAV_SLIDE_FRACTION = 8
+
 private object Routes {
     const val ONBOARDING = "onboarding"
     const val HOME = "home"
@@ -172,4 +209,11 @@ private object Routes {
     const val CRASHLOG = "crashlog"
     const val WARDROBE = "wardrobe"
     const val LICENSES = "licenses"
+
+    /**
+     * v1.1: chat has a route of its own instead of a slot on Home, and it
+     * is only ever navigated to from Settings while the experimental toggle
+     * is on. Nothing else in the graph points here.
+     */
+    const val CHAT = "chat"
 }

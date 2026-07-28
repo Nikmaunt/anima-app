@@ -156,4 +156,8 @@
     <string name="licenses_title">Código abierto</string>
     <string name="licenses_intro">Anima se apoya en %1$d bibliotecas de código abierto. Toca una para leer su licencia.</string>
     <string name="licenses_close_text">Volver a la lista</string>
+    <string name="settings_experimental_label">Experimental</string>
+    <string name="settings_chat_toggle">Hablar con palabras</string>
+    <string name="settings_chat_desc">Desactivado. La criatura vive a través de su cuerpo, no de una caja de chat: las palabras necesitan un archivo de mente y aun así salen más toscas que todo lo demás. Al activarlo aparecen la pantalla de conversación y la de Mente.</string>
+    <string name="settings_chat_open">Conversación…</string>
 </resources>

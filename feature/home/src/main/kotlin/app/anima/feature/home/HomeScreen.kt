@@ -67,14 +67,24 @@ import app.anima.core.model.MindFailure
 import app.anima.core.model.MindStatus
 import app.anima.core.model.MindTier
 import app.anima.core.model.tunedBy
+import app.anima.core.ui.components.ActionRow
 import app.anima.core.ui.components.GhostButton
 import app.anima.core.ui.components.PillButton
+import app.anima.core.ui.components.enterStaggered
+import app.anima.core.ui.theme.AnimaSpacing
 import app.anima.core.ui.theme.LocalAnimaColors
 
 /**
- * The creature's screen: the being fills the upper half; conversation flows
- * beneath it. The creature reacts to typing and thinks with its body — there
- * is no spinner chrome anywhere.
+ * The creature's screen. v1.1: the creature IS the screen.
+ *
+ * Until now the being shared its height with a chat thread, and the owner's
+ * verdict on the device was that it read as a sticker wedged between text
+ * blocks (defect D10). The chat slot has moved to its own route behind an
+ * off-by-default toggle, so what is left here is the body, whatever it has
+ * to say right now, and a way out — in that order of importance.
+ *
+ * The creature still thinks with its body; there is no spinner chrome
+ * anywhere.
  */
 @Composable
 fun HomeScreen(
@@ -148,29 +158,48 @@ fun HomeScreen(
 
     val hapticFeedback = LocalHapticFeedback.current
 
-    // Header: quiet chrome, the creature owns the screen.
+    // Header: the creature's name and how long you have been together, and
+    // nothing else. v1.1 (defects D1 and D3): the v1.0 header put a weighted
+    // name Column and four ghost buttons in one Row, so once the buttons'
+    // intrinsic widths exceeded the line, the name was squeezed to near-zero
+    // width and wrapped one letter per line while the last button split as
+    // "Настройк"/"и". Reproduced at font_scale 1.3 and, separately, at
+    // density 480 with the default font size — see
+    // docs/design/v11/phase0-emulator-eyes.md. Nothing shares this line now,
+    // so there is no width left to lose. Navigation moved to its own wrapping
+    // row below the creature.
     val headerRow: @Composable () -> Unit = {
-        Row(
+        Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+                    .padding(horizontal = AnimaSpacing.m, vertical = AnimaSpacing.s)
+                    .enterStaggered(0),
         ) {
-            Column(Modifier.weight(1f)) {
-                Text(state.creatureName, style = MaterialTheme.typography.titleMedium)
-                val days = state.daysTogether.toInt().coerceAtLeast(0)
-                val daysText = pluralStringResource(R.plurals.home_days_together, days, days)
-                Text(
-                    // ADR-011: the user always knows which mind speaks.
-                    if (state.activeTier == MindTier.CLOUD) {
-                        stringResource(R.string.home_days_cloud, daysText)
-                    } else {
-                        daysText
-                    },
-                    style = MaterialTheme.typography.labelMedium,
-                )
-            }
+            Text(state.creatureName, style = MaterialTheme.typography.headlineMedium)
+            val days = state.daysTogether.toInt().coerceAtLeast(0)
+            val daysText = pluralStringResource(R.plurals.home_days_together, days, days)
+            Text(
+                // ADR-011: the user always knows which mind speaks.
+                if (state.activeTier == MindTier.CLOUD) {
+                    stringResource(R.string.home_days_cloud, daysText)
+                } else {
+                    daysText
+                },
+                style = MaterialTheme.typography.labelMedium,
+            )
+        }
+    }
+
+    // Navigation wraps instead of crushing (design-system-v11 §1, overflow
+    // rule 2). Four labels at font_scale 1.3 do not fit one line; they now
+    // take a second one whole.
+    val navRow: @Composable () -> Unit = {
+        ActionRow(
+            Modifier
+                .padding(horizontal = AnimaSpacing.m, vertical = AnimaSpacing.s)
+                .enterStaggered(3),
+        ) {
             GhostButton(
                 stringResource(R.string.home_nav_rest),
                 onClick = onOpenRest,
@@ -259,90 +288,46 @@ fun HomeScreen(
         // skipping it records nothing and changes nothing.
         val goodnightAvailable by viewModel.goodnightAvailable.collectAsState()
         if (goodnightAvailable && state.streamingReply == null) {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    stringResource(R.string.home_goodnight_line),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(1f),
-                )
-                GhostButton(
-                    stringResource(R.string.home_goodnight_button),
-                    onClick = {
-                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                        viewModel.sayGoodnight()
-                    },
-                    modifier = Modifier.testTag("home.goodnight"),
-                )
-            }
+            Notice(
+                line = stringResource(R.string.home_goodnight_line),
+                action = stringResource(R.string.home_goodnight_button),
+                onAction = {
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                    viewModel.sayGoodnight()
+                },
+                index = 1,
+                testTag = "home.goodnight",
+            )
         }
 
         // v0.3 dreams: at night, one gentle wake earns a told dream.
         if (state.dreamAvailable && state.streamingReply == null) {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    stringResource(R.string.home_dream_line),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(1f),
-                )
-                GhostButton(stringResource(R.string.home_dream_wake), onClick = {
+            Notice(
+                line = stringResource(R.string.home_dream_line),
+                action = stringResource(R.string.home_dream_wake),
+                onAction = {
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                     viewModel.wakeForDream()
-                })
-            }
+                },
+                index = 2,
+                testTag = "home.dream",
+            )
         }
 
         state.mindNotice?.let { notice ->
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    // Closed set (MindFailure) mapped onto localized resources.
+            Notice(
+                // Closed set (MindFailure) mapped onto localized resources.
+                line =
                     when (notice) {
                         MindFailure.TIRED -> stringResource(R.string.home_notice_tired)
                         MindFailure.LOST_THOUGHT -> stringResource(R.string.home_notice_lost)
                     },
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(1f),
-                )
-                GhostButton(stringResource(R.string.home_ok), onClick = viewModel::dismissMindNotice)
-            }
+                action = stringResource(R.string.home_ok),
+                onAction = viewModel::dismissMindNotice,
+                index = 2,
+                testTag = "home.notice",
+            )
         }
-    }
-
-    val chat: @Composable (Modifier) -> Unit = { chatModifier ->
-        ChatPanel(
-            state = state,
-            onSend = { text ->
-                hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                viewModel.send(text)
-            },
-            onTyping = { active ->
-                controller.onTyping(active)
-                if (active) viewModel.onInteraction()
-            },
-            onRequestDownload = viewModel::requestMindDownload,
-            onOpenMind = onOpenSettings,
-            onRegenerate = viewModel::regenerate,
-            onRememberThis = { message ->
-                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                viewModel.rememberThis(message)
-            },
-            onReportReply = { message -> viewModel.reportReply(message.id) },
-            modifier = chatModifier,
-        )
     }
 
     HomeAdaptiveScaffold(
@@ -353,7 +338,7 @@ fun HomeScreen(
         headerRow = headerRow,
         creature = creature,
         cards = cardsAndNotices,
-        chat = chat,
+        navRow = navRow,
         modifier =
             Modifier
                 .fillMaxSize()
@@ -366,11 +351,20 @@ fun HomeScreen(
 
 /**
  * v0.6 tablets/folds: past the expanded threshold the creature gets its own
- * pane (Samsung folds are this product's home turf) — chat and cards move
- * beside it instead of squeezing it into a letterbox. Thresholds follow the
+ * pane (Samsung folds are this product's home turf). Thresholds follow the
  * WindowSizeClass dp bands; hand-rolled because one constant does not
  * justify a library (repo convention). Stateless so the golden rig can
  * drive both branches.
+ *
+ * v1.1: the chat slot is gone (defect D10 — the creature was not the hero of
+ * its own screen, it was one of four things competing for the same height).
+ * Chat lives on its own route now, off by default behind Settings'
+ * experimental toggle. What is left on Home is the creature, whatever it has
+ * to say right now, and a way out.
+ *
+ * The creature no longer shares its height with a message list, so on a phone
+ * it takes everything the header, cards and nav do not — see
+ * docs/design/v11/after/ for what that looks like.
  */
 @Composable
 internal fun HomeAdaptiveScaffold(
@@ -378,7 +372,7 @@ internal fun HomeAdaptiveScaffold(
     headerRow: @Composable () -> Unit,
     creature: @Composable (Modifier) -> Unit,
     cards: @Composable () -> Unit,
-    chat: @Composable (Modifier) -> Unit,
+    navRow: @Composable () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (expanded) {
@@ -399,9 +393,10 @@ internal fun HomeAdaptiveScaffold(
                 Modifier
                     .weight(1f)
                     .fillMaxHeight(),
+                verticalArrangement = Arrangement.Center,
             ) {
                 cards()
-                chat(Modifier.weight(1f))
+                navRow()
             }
         }
     } else {
@@ -410,11 +405,45 @@ internal fun HomeAdaptiveScaffold(
             creature(
                 Modifier
                     .fillMaxWidth()
-                    .weight(0.95f),
+                    .weight(1f),
             )
             cards()
-            chat(Modifier.weight(1f))
+            navRow()
         }
+    }
+}
+
+/**
+ * One line the creature has to say, and the one thing you can do about it.
+ *
+ * v1.1: this replaces three copies of `Row { Text(weight(1f)); GhostButton }`.
+ * That shape put a sentence and a button on the same line, so the sentence
+ * got whatever width the button did not want — on the device it wrapped
+ * mid-phrase and then ran out of room and ellipsised
+ * ("Оно спит и видит сны о прошедшем дне…", docs/design/v11/before/07-home.png).
+ * Stacking removes the competition entirely: the line gets the full width,
+ * the action sits under it, and neither can starve the other at any font
+ * scale.
+ *
+ * The line is `bodyLarge`, not the dimmed `bodyMedium` it used to be — the
+ * creature talking is not supporting text.
+ */
+@Composable
+private fun Notice(
+    line: String,
+    action: String,
+    onAction: () -> Unit,
+    index: Int,
+    testTag: String,
+) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = AnimaSpacing.m, vertical = AnimaSpacing.xs)
+            .enterStaggered(index),
+    ) {
+        Text(line, style = MaterialTheme.typography.bodyLarge)
+        GhostButton(action, onClick = onAction, modifier = Modifier.testTag(testTag))
     }
 }
 

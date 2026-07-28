@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<!--
+  ImpliedQuantity is suppressed deliberately, not silenced. These plurals are
+  bare nouns ("день" / "дня" / "дней") because the number itself is rendered
+  as a separate hero Text next to them (HeroStat), not interpolated into the
+  string. Lint cannot see that split and asks for a %d that would print the
+  number twice.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="ImpliedQuantity">
     <plurals name="home_days_together">
         <item quantity="one">вместе %1$d день</item>
         <item quantity="few">вместе %1$d дня</item>
@@ -150,4 +157,9 @@
         <item>Сколько места вдруг — ты прибрался для меня? Так приятно.</item>
         <item>Ух, стены раздвинулись. Люблю просторную норку.</item>
     </string-array>
+    <string name="chat_title">Разговор</string>
+    <string name="chat_back">Назад</string>
+    <string name="chat_experimental_note">Экспериментально. Существо может говорить, только если на телефоне установлен файл разума; слова получаются грубее, чем всё остальное здесь.</string>
+    <string name="chat_no_mind_voice">«Мой разум спит. Без файла разума я чувствую тебя, но не нахожу слов.»</string>
+    <string name="chat_no_mind_action">Принести разум</string>
 </resources>

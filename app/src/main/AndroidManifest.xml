@@ -33,15 +33,32 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Anima">
 
-        <!-- Strip DataTransport telemetry components (see note above). -->
+        <!--
+          Strip DataTransport telemetry components (see note above).
+
+          MissingClass is ignored on purpose. These are node="remove"
+          directives, not declarations: their whole job is to delete a
+          component IF some Play library merges it in. When no such library is
+          on the classpath the removal is a harmless no-op, and lint's
+          complaint that the class is absent is exactly the state we want.
+          Dropping the directives would mean the telemetry comes back silently
+          the day a dependency reintroduces it.
+
+          v1.1 made this visible: removing :mind-pack from assetPacks took the
+          Play asset-delivery chain off the debug classpath, so the classes
+          stopped existing and lint started erroring.
+        -->
         <service
             android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+            tools:ignore="MissingClass"
             tools:node="remove" />
         <receiver
             android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+            tools:ignore="MissingClass"
             tools:node="remove" />
         <service
             android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+            tools:ignore="MissingClass"
             tools:node="remove" />
 
         <!-- Soul export: one readable file handed to the share sheet. -->

@@ -2,6 +2,7 @@ package app.anima.core.creature.render
 
 import android.graphics.RuntimeShader
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -18,17 +19,25 @@ import androidx.compose.ui.graphics.nativeCanvas
  */
 class GlowSkin {
     private val shader: RuntimeShader? =
-        if (Build.VERSION.SDK_INT >= 33) RuntimeShader(AGSL_SOURCE) else null
+        if (Build.VERSION.SDK_INT >= AGSL_MIN_SDK) RuntimeShader(AGSL_SOURCE) else null
     private var brush: ShaderBrush? = null
 
     /** Call once at surface start to hide first-compile cost (research §A2). */
     fun warmUp(sizePx: Float) {
-        shader?.let {
-            it.setFloatUniform("uTime", 0f)
-            it.setFloatUniform("uCenter", sizePx / 2f, sizePx / 2f)
-            it.setFloatUniform("uRadius", sizePx / 4f)
-            it.setFloatUniform("uColor", 1f, 1f, 1f, 0f)
-        }
+        val s = shader
+        if (Build.VERSION.SDK_INT < AGSL_MIN_SDK || s == null) return
+        warmUpShader(s, sizePx)
+    }
+
+    @RequiresApi(AGSL_MIN_SDK)
+    private fun warmUpShader(
+        s: RuntimeShader,
+        sizePx: Float,
+    ) {
+        s.setFloatUniform("uTime", 0f)
+        s.setFloatUniform("uCenter", sizePx / 2f, sizePx / 2f)
+        s.setFloatUniform("uRadius", sizePx / 4f)
+        s.setFloatUniform("uColor", 1f, 1f, 1f, 0f)
     }
 
     fun DrawScope.drawGlow(
@@ -42,35 +51,14 @@ class GlowSkin {
         // offscreen Bitmap render) draws on a SOFTWARE canvas where a
         // RuntimeShader brush throws — found by the v0.3 GMD suite; the
         // API-level gate alone was never enough.
-        val s = shader?.takeIf { drawContext.canvas.nativeCanvas.isHardwareAccelerated }
-        if (s != null) {
-            s.setFloatUniform("uTime", time)
-            s.setFloatUniform("uCenter", center.x, center.y)
-            s.setFloatUniform("uRadius", radius)
-            s.setFloatUniform(
-                "uColor",
-                color.red,
-                color.green,
-                color.blue,
-                (color.alpha * intensity).coerceIn(0f, 1f),
-            )
-            val b = brush ?: ShaderBrush(s).also { brush = it }
-            // v1.1 (defect D5): the rect must be wide enough that the shader
-            // has already faded to zero alpha before its own edge, otherwise
-            // the crop IS the edge and the creature sits on a hard-edged
-            // square. The shader's outer falloff is edge*2 where
-            // edge = uRadius*(1.35 + ripple), ripple <= RIPPLE_MAX — so alpha
-            // survives out to 2*(1.35 + 0.24) = 3.18 radii, and the corner of
-            // a 2.2-radius half-side rect sits at 2.2*sqrt(2) = 3.11 radii.
-            // The old half-side of 2.2 clipped a live gradient on all four
-            // sides. HALF_SIDE covers the diagonal with margin.
-            drawRect(
-                brush = b,
-                topLeft = Offset(center.x - radius * HALF_SIDE, center.y - radius * HALF_SIDE),
-                size =
-                    androidx.compose.ui.geometry
-                        .Size(radius * HALF_SIDE * 2f, radius * HALF_SIDE * 2f),
-            )
+        //
+        // The shader call lives in its own @RequiresApi function because
+        // lint cannot carry an SDK proof through a nullable field: it wants
+        // the version check and the call in one lexical scope.
+        val hardware = drawContext.canvas.nativeCanvas.isHardwareAccelerated
+        val s = shader
+        if (Build.VERSION.SDK_INT >= AGSL_MIN_SDK && hardware && s != null) {
+            drawShaderGlow(s, center, radius, color, intensity, time)
         } else {
             drawCircle(
                 brush =
@@ -90,7 +78,48 @@ class GlowSkin {
         }
     }
 
+    @RequiresApi(AGSL_MIN_SDK)
+    private fun DrawScope.drawShaderGlow(
+        s: RuntimeShader,
+        center: Offset,
+        radius: Float,
+        color: Color,
+        intensity: Float,
+        time: Float,
+    ) {
+        s.setFloatUniform("uTime", time)
+        s.setFloatUniform("uCenter", center.x, center.y)
+        s.setFloatUniform("uRadius", radius)
+        s.setFloatUniform(
+            "uColor",
+            color.red,
+            color.green,
+            color.blue,
+            (color.alpha * intensity).coerceIn(0f, 1f),
+        )
+        val b = brush ?: ShaderBrush(s).also { brush = it }
+        // v1.1 (defect D5): the rect must be wide enough that the shader has
+        // already faded to zero alpha before its own edge, otherwise the crop
+        // IS the edge and the creature sits on a hard-edged square. The
+        // shader's outer falloff is edge*2 where edge = uRadius*(1.35 +
+        // ripple) and ripple <= RIPPLE_MAX, so alpha survives out to
+        // 2*(1.35 + 0.24) = 3.18 radii — while the corner of the old
+        // 2.2-radius half-side rect sat at only 2.2*sqrt(2) = 3.11. That rect
+        // clipped a live gradient on all four sides. HALF_SIDE clears the
+        // diagonal with margin; GlowSkinFalloffTest proves it.
+        drawRect(
+            brush = b,
+            topLeft = Offset(center.x - radius * HALF_SIDE, center.y - radius * HALF_SIDE),
+            size =
+                androidx.compose.ui.geometry
+                    .Size(radius * HALF_SIDE * 2f, radius * HALF_SIDE * 2f),
+        )
+    }
+
     internal companion object {
+        /** AGSL arrived in Android 13; below it the gradient fallback runs. */
+        const val AGSL_MIN_SDK = 33
+
         /** Upper bound of the shader's `ripple` term; mirrored in AGSL below. */
         const val RIPPLE_MAX = 0.24f
 

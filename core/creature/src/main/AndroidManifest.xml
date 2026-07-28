@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Same pre-existing lint gap as core:body. PurrHaptics vibrates the phone
+  (PurrHaptics.kt:63); VIBRATE was declared only in the app manifest, so
+  `:core:creature:lintDebug` reported MissingPermission as an error. The
+  failure predates v1.1 and was masked by Gradle's task cache. VIBRATE is
+  already in NetworkIsolationTest's exact merged-permission allowlist, so
+  the merged set does not change.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.VIBRATE" />
+</manifest>

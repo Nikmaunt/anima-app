@@ -43,6 +43,7 @@ import app.anima.core.model.CloudMindConfig
 import app.anima.core.model.CreatureConcept
 import app.anima.core.model.Personality
 import app.anima.core.ui.components.GhostButton
+import app.anima.core.ui.components.LabeledControl
 import app.anima.core.ui.components.SectionCard
 import app.anima.core.ui.components.SectionLabel
 import app.anima.core.ui.theme.LocalAnimaColors
@@ -126,6 +127,18 @@ class SettingsViewModel
 
         fun ttsSettingsIntent() = voice.ttsSettingsIntent()
 
+        /**
+         * v1.1: chat and the Mind screen are demoted behind one honest
+         * toggle, off by default. Nothing is deleted — Settings is now the
+         * only door.
+         */
+        val experimentalChat: StateFlow<Boolean> =
+            prefs.experimentalChat().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+
+        fun setExperimentalChat(value: Boolean) {
+            viewModelScope.launch { prefs.setExperimentalChat(value) }
+        }
+
         /** ADR-020 developer flag; the section renders in debug builds only. */
         val litertlmEngine: StateFlow<Boolean> =
             prefs.litertlmEngine().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
@@ -203,9 +216,11 @@ fun SettingsScreen(
     onOpenCrashLog: () -> Unit = {},
     onOpenWardrobe: () -> Unit = {},
     onOpenLicenses: () -> Unit = {},
+    onOpenChat: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
+    val experimentalChat by viewModel.experimentalChat.collectAsState()
     val colors = LocalAnimaColors.current
 
     // v0.6 tablets/folds: settings reads as a capped column, not a banner.
@@ -356,7 +371,41 @@ fun SettingsScreen(
                             ),
                     )
                 }
-                GhostButton(stringResource(R.string.settings_mind_open), onClick = onOpenMind)
+                // v1.1: the Mind screen goes behind the same toggle as chat.
+                // Both are about words; the creature is not.
+                if (experimentalChat) {
+                    GhostButton(
+                        stringResource(R.string.settings_mind_open),
+                        onClick = onOpenMind,
+                        modifier = Modifier.testTag("settings.mind"),
+                    )
+                }
+            }
+
+            SectionCard {
+                SectionLabel(stringResource(R.string.settings_experimental_label))
+                LabeledControl(
+                    title = stringResource(R.string.settings_chat_toggle),
+                    supporting = stringResource(R.string.settings_chat_desc),
+                ) {
+                    Switch(
+                        checked = experimentalChat,
+                        onCheckedChange = viewModel::setExperimentalChat,
+                        modifier = Modifier.testTag("settings.chat.toggle"),
+                        colors =
+                            SwitchDefaults.colors(
+                                checkedTrackColor = colors.accent,
+                                checkedThumbColor = colors.background,
+                            ),
+                    )
+                }
+                if (experimentalChat) {
+                    GhostButton(
+                        stringResource(R.string.settings_chat_open),
+                        onClick = onOpenChat,
+                        modifier = Modifier.testTag("settings.chat.open"),
+                    )
+                }
             }
 
             VoiceCard(viewModel)

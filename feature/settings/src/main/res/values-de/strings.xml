@@ -156,4 +156,8 @@
     <string name="licenses_title">Open Source</string>
     <string name="licenses_intro">Anima baut auf %1$d Open-Source-Bibliotheken auf. Tippe, um die Lizenz zu lesen.</string>
     <string name="licenses_close_text">Zurück zur Liste</string>
+    <string name="settings_experimental_label">Experimentell</string>
+    <string name="settings_chat_toggle">In Worten sprechen</string>
+    <string name="settings_chat_desc">Aus. Das Wesen lebt über seinen Körper, nicht über ein Chatfenster — Worte brauchen eine Geist-Datei und geraten trotzdem rauer als alles andere. Eingeschaltet erscheinen ein Gesprächsbildschirm und der Geist-Bildschirm.</string>
+    <string name="settings_chat_open">Gespräch…</string>
 </resources>

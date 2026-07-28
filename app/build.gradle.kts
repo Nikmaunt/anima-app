@@ -152,10 +152,18 @@ android {
         }
     }
 
-    // ADR-010: the Gemma model rides a fast-follow asset pack in the AAB.
-    // Plain APK builds (debug deploys) carry no packs — the model chain
-    // falls through to the downloaded/SAF paths.
-    assetPacks += ":mind-pack"
+    // v1.1: :mind-pack is NOT in the release bundle any more.
+    //
+    // ADR-010 shipped the model as a fast-follow asset pack, sized at
+    // ~1.38 GB (ADR-021 measurement). With chat demoted to an off-by-default
+    // experiment, that is over a gigabyte delivered to every install for a
+    // screen almost nobody will turn on. The module stays in the repo and in
+    // settings.gradle.kts — it is not deleted — it simply no longer rides
+    // along, and the model chain falls through to the download/SAF paths
+    // that already exist and are already what debug builds use.
+    //
+    // MindPackAbsentTest fails the build if this line comes back without a
+    // deliberate decision.
 
     packaging {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"

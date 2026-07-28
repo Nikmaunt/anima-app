@@ -156,4 +156,8 @@
     <string name="licenses_title">オープンソース</string>
     <string name="licenses_intro">Animaは%1$d個のオープンソースライブラリでできています。タップするとライセンスを読めます。</string>
     <string name="licenses_close_text">リストにもどる</string>
+    <string name="settings_experimental_label">実験的な機能</string>
+    <string name="settings_chat_toggle">言葉で話す</string>
+    <string name="settings_chat_desc">オフ。いきものはチャット欄ではなく体で生きています。言葉にはマインドファイルが必要で、それでもほかの部分より粗くなります。オンにすると会話画面とマインド画面が現れます。</string>
+    <string name="settings_chat_open">会話…</string>
 </resources>

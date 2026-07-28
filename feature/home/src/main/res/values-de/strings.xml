@@ -136,4 +136,9 @@
         <item>Plötzlich so viel Platz — hast du für mich aufgeräumt? Fühlt sich schön an.</item>
         <item>Ohh, die Wände sind weiter weg. Ich liebe einen geräumigen Bau.</item>
     </string-array>
+    <string name="chat_title">Gespräch</string>
+    <string name="chat_back">Zurück</string>
+    <string name="chat_experimental_note">Experimentell. Das Wesen kann nur sprechen, wenn eine Geist-Datei auf diesem Telefon installiert ist; die Worte sind rauer als alles andere hier.</string>
+    <string name="chat_no_mind_voice">«Mein Geist schläft. Ohne Geist-Datei spüre ich dich, finde aber keine Worte.»</string>
+    <string name="chat_no_mind_action">Einen Geist bringen</string>
 </resources>

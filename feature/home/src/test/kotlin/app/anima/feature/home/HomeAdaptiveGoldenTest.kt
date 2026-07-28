@@ -29,7 +29,12 @@ import org.robolectric.annotation.GraphicsMode
  * v0.6 tablets/folds: the adaptive scaffold's two branches as goldens. The
  * creature slot is a placeholder box (CreatureSurface runs an endless frame
  * loop — not goldenable); what these pin is the LAYOUT: pane split at the
- * expanded threshold, stacked otherwise, chat landing in the right pane.
+ * expanded threshold, stacked otherwise.
+ *
+ * v1.1: there is no chat pane to pin any more. The scaffold's second slot
+ * holds notices and the way out; chat moved to its own route behind an
+ * off-by-default toggle, which is why the sample HomeUiState this test used
+ * to build a ChatPanel from is gone.
  */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -44,22 +49,6 @@ class HomeAdaptiveGoldenTest {
 
     @get:Rule
     val compose = createComposeRule()
-
-    private val state =
-        HomeUiState(
-            creatureName = "Iskra",
-            mindStatus = MindStatus.READY,
-            messages =
-                listOf(
-                    ChatMessage("m1", ChatRole.USER, "How was your day?", 1_000L),
-                    ChatMessage(
-                        "m2",
-                        ChatRole.CREATURE,
-                        "Soft and slow. I listened to the battery hum.",
-                        2_000L,
-                    ),
-                ),
-        )
 
     @Composable
     private fun Scaffold(expanded: Boolean) {
@@ -78,17 +67,21 @@ class HomeAdaptiveGoldenTest {
                     creature = { modifier ->
                         Box(modifier.padding(20.dp).background(colors.surfaceHigh))
                     },
-                    cards = {},
-                    chat = { modifier ->
-                        ChatPanel(
-                            state = state,
-                            onSend = {},
-                            onTyping = {},
-                            onRequestDownload = {},
-                            onOpenMind = {},
-                            onRegenerate = {},
-                            onRememberThis = {},
-                            modifier = modifier,
+                    cards = {
+                        // v1.1: the second pane holds notices, not a chat
+                        // thread. What used to be here was the whole reason
+                        // the creature was not the hero of its own screen.
+                        Text(
+                            "Soft and slow. I listened to the battery hum.",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(20.dp),
+                        )
+                    },
+                    navRow = {
+                        Text(
+                            "Rest · Soul · Diary · Settings",
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.padding(20.dp),
                         )
                     },
                     modifier = Modifier.fillMaxSize(),

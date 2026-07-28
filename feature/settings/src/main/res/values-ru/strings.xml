@@ -156,4 +156,8 @@
     <string name="licenses_title">Открытый код</string>
     <string name="licenses_intro">Anima построена на %1$d библиотеках с открытым кодом. Нажми, чтобы прочитать лицензию.</string>
     <string name="licenses_close_text">Назад к списку</string>
+    <string name="settings_experimental_label">Экспериментальное</string>
+    <string name="settings_chat_toggle">Разговор словами</string>
+    <string name="settings_chat_desc">Выключено. Существо живёт телом, а не окном чата — для слов нужен файл разума, и получаются они грубее всего остального. Включишь — появятся экран разговора и экран Разум.</string>
+    <string name="settings_chat_open">Разговор…</string>
 </resources>

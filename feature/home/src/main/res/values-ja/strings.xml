@@ -129,4 +129,9 @@
         <item>きゅうにひろびろ——おかたづけしてくれたの？うれしいな。</item>
         <item>わあ、かべがとおくなった。ひろいすみか、だいすき。</item>
     </string-array>
+    <string name="chat_title">会話</string>
+    <string name="chat_back">戻る</string>
+    <string name="chat_experimental_note">実験的な機能です。この端末にマインドファイルが入っているときだけ、いきものは言葉を話せます。言葉づかいはほかの部分より粗くなります。</string>
+    <string name="chat_no_mind_voice">「わたしの心は眠っています。マインドファイルがないと、あなたを感じることはできても、言葉が見つかりません。」</string>
+    <string name="chat_no_mind_action">心を連れてくる</string>
 </resources>

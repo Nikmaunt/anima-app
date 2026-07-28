@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<!--
+  ImpliedQuantity is suppressed deliberately, not silenced. These plurals are
+  bare nouns ("день" / "дня" / "дней") because the number itself is rendered
+  as a separate hero Text next to them (HeroStat), not interpolated into the
+  string. Lint cannot see that split and asks for a %d that would print the
+  number twice.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="ImpliedQuantity">
     <string name="notif_back">Назад</string>
     <string name="notif_title">Чувство уведомлений</string>
     <string name="notif_ask_title">Оно хочет слышать</string>

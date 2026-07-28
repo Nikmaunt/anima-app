@@ -14,4 +14,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--
+      v1.1: declared here too so this module's lint can see it on
+      MindModelDownloader.kt:130, which checks connectivity before starting a
+      download. Same pre-existing gap as :core:body and :core:cloud-mind.
+      ACCESS_NETWORK_STATE is in NetworkIsolationTest's exact
+      merged-permission allowlist, so the merged set does not change.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 </manifest>
