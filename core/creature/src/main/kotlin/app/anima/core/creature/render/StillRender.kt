@@ -19,6 +19,10 @@ import app.anima.core.model.Mood
  * live wallpaper). The engine is created, told the mood, settled in
  * reduced-motion statics, advanced exactly one tick and thrown away — no loop
  * survives this call.
+ *
+ * "Exactly one tick" became true in v1.1; before that it was zero, and the
+ * frame carried the default ALERT pose no matter what mood was asked for
+ * (audit-v10 finding 0.3-A). StillRenderTicksTest holds it.
  */
 object StillRender {
     fun tile(
@@ -37,7 +41,19 @@ object StillRender {
         engine.setReducedMotion(true)
         engine.setMood(mood)
         engine.onResume()
-        engine.advance(ONE_TICK_NANOS)
+        // v1.1 (audit-v10 finding 0.3-A). `onResume()` sets lastFrameNanos to
+        // Long.MIN_VALUE, and `advance` treats that as "first frame ever":
+        // it anchors the clock and returns without simulating. So the single
+        // advance below used to run ZERO ticks, `advanceReduced` never ran,
+        // and pose.energy / pose.lidDroop / pose.flush kept their defaults
+        // whatever the mood said. That is why five of the eight concepts had
+        // a widget that was literally the same picture in every state, and
+        // why ember-asleep-night had its eyes open.
+        //
+        // Anchoring is now a separate, explicit call, and the tick after it
+        // is the one tick this class always claimed to run.
+        engine.advance(CLOCK_ANCHOR_NANOS)
+        engine.advance(CLOCK_ANCHOR_NANOS + ONE_TICK_NANOS)
 
         val image = ImageBitmap(sizePx, sizePx)
         val renderContext =
@@ -64,6 +80,9 @@ object StillRender {
         }
         return image.asAndroidBitmap().copy(Bitmap.Config.ARGB_8888, false)
     }
+
+    /** Arbitrary monotonic origin; only the delta to the next call matters. */
+    private const val CLOCK_ANCHOR_NANOS = 0L
 
     private const val ONE_TICK_NANOS = 16_000_000L
 }
