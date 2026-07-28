@@ -253,6 +253,22 @@ class CreatureEngine(
         // Publish scalar channels.
         pose.energy = energy
         pose.squash = squash.value
+        // v1.1: ambient breathing squash, published as its OWN channel.
+        //
+        // `breath` and `squash` were independent, so at rest the body changed
+        // height without ever changing width — the deformation that reads as
+        // "alive and made of something" only existed during tap and startle
+        // events. This adds it to the resting cycle.
+        //
+        // It is deliberately NOT folded into `pose.squash`: that channel means
+        // "the event squash episode", something tests assert settles back to
+        // zero, and an ambient term never settles. Additive channel, existing
+        // contract untouched.
+        //
+        // Volume-preserving by construction: the term is the negative of the
+        // breath's deviation from its own midpoint. Taller on the inhale means
+        // narrower; the body does not grow.
+        pose.breathSquash = -(pose.breath - BREATH_MIDPOINT) * BREATH_SQUASH_COUPLING
         pose.tiltDeg = tilt.value
         pose.petLean = petLean.value
         pose.flush = flushEase.value
@@ -330,8 +346,25 @@ class CreatureEngine(
             if (dartInterval <= 0f) gaze.setTarget(0f, GAZE_ASLEEP_Y)
         }
         gaze.step(dt)
-        pose.gazeX = gaze.x.value
-        pose.gazeY = gaze.y.value
+
+        // v1.1: microsaccades. Between darts the eye used to be perfectly
+        // still, which is the one thing a live eye never is. The literature
+        // gives ~1 per second at under a degree of arc (docs/research.md §B2,
+        // and docs/research-v11-design.md §1.6); in this rig's normalised
+        // gaze coordinates that is MICROSACCADE_AMPLITUDE, roughly two
+        // percent of the dart range — small enough that it reads as aliveness
+        // rather than as a twitch, and visible on a single still frame
+        // because it moves the pupil off dead centre.
+        //
+        // Deterministic: driven by the same seeded hash as everything else,
+        // so goldens stay bit-stable.
+        val microIndex = (time * MICROSACCADE_HZ).toLong()
+        val mx = ValueNoise.hash01(microIndex, seed, channel = 33) * 2f - 1f
+        val my = ValueNoise.hash01(microIndex, seed, channel = 34) * 2f - 1f
+        val microScale = if (profile.dartIntervalSeconds <= 0f) 0f else MICROSACCADE_AMPLITUDE
+
+        pose.gazeX = gaze.x.value + mx * microScale
+        pose.gazeY = gaze.y.value + my * microScale
     }
 
     private fun stepFlourish() {
@@ -369,6 +402,7 @@ class CreatureEngine(
         pose.offsetX = 0f
         pose.offsetY = 0f
         pose.squash = 0f
+        pose.breathSquash = 0f
         pose.tiltDeg = 0f
         pose.gazeX = 0f
         pose.gazeY = 0f
@@ -413,6 +447,24 @@ class CreatureEngine(
         const val TYPING_BLINK_SLOWDOWN = 2.5f
 
         // Gaze.
+
+        /** Microsaccade rate, Hz — the literature's ~1 per second. */
+        const val MICROSACCADE_HZ = 1f
+
+        /**
+         * Microsaccade amplitude in normalised gaze units. The sources give
+         * "under one degree"; converting that to this rig has no calibrated
+         * angular size, so this is the documented estimate from
+         * docs/research-v11-design.md, held at the small end.
+         */
+        const val MICROSACCADE_AMPLITUDE = 0.012f
+
+        /** Breath value the ambient squash treats as neutral. */
+        const val BREATH_MIDPOINT = 0.5f
+
+        /** How much of the breath deviation becomes width, inverted. */
+        const val BREATH_SQUASH_COUPLING = 0.22f
+
         const val DART_STIFFNESS = 420f
         const val DART_RANGE_X = 0.6f
         const val DART_RANGE_Y = 0.35f

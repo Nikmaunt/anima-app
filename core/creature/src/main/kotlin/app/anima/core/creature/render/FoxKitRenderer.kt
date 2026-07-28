@@ -18,8 +18,8 @@ class FoxKitRenderer : CreatureRenderer {
 
     override fun DrawScope.render(ctx: RenderContext) {
         val pose = ctx.pose
-        val c = Offset(size.width / 2f, size.height / 2f + size.minDimension * 0.04f)
-        val bodyR = size.minDimension * 0.24f
+        val c = Offset(size.width / 2f, size.height / 2f + size.minDimension * RigScale.FOX_KIT_BIAS)
+        val bodyR = size.minDimension * 0.24f * RigScale.FOX_KIT
         val fur = Hues.bodyColor(24f, sat = 0.68f, light = 0.62f, ctx = ctx)
         val furDeep = Hues.bodyColor(18f, sat = 0.62f, light = 0.42f, ctx = ctx)
         val cream = Hues.bodyColor(38f, sat = 0.5f, light = 0.86f, ctx = ctx)

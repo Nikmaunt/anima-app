@@ -17,9 +17,9 @@ import kotlin.math.sin
 class RobotRenderer : CreatureRenderer {
     override fun DrawScope.render(ctx: RenderContext) {
         val pose = ctx.pose
-        val c = Offset(size.width / 2f, size.height / 2f)
-        val bodyW = size.minDimension * 0.46f
-        val bodyH = size.minDimension * 0.4f * (1f + pose.breath * 0.03f)
+        val c = Offset(size.width / 2f, size.height / 2f + size.minDimension * RigScale.ROBOT_BIAS)
+        val bodyW = size.minDimension * 0.46f * RigScale.ROBOT
+        val bodyH = size.minDimension * 0.4f * RigScale.ROBOT * (1f + pose.breath * 0.03f)
         val shell = Hues.bodyColor(215f, sat = 0.16f, light = 0.72f, ctx = ctx)
         val shellDeep = Hues.bodyColor(220f, sat = 0.2f, light = 0.5f, ctx = ctx)
         val screen = Color(0xFF11151F)

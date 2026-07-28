@@ -20,8 +20,8 @@ class JellyRenderer : CreatureRenderer {
 
     override fun DrawScope.render(ctx: RenderContext) {
         val pose = ctx.pose
-        val c = Offset(size.width / 2f, size.height / 2f - size.minDimension * 0.05f)
-        val r = size.minDimension * 0.24f
+        val c = Offset(size.width / 2f, size.height / 2f + size.minDimension * RigScale.JELLY_BIAS)
+        val r = size.minDimension * 0.24f * RigScale.JELLY
         val pulse = 1f + pose.breath * 0.1f
         val bellW = r * 1.25f * pulse
         val bellH = r * (1.12f - pose.breath * 0.08f)

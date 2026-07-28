@@ -57,8 +57,21 @@ class GlowSkin {
         // the version check and the call in one lexical scope.
         val hardware = drawContext.canvas.nativeCanvas.isHardwareAccelerated
         val s = shader
+        // v1.1, second half of D5. Widening the rect fixed the shader being
+        // cropped by its own rect — but once the bodies were scaled up to a
+        // common size (RigScale), the glow started overflowing the FRAME
+        // instead, and the frame edge cropped it into exactly the same hard
+        // rectangle. Caught on the contact sheet, not by a test.
+        //
+        // So the glow is frame-bounded: whatever radius the body asks for,
+        // the halo is shrunk until it fades out inside the drawing area. A
+        // large body simply gets less room for a halo, which is also what it
+        // should look like.
+        val maxHalfExtent = size.minDimension * 0.5f
+        val hwRadius = minOf(radius, maxHalfExtent / HALF_SIDE)
+        val swRadius = minOf(radius, maxHalfExtent / SOFTWARE_FALLOFF_RADII)
         if (Build.VERSION.SDK_INT >= AGSL_MIN_SDK && hardware && s != null) {
-            drawShaderGlow(s, center, radius, color, intensity, time)
+            drawShaderGlow(s, center, hwRadius, color, intensity, time)
         } else {
             drawCircle(
                 brush =
@@ -70,9 +83,9 @@ class GlowSkin {
                                 Color.Transparent,
                             ),
                         center = center,
-                        radius = radius * 2.2f,
+                        radius = swRadius * SOFTWARE_FALLOFF_RADII,
                     ),
-                radius = radius * 2.2f,
+                radius = swRadius * SOFTWARE_FALLOFF_RADII,
                 center = center,
             )
         }
@@ -133,6 +146,9 @@ class GlowSkin {
          * still. Proven by GlowSkinFalloffTest.
          */
         const val HALF_SIDE = 3.4f
+
+        /** Where the software fallback's radial gradient reaches Transparent. */
+        const val SOFTWARE_FALLOFF_RADII = 2.2f
 
         /**
          * Radial glow with a breathing, noise-rippled rim. Cheap: one hash

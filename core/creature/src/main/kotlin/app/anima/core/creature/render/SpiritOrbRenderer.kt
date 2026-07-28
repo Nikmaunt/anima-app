@@ -19,8 +19,8 @@ class SpiritOrbRenderer : CreatureRenderer {
 
     override fun DrawScope.render(ctx: RenderContext) {
         val pose = ctx.pose
-        val c = Offset(size.width / 2f, size.height / 2f)
-        val r = size.minDimension * 0.26f * (1f + pose.breath * 0.05f)
+        val c = Offset(size.width / 2f, size.height / 2f + size.minDimension * RigScale.SPIRIT_ORB_BIAS)
+        val r = size.minDimension * 0.26f * RigScale.SPIRIT_ORB * (1f + pose.breath * 0.05f)
         val hue = 190f // pale cyan spirit
         val core = Hues.bodyColor(hue, sat = 0.55f, light = 0.72f, ctx = ctx)
         val rim = Hues.bodyColor(hue + 24f, sat = 0.65f, light = 0.6f, ctx = ctx)

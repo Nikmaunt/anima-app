@@ -20,8 +20,8 @@ class EmberRenderer : CreatureRenderer {
 
     override fun DrawScope.render(ctx: RenderContext) {
         val pose = ctx.pose
-        val c = Offset(size.width / 2f, size.height / 2f + size.minDimension * 0.06f)
-        val r = size.minDimension * 0.24f
+        val c = Offset(size.width / 2f, size.height / 2f + size.minDimension * RigScale.EMBER_BIAS)
+        val r = size.minDimension * 0.24f * RigScale.EMBER
         val hot = ctx.mood == Mood.HOT
         val asleep = ctx.mood == Mood.ASLEEP
         val baseHue =

@@ -23,8 +23,8 @@ class MothRenderer : CreatureRenderer {
 
     override fun DrawScope.render(ctx: RenderContext) {
         val pose = ctx.pose
-        val c = Offset(size.width / 2f, size.height / 2f)
-        val r = size.minDimension * 0.22f
+        val c = Offset(size.width / 2f, size.height / 2f + size.minDimension * RigScale.MOTH_BIAS)
+        val r = size.minDimension * 0.22f * RigScale.MOTH
         val asleep = ctx.mood == Mood.ASLEEP
         val dust = Hues.bodyColor(265f, sat = 0.4f, light = 0.72f, ctx = ctx)
         val wing = Hues.bodyColor(280f, sat = 0.3f, light = if (ctx.night) 0.58f else 0.65f, ctx = ctx)

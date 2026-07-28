@@ -22,8 +22,8 @@ class SproutRenderer : CreatureRenderer {
 
     override fun DrawScope.render(ctx: RenderContext) {
         val pose = ctx.pose
-        val baseC = Offset(size.width / 2f, size.height / 2f + size.minDimension * 0.28f)
-        val r = size.minDimension * 0.24f
+        val baseC = Offset(size.width / 2f, size.height / 2f + size.minDimension * (0.28f + RigScale.SPROUT_BIAS))
+        val r = size.minDimension * 0.24f * RigScale.SPROUT
         val soil = Hues.bodyColor(25f, sat = 0.35f, light = 0.35f, ctx = ctx)
         val stem = Hues.bodyColor(130f, sat = 0.45f, light = 0.42f, ctx = ctx)
         val leaf = Hues.bodyColor(135f, sat = 0.5f, light = 0.5f, ctx = ctx)

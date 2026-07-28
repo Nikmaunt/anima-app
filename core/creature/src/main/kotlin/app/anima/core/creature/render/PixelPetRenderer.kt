@@ -24,13 +24,13 @@ class PixelPetRenderer : CreatureRenderer {
         val pose = ctx.pose
         buildSprites(ctx.seed)
 
-        val px = size.minDimension * 0.75f / grid
+        val px = size.minDimension * 0.75f * RigScale.PIXEL_PET / grid
         // Snap wander to whole pixels — motion stays chunky on purpose.
         val originX =
             size.width / 2f - (grid / 2f) * px +
                 (pose.offsetX * size.minDimension / px).toInt() * px
         val originY =
-            size.height / 2f - (grid / 2f) * px +
+            size.height / 2f + size.minDimension * RigScale.PIXEL_PET_BIAS - (grid / 2f) * px +
                 (pose.offsetY * size.minDimension / px).toInt() * px
 
         // Two-frame walk cycle; frame rate follows energy (asleep ≈ frozen).

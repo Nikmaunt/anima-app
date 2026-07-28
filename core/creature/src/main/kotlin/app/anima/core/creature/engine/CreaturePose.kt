@@ -27,6 +27,13 @@ class CreaturePose {
     /** Volume-preserving squash: scaleY = 1 + squash, scaleX = 1/(1+squash). */
     var squash: Float = 0f
 
+    /**
+     * v1.1: the resting breath's volume-preserving component, separate from
+     * the event [squash] so each can be reasoned about — and tested — alone.
+     * Consumers apply both.
+     */
+    var breathSquash: Float = 0f
+
     /** Body tilt in degrees. */
     var tiltDeg: Float = 0f
 

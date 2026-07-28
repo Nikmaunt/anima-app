@@ -181,7 +181,11 @@ fun CreatureSurface(
                     renderContext.growth = controller.growth
                     renderContext.paletteShiftDeg = controller.paletteShiftDeg
 
-                    val squashY = 1f + pose.squash * 0.10f
+                    // Event squash plus the resting breath's own squash: the
+                    // body is now narrower at the top of an inhale rather than
+                    // simply larger (v1.1). `breathScale` stays uniform and
+                    // small — it is the macro "there is air in there" scale.
+                    val squashY = 1f + (pose.squash + pose.breathSquash) * 0.10f
                     val squashX = 1f / squashY
                     val breathScale = 1f + pose.breath * 0.015f * pose.energy
                     val lean = pose.petLean * size.minDimension * 0.01f
