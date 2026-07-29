@@ -70,6 +70,8 @@
     </plurals>
     <string name="soul_notice_wrong_passphrase">Falsche Passphrase, oder die Datei ist beschädigt. Nichts wurde verändert.</string>
     <string name="soul_notice_import_failed">Import fehlgeschlagen: %1$s</string>
+    <string name="soul_notice_no_body_yet">Es ist noch kein Körper zugewiesen — es gibt nichts zu übertragen.</string>
+    <string name="soul_notice_unknown_body">Diese Datei nennt einen Körper, den diese App-Version nicht hat. Nichts wurde verändert.</string>
     <string name="soul_error_unknown">unbekannter Fehler</string>
 
     <string name="soul_export_subject">Die Seele von %1$s</string>

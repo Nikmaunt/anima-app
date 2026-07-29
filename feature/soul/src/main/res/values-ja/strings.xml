@@ -64,6 +64,8 @@
     </plurals>
     <string name="soul_notice_wrong_passphrase">あいことばがちがうか、ファイルがこわれているみたい。なにも変わっていないよ。</string>
     <string name="soul_notice_import_failed">読みこみに失敗: %1$s</string>
+    <string name="soul_notice_no_body_yet">まだからだがきまっていないから、もっていくものがないよ。</string>
+    <string name="soul_notice_unknown_body">このファイルには、このバージョンにないからだが書かれているよ。なにも変わっていないよ。</string>
     <string name="soul_error_unknown">不明なエラー</string>
 
     <string name="soul_export_subject">%1$sのたましい</string>

@@ -34,6 +34,19 @@ enum class CreatureConcept(
     ;
 
     companion object {
-        fun fromWire(wire: String): CreatureConcept = entries.firstOrNull { it.wire == wire } ?: SPIRIT_ORB
+        /**
+         * v1.1b: **null for an unknown wire value, never a substitute body.**
+         *
+         * This used to fall back to [SPIRIT_ORB], and that fallback was the one
+         * place in the app where a body the phone was never assigned got
+         * *written* rather than merely drawn: a backup file naming a concept
+         * this build does not know (a later release, a damaged or edited file)
+         * imported as a different creature, and the envelope version does not
+         * guard it — the concept set can grow without the format moving.
+         *
+         * Callers must decide what "unknown" means for them. [JournalKind.fromWire]
+         * already worked this way; this is the same shape, not a new one.
+         */
+        fun fromWire(wire: String): CreatureConcept? = entries.firstOrNull { it.wire == wire }
     }
 }

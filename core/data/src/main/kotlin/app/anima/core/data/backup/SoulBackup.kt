@@ -39,7 +39,26 @@ class SoulBackup
         private val journalDao: BodyJournalDao,
         private val capsuleDao: TimeCapsuleDao,
     ) {
+        /**
+         * v1.1b task 1a: the export has no body to write yet. Refusing is the
+         * only non-corrupting answer — a soul file is what carries the creature
+         * to the next phone, so a body invented here would be a rebirth as
+         * somebody else, not a missing label.
+         */
+        class NoBodyToExport : Exception("the creature has no assigned body yet")
+
+        /**
+         * v1.1b task 1a: the file names a body this build does not know.
+         * Deliberately carries no detail — the wire value comes from a file and
+         * untrusted text does not travel into the interface.
+         */
+        class UnknownBodyInFile : Exception("the backup names a body this version does not know")
+
         suspend fun exportPayload(nowMillis: Long): ByteArray {
+            // Read identity FIRST and refuse before touching anything else: a
+            // half-identified soul must not produce a file at all.
+            val concept = identity.concept() ?: throw NoBodyToExport()
+            val seed = identity.seed() ?: throw NoBodyToExport()
             val facts = soulFactDao.allIncludingDead()
             val journal = journalDao.recent(JOURNAL_EXPORT_CAP).first()
             val capsules = capsuleDao.all()
@@ -52,8 +71,8 @@ class SoulBackup
                         "creature",
                         buildJsonObject {
                             put("name", identity.name() ?: "")
-                            put("concept", (identity.concept() ?: CreatureConcept.SPIRIT_ORB).wire)
-                            put("seed", identity.seed() ?: 0L)
+                            put("concept", concept.wire)
+                            put("seed", seed)
                             put("hatchedAtMillis", identity.hatchedAtMillis() ?: nowMillis)
                         },
                     )
@@ -126,10 +145,14 @@ class SoulBackup
 
             val creature = root.getValue("creature").jsonObject
             val name = creature.getValue("name").jsonPrimitive.content
-            val concept = CreatureConcept.fromWire(creature.getValue("concept").jsonPrimitive.content)
+            // Unknown body: refuse before the first write. Everything below this
+            // line touches durable data, so the check has to be above it.
+            val concept =
+                CreatureConcept.fromWire(creature.getValue("concept").jsonPrimitive.content)
+                    ?: throw UnknownBodyInFile()
             val seed = creature.getValue("seed").jsonPrimitive.long
             val hatchedAt = creature.getValue("hatchedAtMillis").jsonPrimitive.long
-            identity.hatch(name, concept ?: CreatureConcept.SPIRIT_ORB, seed, hatchedAt)
+            identity.hatch(name, concept, seed, hatchedAt)
             identity.restoreHatchedAt(hatchedAt)
 
             var imported = 0

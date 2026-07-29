@@ -89,6 +89,8 @@
     </plurals>
     <string name="soul_notice_wrong_passphrase">Кодовая фраза не подходит, или файл повреждён. Ничего не изменилось.</string>
     <string name="soul_notice_import_failed">Импорт не удался: %1$s</string>
+    <string name="soul_notice_no_body_yet">Тело ещё не назначено — переносить пока нечего.</string>
+    <string name="soul_notice_unknown_body">В этом файле указано тело, которого нет в этой версии приложения. Ничего не изменилось.</string>
     <string name="soul_error_unknown">неизвестная ошибка</string>
 
     <string name="soul_export_subject">Душа: %1$s</string>

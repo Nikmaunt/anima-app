@@ -75,6 +75,8 @@
     </plurals>
     <string name="soul_notice_wrong_passphrase">Wrong passphrase, or the file is damaged. Nothing was changed.</string>
     <string name="soul_notice_import_failed">Import failed: %1$s</string>
+    <string name="soul_notice_no_body_yet">No body has been assigned yet — there is nothing to carry over.</string>
+    <string name="soul_notice_unknown_body">This file names a body this version of the app does not have. Nothing was changed.</string>
     <string name="soul_error_unknown">unknown error</string>
 
     <!-- Share sheet / postcard (context-bound in SoulViewModel) -->

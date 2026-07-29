@@ -89,6 +89,8 @@
     </plurals>
     <string name="soul_notice_wrong_passphrase">Złe hasło albo uszkodzony plik. Nic się nie zmieniło.</string>
     <string name="soul_notice_import_failed">Import nie powiódł się: %1$s</string>
+    <string name="soul_notice_no_body_yet">Ciało nie zostało jeszcze przypisane — nie ma czego przenosić.</string>
+    <string name="soul_notice_unknown_body">Ten plik wskazuje ciało, którego ta wersja aplikacji nie ma. Nic się nie zmieniło.</string>
     <string name="soul_error_unknown">nieznany błąd</string>
 
     <string name="soul_export_subject">Dusza: %1$s</string>

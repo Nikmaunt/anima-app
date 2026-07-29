@@ -415,6 +415,8 @@ private fun backupNoticeText(notice: BackupNotice): String =
             }
         }
         BackupNotice.WrongPassphraseOrCorrupt -> stringResource(R.string.soul_notice_wrong_passphrase)
+        BackupNotice.NoBodyYet -> stringResource(R.string.soul_notice_no_body_yet)
+        BackupNotice.UnknownBodyInFile -> stringResource(R.string.soul_notice_unknown_body)
         is BackupNotice.ImportFailed ->
             stringResource(
                 R.string.soul_notice_import_failed,

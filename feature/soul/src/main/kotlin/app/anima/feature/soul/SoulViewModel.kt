@@ -69,6 +69,18 @@ sealed interface BackupNotice {
 
     data object WrongPassphraseOrCorrupt : BackupNotice
 
+    /**
+     * v1.1b task 1a. Added rather than folded into [ExportFailed]/[ImportFailed]
+     * because both of those say "something went wrong with the file", and here
+     * nothing did: in [NoBodyYet] there is no body to write, and in
+     * [UnknownBodyInFile] the file is intact and names a body this build does
+     * not have. Neither carries a detail — the second one's detail would be
+     * untrusted text out of a file.
+     */
+    data object NoBodyYet : BackupNotice
+
+    data object UnknownBodyInFile : BackupNotice
+
     data class ImportFailed(
         val detail: String?,
     ) : BackupNotice
@@ -164,10 +176,18 @@ class SoulViewModel
             viewModelScope.launch {
                 val now = System.currentTimeMillis()
                 val name = identity.name() ?: "Anima"
+                // v1.1b task 1a: this file leaves the phone and says "a creature
+                // of the <kind> kind" in prose. Until the body is known there is
+                // no honest sentence to write, so no file is written either.
+                val concept = identity.concept()
+                if (concept == null) {
+                    backupNotice.value = BackupNotice.NoBodyYet
+                    return@launch
+                }
                 val markdown =
                     SoulPort.export(
                         creatureName = name,
-                        concept = identity.concept() ?: CreatureConcept.SPIRIT_ORB,
+                        concept = concept,
                         stats = identity.stats(now),
                         facts = soul.liveFacts().first(),
                         journal = journal.recent(SoulPort.MAX_EXPORT_MOMENTS).first(),
@@ -355,7 +375,12 @@ class SoulViewModel
                 }.onSuccess {
                     backupNotice.value = BackupNotice.ExportDone
                 }.onFailure {
-                    backupNotice.value = BackupNotice.ExportFailed(it.message)
+                    backupNotice.value =
+                        if (it is SoulBackup.NoBodyToExport) {
+                            BackupNotice.NoBodyYet
+                        } else {
+                            BackupNotice.ExportFailed(it.message)
+                        }
                 }
             }
         }
@@ -382,10 +407,15 @@ class SoulViewModel
                     stats.value = identity.stats(System.currentTimeMillis())
                 }.onFailure {
                     backupNotice.value =
-                        if (it is SoulBackupCodec.WrongPassphraseOrCorrupt) {
-                            BackupNotice.WrongPassphraseOrCorrupt
-                        } else {
-                            BackupNotice.ImportFailed(it.message)
+                        when (it) {
+                            is SoulBackupCodec.WrongPassphraseOrCorrupt ->
+                                BackupNotice.WrongPassphraseOrCorrupt
+                            // v1.1b task 1a: named separately from a generic
+                            // failure because nothing is wrong with the FILE —
+                            // this build simply has no such body, and saying
+                            // "damaged" about an intact soul would be a lie.
+                            is SoulBackup.UnknownBodyInFile -> BackupNotice.UnknownBodyInFile
+                            else -> BackupNotice.ImportFailed(it.message)
                         }
                 }
             }
