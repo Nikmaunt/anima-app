@@ -413,15 +413,15 @@ internal fun HomeAdaptiveScaffold(
                     .fillMaxHeight(),
             ) {
                 headerRow()
-                // Same reasoning as the compact branch below: the air belongs
-                // above the body, not split around it.
-                Spacer(Modifier.weight(1f))
-                creature(
-                    Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f),
+                // The same rule as the compact branch. This pane needs it too:
+                // an unfolded fold held in portrait is ~904dp wide and taller
+                // than that, so the pane is TALL and gets exactly the void the
+                // compact branch is about — and folds are this product's home
+                // turf, so that is not a hypothetical.
+                BodyAndContentBelow(
+                    modifier = Modifier.weight(1f),
+                    creature = creature,
                 )
-                Spacer(Modifier.height(AnimaSpacing.xl))
             }
             Column(
                 Modifier
@@ -436,42 +436,66 @@ internal fun HomeAdaptiveScaffold(
     } else {
         Column(modifier) {
             headerRow()
-
-            // v1.1b task 4. The creature used to be `weight(1f)`, i.e. it took
-            // every pixel the header, cards and nav did not want — and every
-            // renderer sizes its body from `size.minDimension`, so on a portrait
-            // phone the body scaled to WIDTH and all the surplus HEIGHT became
-            // margin. Because a Column centres a child in its own box, that
-            // margin came out as two near-equal quarters with the body exactly in
-            // the middle, which is the thing that reads as no layout at all.
-            //
-            // The fix is not a smaller body and not a capped box: it is putting
-            // the surplus somewhere on purpose. This Spacer takes it, ABOVE the
-            // body, where it becomes the air the name needs to read as an anchor
-            // instead of as a label. The body then sits below the geometric
-            // centre — which is where a standing thing sits, an optical centre
-            // being higher than a geometric one.
-            Spacer(Modifier.weight(1f))
-
-            // `aspectRatio(1f)` is not a cap on the body. The body is width-sized
-            // either way (minDimension), so a square box is exactly the box it
-            // draws in; the old taller box only claimed height it never used.
-            creature(
-                Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f),
-            )
-
-            // Content sits against the body now, not in a separate bottom zone.
-            // `xl` between the notices and the way out is the same gap the design
-            // system uses everywhere to mean "new group", four times the spacing
-            // inside either one, so the boundary reads without a rule or a card.
-            Column(verticalArrangement = Arrangement.spacedBy(AnimaSpacing.xl)) {
-                Column { cards() }
-                navRow()
+            BodyAndContentBelow(
+                modifier = Modifier.weight(1f),
+                creature = creature,
+            ) {
+                // Content sits against the body now, not in a separate bottom
+                // zone. `xl` between the notices and the way out is the same gap
+                // the design system uses everywhere to mean "new group", four
+                // times the spacing inside either one, so the boundary reads
+                // without a rule or a card.
+                Column(verticalArrangement = Arrangement.spacedBy(AnimaSpacing.xl)) {
+                    Column { cards() }
+                    navRow()
+                }
+                Spacer(Modifier.height(AnimaSpacing.m))
             }
-            Spacer(Modifier.height(AnimaSpacing.m))
         }
+    }
+}
+
+/**
+ * v1.1b task 4: the body, whatever it has to say, and all the air in one place.
+ *
+ * The creature slot used to be `weight(1f)`, i.e. it took every pixel the header,
+ * cards and nav did not want — and every renderer sizes its body from
+ * `size.minDimension`, so in a box taller than it is wide the body scales to
+ * WIDTH and the surplus HEIGHT becomes margin. A Column centres a child in its
+ * own box, so that margin came out as two near-equal voids with the body exactly
+ * between them, which is the thing that reads as no layout at all.
+ *
+ * So the surplus is not removed — it is put somewhere on purpose.
+ * `Arrangement.Bottom` seats the body and its content against the bottom, which
+ * collects every leftover pixel into one zone directly under the name, where it
+ * is the air a 32sp Light anchor needs instead of a gap. The body then sits below
+ * the geometric centre, which is where a standing thing sits: an optical centre
+ * is higher than a geometric one.
+ *
+ * `aspectRatio(1f)` is not a cap on the body. The body is minDimension-sized
+ * either way, so a square is exactly the box it draws in — the old taller box
+ * only claimed height it never drew in. And when the space really is shorter than
+ * it is wide (a fold in landscape), `aspectRatio` sizes from the height instead,
+ * so the body still fills the pane and nothing is asked for that is not there.
+ * That last part is not theory: the first attempt used a weighted spacer plus a
+ * square, which put the creature in the bottom corner of a landscape pane and
+ * asked for more height than the pane had.
+ *
+ * No `graphicsLayer` anywhere. The body is where the layout puts it.
+ */
+@Composable
+private fun BodyAndContentBelow(
+    modifier: Modifier,
+    creature: @Composable (Modifier) -> Unit,
+    content: @Composable () -> Unit = {},
+) {
+    Column(modifier, verticalArrangement = Arrangement.Bottom) {
+        creature(
+            Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f),
+        )
+        content()
     }
 }
 
