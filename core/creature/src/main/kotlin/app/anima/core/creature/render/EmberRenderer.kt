@@ -18,6 +18,12 @@ class EmberRenderer : CreatureRenderer {
     private val flamePath = Path()
     private val glow = GlowSkin()
 
+    private companion object {
+        /** Flame height in body radii. See the note at the use site for why. */
+        const val AWAKE_HEIGHT_RADII = 1.9f
+        const val ASLEEP_HEIGHT_RADII = 1.70f
+    }
+
     override fun DrawScope.render(ctx: RenderContext) {
         val pose = ctx.pose
         val c = Offset(size.width / 2f, size.height / 2f + size.minDimension * RigScale.EMBER_BIAS)
@@ -44,7 +50,7 @@ class EmberRenderer : CreatureRenderer {
         }
 
         // Flame silhouette: teardrop with noise-rippled flanks. Raggedness
-        // rises with heat and anxiety; asleep collapses to a low ember dome.
+        // rises with heat and anxiety; asleep settles into a calm, smooth flame.
         val rag =
             when {
                 hot -> 0.28f
@@ -52,7 +58,15 @@ class EmberRenderer : CreatureRenderer {
                 asleep -> 0.03f
                 else -> 0.1f
             }
-        val height = r * (if (asleep) 1.0f else 1.9f) * (1f + pose.breath * 0.12f)
+        // v1.1b task 3: this was 1.0f asleep against 1.9f awake — a 47 % collapse
+        // that measured 0.506 of the frame against its own 0.822, and dropped the
+        // ink's centre to 0.673. On the contact sheet it did not read as a
+        // sleeping flame at all; it read as a small dark hooded figure, i.e. as a
+        // different creature. Sleep is now said with dimness, a still silhouette
+        // and closed lids — all of which this renderer already does — instead of
+        // with size. 1.70 keeps it visibly lower than awake and inside the band
+        // that FrameScaleTest now holds for all four states.
+        val height = r * (if (asleep) ASLEEP_HEIGHT_RADII else AWAKE_HEIGHT_RADII) * (1f + pose.breath * 0.12f)
         val width = r * 1.25f
         flamePath.reset()
         val steps = 14
