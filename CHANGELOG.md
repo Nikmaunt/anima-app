@@ -14,6 +14,97 @@ keeps the formula available the day a real version scheme is needed. The
 invariant the original note cared about — pre-1.0 codes stay below every
 post-1.0 code — holds either way.
 
+## [1.1.0] — 2026-07-30
+
+Two runs under one version. The first (`0d7f185`..`832bde2`) looked at the app
+on a real emulator for the first time and built a design system out of what it
+saw. The second (`69c0761`..) was told to distrust the first one's handoff, and
+found that the defect the handoff named was bigger than the handoff said.
+
+Nothing here has been merged or released. `versionCode` stays the run number;
+see the amendment above.
+
+### Fixed
+- **A body the phone was never assigned is no longer written into durable
+  data.** `CreatureConcept.fromWire` fell back to `SPIRIT_ORB` for an unknown
+  wire value, so a soul file naming a body this build does not know — a backup
+  from a later release, a damaged or hand-edited file — imported as a *different
+  creature* and persisted it. The envelope version does not guard that: the
+  concept set can grow without the format moving. Export now refuses rather than
+  naming a body it does not know, import refuses before the first write, and both
+  outcomes have their own localized notice in all six languages instead of
+  borrowing "the file is broken". Proven by `SoulBackupIdentityTest` failing on
+  the unfixed tree and printing the payload it was about to write.
+- **The wrong body no longer flashes at launch, anywhere.** The handoff listed
+  nine substitution sites; there were fourteen, plus six state-field defaults, a
+  StateFlow seeded with `SPIRIT_ORB to 0L`, and one hardcoded body. The five it
+  missed included the live wallpaper — a full-screen home-screen surface — and
+  three sites on the Soul screen, which is the transfer surface the paid part of
+  the product rests on. Until identity is read, every surface now draws nobody:
+  an empty box of the same measured size, background only on the wallpaper, an
+  empty but still tappable widget. A fourth durable write path turned up while
+  removing the flow's seed value: the shareable postcard PNG.
+- **`EMBER` asleep was 0.506 of its frame against its own 0.822 awake**, and on
+  the contact sheet it read as a small dark hooded figure rather than a sleeping
+  flame. The renderer collapsed the flame to 1.0 radii asleep against 1.9 awake;
+  sleep is now said with dimness and stillness, and the body measures 0.717.
+- **`PIXEL_PET` drew a cell past the edge of its own frame.** The sleep-Z pips
+  sat outside the sprite at column `grid+1` and the second one was clipped by the
+  frame; that is the stray square on every earlier contact sheet, and the reason
+  asleep-night measured 0.912 while the same body measured 0.818 awake.
+
+### Changed
+- **Three bodies that existed only as additive light now have something darker
+  than the wall behind them.** `SPIRIT_ORB`, `PIXEL_PET` and `MOTH` failed a busy
+  photographic backdrop, and the cause was not transparency as such: light over a
+  bright photo pixel adds nothing, so the body had no way to be darker than its
+  background. New `Grounding` layer — occlusion shadow, a two-tone contour (one
+  colour cannot read on both white paper and a black wallpaper), and opaque
+  top-to-bottom body shading. `JELLY`'s tentacles got the same. No plate behind
+  any body; the frame stays transparent. Eight of eight bodies now read on all
+  three backdrops, against five of eight before.
+- **`FrameScaleTest` measures all four states, not just `ALERT`** — 32
+  measurements per assertion instead of 8, plus a new one holding a body's own
+  smallest state against its own largest. Both new thresholds come from the gap
+  in the measured data, not from roundness.
+- **Home is no longer empty symmetrically.** The creature slot took every pixel
+  the rest of the screen did not want, and because a body sizes from
+  `size.minDimension` the surplus height became margin — two matching voids with
+  the body between them. The air is now collected into one zone above the body,
+  where it works for the 32sp Light name; the body sits below the geometric
+  centre, measured at 0.593 of the screen height.
+- Chat and the Mind screen are demoted, not deleted: chat is a route reachable
+  only from Settings behind `experimental_chat`, off by default, and Home has no
+  chat slot at all. Held by `ChatDemotionTest`.
+- A design system with contrast instead of gradations, air instead of cards, and
+  an accent derived from the creature's own genome — `docs/design-system-v11.md`.
+
+### Added
+- `NoDefaultBodyTest` — four tests in the ordinary `check` contour that fail when
+  any production source names a body as a fallback or defaults a seed. It names
+  all eight bodies, or the rule is walked around by picking a different one.
+  Proven to bite: it caught two real violations on its first run, and a
+  deliberately planted regression produced exactly the expected failures.
+- `tools/contact-sheet.py` — the 8x4-on-three-backdrops comparison, in the repo
+  rather than ad-hoc, so the next run can re-shoot it instead of reinventing it.
+- Micromotion at the engine level (breath squash on its own channel, microsaccades)
+  and a debug-only design catalogue activity that cannot ship.
+
+### Known, not fixed, awaiting a decision
+- The launcher icon — and therefore the system splash — is literally the spirit
+  orb. Whoever was assigned a fox sees a different body full-screen at every
+  launch, for longer than the flash this run removed. An adaptive icon is a static
+  resource and cannot follow a device seed.
+- The two-pane Home split fires on width alone, so a screen wider than 840dp that
+  is also taller than it is wide — an unfolded Fold in portrait — gets two tall
+  narrow columns with the body in one corner.
+- A phone whose `ANDROID_ID` is unreadable seeds its creature from the fixed
+  string `"anima-fallback"`, i.e. gets the same creature as every other such
+  phone.
+- `MOTH` reads as a butterfly rather than a moth, and asleep it is a brown
+  capsule with antennae. It passes readability and fails recognisability.
+- `DayInLifeTest` still hangs on soul import; the E2E floor is unfixed.
+
 ## [1.0.0] — 2026-07-27
 
 The run that asked what the creature actually says. v0.9 proved the model
