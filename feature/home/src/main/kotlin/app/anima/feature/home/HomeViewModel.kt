@@ -73,8 +73,16 @@ sealed interface HomeStarter {
 
 data class HomeUiState(
     val creatureName: String = "",
-    val concept: CreatureConcept = CreatureConcept.SPIRIT_ORB,
-    val seed: Long = 0L,
+    /**
+     * v1.1b task 1c: **null while identity is still being read.** This field
+     * used to default to `SPIRIT_ORB`, and because `stateIn` needs an initial
+     * value, that default was the first thing every launch drew — a body this
+     * phone was never assigned, on the one screen whose whole claim is that the
+     * body belongs to this phone. Null means "draw nobody", not "draw the orb".
+     */
+    val concept: CreatureConcept? = null,
+    /** Null with the same meaning: a default seed is a different personality. */
+    val seed: Long? = null,
     val daysTogether: Long = 1,
     val bodyState: BodyState = BodyState.Resting,
     val messages: List<ChatMessage> = emptyList(),
@@ -226,7 +234,12 @@ class HomeViewModel
                     growth = Evolution.growthOf(stats, now),
                     calmMotion = extras.b,
                     stage = Evolution.stageOf(stats, now),
-                    personality = extras.c ?: Personality.presetFor(id.concept),
+                    // v1.1b task 1c: no body known yet means no body's preset —
+                    // the neutral baseline, not some other creature's temperament.
+                    personality =
+                        extras.c
+                            ?: id.concept?.let(Personality::presetFor)
+                            ?: Personality.Default,
                     starters = extras.d,
                     activeTier = quad.c.tier,
                     dreamAvailable = quad.c.dream,
@@ -291,7 +304,8 @@ class HomeViewModel
                 // creation time, in the locale of that moment (glossary §4).
                 val pool = appContext.resources.getStringArray(R.array.home_goodnight_pool)
                 val epochDay = now / RelationshipStats.DAY_MILLIS
-                val seed = (identity.seed() ?: 0L) + epochDay
+                // v1.1b task 1c: a default seed picks a different creature's line.
+                val seed = (identity.seed() ?: return@launch) + epochDay
                 val line = pool[(seed % pool.size).toInt().let { if (it < 0) it + pool.size else it }]
                 chat.append(ChatRole.CREATURE, line, now)
                 speakIfEnabled(line)
@@ -357,10 +371,13 @@ class HomeViewModel
             // creature honors the intent itself.
             if (bodyState.value.signals.silenced) return
             val s = uiState.value
+            // v1.1b task 1c: the voice is derived from the body. Unknown body,
+            // no voice — silence is honest, a stand-in voice is not.
+            val concept = s.concept ?: return
             voice.speak(
                 text,
                 app.anima.core.voice.VoiceCharacter.of(
-                    s.concept,
+                    concept,
                     s.personality.warmth,
                     s.personality.chattiness,
                 ),
@@ -400,7 +417,7 @@ class HomeViewModel
             // l10n: context-bound — appended to the chat DB at creation time
             // in the current locale; history is never repainted (glossary §4).
             val pool = appContext.resources.getStringArray(R.array.home_morning_pool)
-            val seed = (identity.seed() ?: 0L) + epochDay
+            val seed = (identity.seed() ?: return) + epochDay
             val line = pool[(seed % pool.size).toInt().let { if (it < 0) it + pool.size else it }]
             chat.append(ChatRole.CREATURE, line, now)
             speakIfEnabled(line)
@@ -449,7 +466,7 @@ class HomeViewModel
                     )
                 val dream =
                     app.anima.core.model.DreamWeaver
-                        .weave(identity.seed() ?: 0L, key, echo)
+                        .weave(identity.seed() ?: return@launch, key, echo)
                 chat.append(ChatRole.CREATURE, dream, now)
                 journal.record(JournalKind.DREAM_TOLD, now)
             }
@@ -557,7 +574,7 @@ class HomeViewModel
                         "${((free - base) * PERCENT).toInt()}",
                     )
                     val pool = appContext.resources.getStringArray(R.array.home_burrow_pool)
-                    val seed = (identity.seed() ?: 0L) + now / RelationshipStats.DAY_MILLIS
+                    val seed = (identity.seed() ?: return@collect) + now / RelationshipStats.DAY_MILLIS
                     val line = pool[(seed % pool.size).toInt().let { if (it < 0) it + pool.size else it }]
                     chat.append(ChatRole.CREATURE, line, now)
                     events.value = BodyEvent.BURROW_ROOMIER
@@ -741,8 +758,9 @@ class HomeViewModel
 
         private data class IdentitySnapshot(
             val name: String,
-            val concept: CreatureConcept,
-            val seed: Long,
+            /** null until the row is read; never a stand-in body (v1.1b task 1c). */
+            val concept: CreatureConcept?,
+            val seed: Long?,
             val daysTogether: Long,
             val hatchedAt: Long,
             val conversationCount: Int,
@@ -758,8 +776,8 @@ class HomeViewModel
                 val stats = identity.stats(now)
                 IdentitySnapshot(
                     name = name.orEmpty(),
-                    concept = concept ?: CreatureConcept.SPIRIT_ORB,
-                    seed = identity.seed() ?: 0L,
+                    concept = concept,
+                    seed = identity.seed(),
                     daysTogether = stats.daysTogether(now),
                     hatchedAt = stats.hatchedAtMillis,
                     conversationCount = conversations,

@@ -121,12 +121,17 @@ class AnimaWallpaperService : WallpaperService() {
                 EntryPointAccessors
                     .fromApplication(applicationContext, WallpaperEntryPoint::class.java)
             val identity = entry.identity()
+            // v1.1b task 1c: this is a FULL-SCREEN surface on the home screen —
+            // the place where a substituted body is least likely to be read as a
+            // bug and most likely to be believed. If identity cannot be read,
+            // the frame is background only. An empty wallpaper is a visible
+            // problem; a stranger's creature is an invisible one.
             val concept =
                 runCatching { kotlinx.coroutines.runBlocking { identity.concept() } }
-                    .getOrNull() ?: CreatureConcept.SPIRIT_ORB
+                    .getOrNull()
             val seed =
                 runCatching { kotlinx.coroutines.runBlocking { identity.seed() } }
-                    .getOrNull() ?: 0L
+                    .getOrNull()
             // v0.4 milestones: the worn palette follows onto the wallpaper.
             val paletteShift =
                 runCatching {
@@ -149,6 +154,7 @@ class AnimaWallpaperService : WallpaperService() {
             val canvas = runCatching { holder.lockCanvas() }.getOrNull() ?: return
             try {
                 canvas.drawColor(if (night) NIGHT_BG else DAY_BG)
+                if (concept == null || seed == null) return
                 val side = minOf(canvas.width, canvas.height) * CREATURE_FRACTION
                 val bitmap =
                     StillRender.tile(

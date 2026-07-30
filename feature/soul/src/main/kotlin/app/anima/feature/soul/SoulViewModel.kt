@@ -33,8 +33,9 @@ import javax.inject.Inject
 
 data class SoulUiState(
     val facts: List<SoulFact> = emptyList(),
-    val concept: CreatureConcept = CreatureConcept.SPIRIT_ORB,
-    val seed: Long = 0L,
+    /** v1.1b task 1c: null until the identity row is read. */
+    val concept: CreatureConcept? = null,
+    val seed: Long? = null,
     val stats: RelationshipStats? = null,
     val importCandidates: List<FactCandidate> = emptyList(),
     val importText: String = "",
@@ -110,7 +111,11 @@ class SoulViewModel
         private val categoryFilter = MutableStateFlow<FactCategory?>(null)
         private val editing = MutableStateFlow<Pair<SoulFact, String>?>(null)
         private val backupNotice = MutableStateFlow<BackupNotice?>(null)
-        private val identityBits = MutableStateFlow(CreatureConcept.SPIRIT_ORB to 0L)
+
+        // v1.1b task 1c: this was seeded with SPIRIT_ORB and seed 0, which made
+        // the Soul screen draw a body belonging to no phone on its first frames
+        // EVERY time it opened — not only when a read failed.
+        private val identityBits = MutableStateFlow<Pair<CreatureConcept, Long>?>(null)
 
         val uiState: StateFlow<SoulUiState> =
             kotlinx.coroutines.flow
@@ -136,8 +141,8 @@ class SoulViewModel
                             }
                     SoulUiState(
                         facts = filtered,
-                        concept = identityBits.value.first,
-                        seed = identityBits.value.second,
+                        concept = identityBits.value?.first,
+                        seed = identityBits.value?.second,
                         stats = imports.third,
                         importCandidates = imports.first,
                         importText = imports.second,
@@ -159,8 +164,9 @@ class SoulViewModel
         init {
             viewModelScope.launch {
                 stats.value = identity.stats(System.currentTimeMillis())
-                identityBits.value =
-                    (identity.concept() ?: CreatureConcept.SPIRIT_ORB) to (identity.seed() ?: 0L)
+                val concept = identity.concept()
+                val seed = identity.seed()
+                identityBits.value = if (concept != null && seed != null) concept to seed else null
             }
         }
 
@@ -223,7 +229,16 @@ class SoulViewModel
             viewModelScope.launch {
                 val now = System.currentTimeMillis()
                 val name = identity.name() ?: "Anima"
-                val (concept, seed) = identityBits.value
+                // v1.1b task 1c: found while removing the SPIRIT_ORB-to-0L seed
+                // value of identityBits — this is a PNG that LEAVES the phone,
+                // and before the init coroutine finished it would have rendered
+                // and shared a body belonging to no phone. Fourth write path
+                // after the JSON payload, the markdown and the encrypted copy.
+                val (concept, seed) =
+                    identityBits.value ?: run {
+                        backupNotice.value = BackupNotice.NoBodyYet
+                        return@launch
+                    }
                 val liveStats = identity.stats(now)
                 val shift =
                     app.anima.core.model.Milestones.effectiveShiftDeg(

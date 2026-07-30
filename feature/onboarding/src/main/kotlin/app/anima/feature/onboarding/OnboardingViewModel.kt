@@ -27,7 +27,13 @@ enum class OnboardingStage { HATCH, CHOOSE, NAME }
 
 data class OnboardingUiState(
     val stage: OnboardingStage = OnboardingStage.HATCH,
-    val seed: Long = 0L,
+    /**
+     * v1.1b task 1c: no default. It was `0L`, and although the view model has
+     * always constructed this state with the real device seed, a default here
+     * means a future second construction site can hatch seed 0 without the
+     * compiler saying anything.
+     */
+    val seed: Long,
     val concept: CreatureConcept? = null,
     val name: String = "",
 )

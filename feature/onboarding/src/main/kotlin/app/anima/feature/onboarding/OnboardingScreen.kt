@@ -72,7 +72,7 @@ fun OnboardingScreen(
             .imePadding(),
     ) {
         when (state.stage) {
-            OnboardingStage.HATCH -> HatchStage(seed = state.seed, onHatched = viewModel::onHatched)
+            OnboardingStage.HATCH -> HatchStage(onHatched = viewModel::onHatched)
             OnboardingStage.CHOOSE ->
                 ChooseStage(
                     seed = state.seed,
@@ -80,14 +80,20 @@ fun OnboardingScreen(
                     onSelect = viewModel::onConceptChosen,
                     onConfirm = viewModel::onConceptConfirmed,
                 )
+            // v1.1b task 1c: NAME is only reachable through onConceptConfirmed(),
+            // which refuses a null concept — so the old `?: SPIRIT_ORB` here was
+            // unreachable, and it made the impossible case look handled. If the
+            // concept is somehow absent, show nothing rather than someone else.
             OnboardingStage.NAME ->
-                NameStage(
-                    seed = state.seed,
-                    concept = state.concept ?: CreatureConcept.SPIRIT_ORB,
-                    name = state.name,
-                    onNameChanged = viewModel::onNameChanged,
-                    onConfirm = { viewModel.complete(onFinished) },
-                )
+                state.concept?.let { chosen ->
+                    NameStage(
+                        seed = state.seed,
+                        concept = chosen,
+                        name = state.name,
+                        onNameChanged = viewModel::onNameChanged,
+                        onConfirm = { viewModel.complete(onFinished) },
+                    )
+                }
         }
     }
 }
@@ -99,10 +105,7 @@ fun OnboardingScreen(
  * ambient life continues.
  */
 @Composable
-private fun HatchStage(
-    seed: Long,
-    onHatched: () -> Unit,
-) {
+private fun HatchStage(onHatched: () -> Unit) {
     val colors = LocalAnimaColors.current
     var progress by remember { mutableFloatStateOf(0f) }
     var skipped by remember { mutableStateOf(false) }
@@ -180,10 +183,31 @@ private fun HatchStage(
                     }
                 }
             } else {
-                // Born: the formless spirit; a body is chosen next.
-                val controller = rememberCreature(CreatureConcept.SPIRIT_ORB, seed)
-                controller.setBodyState(BodyState.Resting)
-                CreatureSurface(controller = controller, night = true, modifier = Modifier.fillMaxSize())
+                // Born, and not yet anybody. v1.1b task 1c: this used to be a
+                // literal `rememberCreature(SPIRIT_ORB, seed)` — the comment
+                // called it "the formless spirit", but SPIRIT_ORB is one of the
+                // eight real bodies, so whoever's phone was going to be a fox
+                // watched a different creature hatch out of their egg. What is
+                // drawn now is light with no features: the same glow the cracks
+                // were leaking, opened out. Nothing here says which body follows.
+                Canvas(Modifier.fillMaxSize()) {
+                    val c = Offset(size.width / 2f, size.height / 2f)
+                    val r = size.minDimension * 0.22f
+                    drawCircle(
+                        brush =
+                            Brush.radialGradient(
+                                listOf(
+                                    Color(0xFFDFF7F1),
+                                    Color(0xFF8FD3C7).copy(alpha = 0.55f),
+                                    Color(0x008FD3C7),
+                                ),
+                                center = c,
+                                radius = r * BORN_GLOW_RADII,
+                            ),
+                        radius = r * BORN_GLOW_RADII,
+                        center = c,
+                    )
+                }
             }
         }
         Text(
@@ -314,5 +338,8 @@ private fun NameStage(
         Spacer(Modifier.height(24.dp))
     }
 }
+
+/** Radius of the featureless born-glow, in egg radii (v1.1b task 1c). */
+private const val BORN_GLOW_RADII = 1.6f
 
 private const val HATCH_MILLIS = 6000

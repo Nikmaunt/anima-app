@@ -118,25 +118,40 @@ fun HomeScreen(
         }
     }
 
+    // v1.1b task 1c: identity, or nothing. Both come from the same row pair, so
+    // they are read as one thing — a known body with a default seed would be
+    // just as wrong as a default body. Until they arrive there is no controller
+    // and no genome, and therefore nobody to draw.
+    val concept = state.concept
+    val seed = state.seed
+
     // Personality tunes the genome (saccades, blink pace) within its bounds;
     // the life stage scales the whole body. Both deterministic (v0.2).
-    val genome =
-        remember(state.seed, state.personality) {
-            CreatureGenome.from(state.seed).tunedBy(state.personality)
+    val controller =
+        if (concept != null && seed != null) {
+            val genome =
+                remember(seed, state.personality) {
+                    CreatureGenome.from(seed).tunedBy(state.personality)
+                }
+            rememberCreature(concept, seed, genome)
+        } else {
+            null
         }
-    val controller = rememberCreature(state.concept, state.seed, genome)
     val paletteShift by viewModel.paletteShift.collectAsState()
-    controller.paletteShiftDeg = paletteShift
-    controller.setBodyState(state.bodyState)
-    controller.setGrowth(state.growth)
-    controller.setStage(state.stage)
-    controller.onThinking(state.streamingReply != null)
+    if (controller != null) {
+        controller.paletteShiftDeg = paletteShift
+        controller.setBodyState(state.bodyState)
+        controller.setGrowth(state.growth)
+        controller.setStage(state.stage)
+        controller.onThinking(state.streamingReply != null)
+    }
 
     // v0.3 haptic map: rich moments run through PurrHaptics' own primitive
     // gates (arePrimitivesSupported) — unsupported hardware stays silent.
     val context = LocalContext.current
     val richHaptics = remember { PurrHaptics(context) }
-    LaunchedEffect(bodyEvent) {
+    LaunchedEffect(bodyEvent, controller) {
+        if (controller == null) return@LaunchedEffect
         when (bodyEvent) {
             BodyEvent.CELEBRATE_CHARGE -> {
                 controller.onCelebrate()
@@ -230,13 +245,21 @@ fun HomeScreen(
     }
 
     val creature: @Composable (Modifier) -> Unit = { creatureModifier ->
-        CreatureSurface(
-            controller = controller,
-            night = colors.isNight,
-            modifier = creatureModifier,
-            reducedMotionOverride = if (state.calmMotion) true else null,
-            contentDescription = creatureA11y(state),
-        )
+        if (controller != null) {
+            CreatureSurface(
+                controller = controller,
+                night = colors.isNight,
+                modifier = creatureModifier,
+                reducedMotionOverride = if (state.calmMotion) true else null,
+                contentDescription = creatureA11y(state),
+            )
+        } else {
+            // v1.1b task 1c: an empty box, not a stand-in body. It keeps the
+            // slot's measured size so nothing jumps when the real body arrives,
+            // and it is deliberately silent to a screen reader — announcing a
+            // creature that is not there yet would be the same lie in words.
+            Box(creatureModifier)
+        }
     }
 
     val cardsAndNotices: @Composable () -> Unit = {

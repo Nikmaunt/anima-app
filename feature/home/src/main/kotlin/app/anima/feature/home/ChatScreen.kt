@@ -56,10 +56,10 @@ fun ChatScreen(
 
     // The creature is not drawn here — this screen is the one place in the
     // app that is about words, and the body stays on Home where it is the
-    // hero. Genome is still resolved so voice tuning matches.
-    remember(state.seed, state.personality) {
-        CreatureGenome.from(state.seed).tunedBy(state.personality)
-    }
+    // hero. v1.1b: a `remember { CreatureGenome.from(state.seed) }` stood here
+    // with a comment saying voice tuning needed it; the value was discarded and
+    // the voice is tuned in the view model, so the seed's nullability exposed it
+    // as dead. Removed rather than made null-safe.
 
     Column(
         Modifier

@@ -10,10 +10,10 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
+import androidx.glance.layout.Box
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.fillMaxSize
 import app.anima.core.data.repo.IdentityRepository
-import app.anima.core.model.CreatureConcept
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -42,8 +42,12 @@ class AnimaWidget : GlanceAppWidget() {
     ) {
         val entry = EntryPointAccessors.fromApplication(context, WidgetEntryPoint::class.java)
         val identity = entry.identity()
-        val concept = runCatching { identity.concept() }.getOrNull() ?: CreatureConcept.SPIRIT_ORB
-        val seed = runCatching { identity.seed() }.getOrNull() ?: 0L
+        // v1.1b task 1c: the widget sits on the home screen next to the launcher
+        // icons, where nobody inspects it — a substituted body here is believed
+        // rather than reported. If the identity read fails, the widget draws
+        // nothing at all (see the empty branch at the bottom of provideGlance).
+        val concept = runCatching { identity.concept() }.getOrNull()
+        val seed = runCatching { identity.seed() }.getOrNull()
         val name = runCatching { identity.name() }.getOrNull() ?: "Anima"
         // v0.4 milestones: the worn palette follows onto the home screen.
         val paletteShift =
@@ -58,6 +62,19 @@ class AnimaWidget : GlanceAppWidget() {
         val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         val night = hour >= NIGHT_FROM || hour < NIGHT_UNTIL
         val mood = WidgetSnapshot.moodFor(vitals, night)
+        val launch = context.packageManager.getLaunchIntentForPackage(context.packageName)
+
+        if (concept == null || seed == null) {
+            // Empty, and still tappable so the owner can open the app and see
+            // what is wrong. No text: the widget contract is "nothing to read"
+            // (design-2026-07 §4.3), and a body is not invented to fill space.
+            provideContent {
+                val base = GlanceModifier.fillMaxSize()
+                Box(if (launch != null) base.clickable(actionStartActivity(launch)) else base) {}
+            }
+            return
+        }
+
         val bitmap =
             WidgetSnapshot.render(
                 concept,
@@ -69,7 +86,6 @@ class AnimaWidget : GlanceAppWidget() {
                 paletteShiftDeg = paletteShift,
             )
 
-        val launch = context.packageManager.getLaunchIntentForPackage(context.packageName)
         provideContent {
             val base = GlanceModifier.fillMaxSize()
             Image(

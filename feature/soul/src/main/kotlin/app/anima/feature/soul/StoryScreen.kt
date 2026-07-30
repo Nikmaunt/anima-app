@@ -47,8 +47,9 @@ import javax.inject.Inject
 data class StoryUiState(
     val creatureName: String = "",
     val moments: List<StoryMoment> = emptyList(),
-    val concept: CreatureConcept = CreatureConcept.SPIRIT_ORB,
-    val seed: Long = 0L,
+    /** v1.1b task 1c: null until the identity row is read. */
+    val concept: CreatureConcept? = null,
+    val seed: Long? = null,
 )
 
 @HiltViewModel
@@ -72,8 +73,8 @@ class StoryViewModel
                 state.value =
                     StoryUiState(
                         creatureName = identity.name().orEmpty(),
-                        concept = identity.concept() ?: CreatureConcept.SPIRIT_ORB,
-                        seed = identity.seed() ?: 0L,
+                        concept = identity.concept(),
+                        seed = identity.seed(),
                         moments =
                             StoryTimeline.build(
                                 hatchedAtMillis = identity.hatchedAtMillis() ?: now,

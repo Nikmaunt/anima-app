@@ -20,8 +20,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class RestUiState(
-    val concept: CreatureConcept = CreatureConcept.SPIRIT_ORB,
-    val seed: Long = 0L,
+    /** v1.1b task 1c: null until the identity row is read. */
+    val concept: CreatureConcept? = null,
+    val seed: Long? = null,
     val creatureName: String = "",
     val charging: Boolean = false,
     /** Derived, only-growing counters (Finch-ethics: nothing to break). */
@@ -64,8 +65,8 @@ class RestViewModel
             viewModelScope.launch {
                 mutableState.value =
                     mutableState.value.copy(
-                        concept = identity.concept() ?: CreatureConcept.SPIRIT_ORB,
-                        seed = identity.seed() ?: 0L,
+                        concept = identity.concept(),
+                        seed = identity.seed(),
                         creatureName = identity.name().orEmpty(),
                     )
             }

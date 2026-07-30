@@ -16,7 +16,29 @@ class RenderContext {
     var mood: Mood = Mood.ALERT
     var timeSeconds: Float = 0f
     var night: Boolean = true
-    var seed: Long = 0L
+
+    /**
+     * v1.1b task 1c: no default seed. [pose] and [genome] are `lateinit` for
+     * this exact reason and a Long cannot be, so the same contract is spelled
+     * out by hand: reading before the frame set it fails loudly instead of
+     * quietly drawing seed 0 — which is a different creature's randomness, and
+     * on this frame there is no way to see that from the picture.
+     *
+     * A `Long?` would have been shorter and would have boxed on every frame;
+     * this class is reused per frame under a zero-alloc rule.
+     */
+    private var seedValue: Long = 0L
+    private var seedAssigned: Boolean = false
+
+    var seed: Long
+        get() {
+            check(seedAssigned) { "RenderContext.seed read before the frame set it" }
+            return seedValue
+        }
+        set(value) {
+            seedValue = value
+            seedAssigned = true
+        }
 
     /** Vitals some concepts embody directly (robot's charge bar, sprout growth). */
     var batteryPercent: Int = 80

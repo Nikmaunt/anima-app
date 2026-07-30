@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -45,8 +46,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class WardrobeUiState(
-    val concept: CreatureConcept = CreatureConcept.SPIRIT_ORB,
-    val seed: Long = 0L,
+    /** v1.1b task 1c: null until the identity row is read. */
+    val concept: CreatureConcept? = null,
+    val seed: Long? = null,
     val selectedWire: String? = null,
     val board: List<Milestones.Unlock> = emptyList(),
 )
@@ -79,8 +81,8 @@ class WardrobeViewModel
             val now = System.currentTimeMillis()
             state.value =
                 state.value.copy(
-                    concept = identity.concept() ?: CreatureConcept.SPIRIT_ORB,
-                    seed = identity.seed() ?: 0L,
+                    concept = identity.concept(),
+                    seed = identity.seed(),
                     board = Milestones.board(identity.stats(now), now),
                 )
         }
@@ -136,18 +138,27 @@ fun WardrobeScreen(
                                     viewModel.select(unlock.variant)
                                 },
                     ) {
-                        // Live rig preview wearing this palette.
-                        val controller = rememberCreature(state.concept, state.seed)
-                        LaunchedEffect(unlock.variant) {
-                            controller.paletteShiftDeg = unlock.variant.shiftDeg
+                        // Live rig preview wearing this palette. v1.1b task 1c:
+                        // these are shifts of the ASSIGNED body, so with no body
+                        // known there is nothing to preview — an empty swatch of
+                        // the same size, never a different creature in the palette.
+                        val wornConcept = state.concept
+                        val wornSeed = state.seed
+                        if (wornConcept != null && wornSeed != null) {
+                            val controller = rememberCreature(wornConcept, wornSeed)
+                            LaunchedEffect(unlock.variant) {
+                                controller.paletteShiftDeg = unlock.variant.shiftDeg
+                            }
+                            CreatureSurface(
+                                controller = controller,
+                                night = colors.isNight,
+                                modifier = Modifier.size(88.dp),
+                                interactive = false,
+                                contentDescription = unlock.variant.label,
+                            )
+                        } else {
+                            Spacer(Modifier.size(88.dp))
                         }
-                        CreatureSurface(
-                            controller = controller,
-                            night = colors.isNight,
-                            modifier = Modifier.size(88.dp),
-                            interactive = false,
-                            contentDescription = unlock.variant.label,
-                        )
                         Column(Modifier.weight(1f)) {
                             SectionLabel(unlock.variant.label)
                             Text(

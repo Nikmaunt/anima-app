@@ -191,22 +191,30 @@ fun RestContent(
             }
             Spacer(Modifier.height(8.dp))
 
-            val controller = rememberCreature(ui.concept, ui.seed)
-            controller.paletteShiftDeg = paletteShiftDeg
-            val restingMood = if (phase is RestPhase.Running) Mood.ASLEEP else Mood.ALERT
-            LaunchedEffect(restingMood, charging) {
-                controller.setBodyState(
-                    BodyState(BodySignals.Resting.copy(charging = charging), restingMood),
+            // v1.1b task 1c: identity, or an empty 220dp box. The box holds the
+            // layout so nothing below it shifts when the real body arrives.
+            val restConcept = ui.concept
+            val restSeed = ui.seed
+            if (restConcept != null && restSeed != null) {
+                val controller = rememberCreature(restConcept, restSeed)
+                controller.paletteShiftDeg = paletteShiftDeg
+                val restingMood = if (phase is RestPhase.Running) Mood.ASLEEP else Mood.ALERT
+                LaunchedEffect(restingMood, charging) {
+                    controller.setBodyState(
+                        BodyState(BodySignals.Resting.copy(charging = charging), restingMood),
+                    )
+                }
+                CreatureSurface(
+                    controller = controller,
+                    night = phase is RestPhase.Running,
+                    modifier = Modifier.size(220.dp),
+                    interactive = false,
+                    contentDescription = stringResource(R.string.rest_a11y_creature),
+                    runFrameLoop = frameLoop,
                 )
+            } else {
+                Spacer(Modifier.size(220.dp))
             }
-            CreatureSurface(
-                controller = controller,
-                night = phase is RestPhase.Running,
-                modifier = Modifier.size(220.dp),
-                interactive = false,
-                contentDescription = stringResource(R.string.rest_a11y_creature),
-                runFrameLoop = frameLoop,
-            )
             Spacer(Modifier.height(24.dp))
 
             when (phase) {

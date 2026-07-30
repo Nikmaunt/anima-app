@@ -60,7 +60,8 @@ import javax.inject.Inject
 data class SettingsUiState(
     val name: String = "",
     val concept: CreatureConcept? = null,
-    val seed: Long = 0L,
+    /** v1.1b task 1c: null until the identity row is read, never 0. */
+    val seed: Long? = null,
     val calmMotion: Boolean = false,
     val personality: Personality = Personality.Default,
     val personalityCustomised: Boolean = false,
@@ -147,7 +148,7 @@ class SettingsViewModel
             viewModelScope.launch { prefs.setLitertlmEngine(value) }
         }
 
-        private val seed = MutableStateFlow(0L)
+        private val seed = MutableStateFlow<Long?>(null)
 
         val uiState: StateFlow<SettingsUiState> =
             combine(
@@ -158,13 +159,17 @@ class SettingsViewModel
                 seed,
             ) { name, concept, calmCloudShots, personality, s ->
                 val (calm, cloud, shots) = calmCloudShots
-                val effectiveConcept = concept ?: CreatureConcept.SPIRIT_ORB
                 SettingsUiState(
                     name = name.orEmpty(),
                     concept = concept,
                     seed = s,
                     calmMotion = calm,
-                    personality = personality ?: Personality.presetFor(effectiveConcept),
+                    // v1.1b task 1c: with no body known there is no body's
+                    // preset — the neutral baseline, not another creature's.
+                    personality =
+                        personality
+                            ?: concept?.let(Personality::presetFor)
+                            ?: Personality.Default,
                     personalityCustomised = personality != null,
                     cloud = cloud,
                     soulScreenshotsAllowed = shots,
@@ -172,7 +177,7 @@ class SettingsViewModel
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
 
         init {
-            viewModelScope.launch { seed.value = identity.seed() ?: 0L }
+            viewModelScope.launch { seed.value = identity.seed() }
         }
 
         fun rename(name: String) {
@@ -272,15 +277,22 @@ fun SettingsScreen(
                     stringResource(R.string.settings_body_hint),
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                ConceptGallery(
-                    seed = state.seed,
-                    selected = state.concept,
-                    onSelect = viewModel::switchConcept,
-                    accent = colors.accent,
-                    surface = colors.surfaceHigh,
-                    outline = colors.outline,
-                    modifier = Modifier.height(660.dp),
-                )
+                // v1.1b task 1c: the gallery renders every body against THIS
+                // phone's seed, so with no seed there is nothing truthful to
+                // render. (The whole section leaves in Phase 4 — the owner's
+                // creature passport replaces it — but until then it must not
+                // draw eight creatures from seed 0.)
+                state.seed?.let { ownSeed ->
+                    ConceptGallery(
+                        seed = ownSeed,
+                        selected = state.concept,
+                        onSelect = viewModel::switchConcept,
+                        accent = colors.accent,
+                        surface = colors.surfaceHigh,
+                        outline = colors.outline,
+                        modifier = Modifier.height(660.dp),
+                    )
+                }
                 // v0.4 milestones: palettes opened by the relationship.
                 GhostButton(stringResource(R.string.settings_forms_button), onClick = onOpenWardrobe)
             }

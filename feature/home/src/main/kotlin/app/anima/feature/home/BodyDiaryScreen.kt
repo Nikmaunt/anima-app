@@ -76,8 +76,9 @@ data class BodyDiaryUiState(
     val storms: List<Long> = emptyList(),
     val chartWeek: Boolean = false,
     val stormDrainRatio: Double? = null,
-    val concept: app.anima.core.model.CreatureConcept = app.anima.core.model.CreatureConcept.SPIRIT_ORB,
-    val seed: Long = 0L,
+    /** v1.1b task 1c: null until the identity row is read. */
+    val concept: app.anima.core.model.CreatureConcept? = null,
+    val seed: Long? = null,
     val quietWeek: Boolean = false,
     // v0.4 diary v3: rest sessions, weekly care, "our year" heatmap.
     val weekRests: Int = 0,
@@ -147,8 +148,8 @@ class BodyDiaryViewModel
                         weekOffline = journal.countOfSince(JournalKind.WENT_OFFLINE, weekAgo),
                         weekPerApp = if (senseOn) notifEvents.perAppSince(weekAgo) else emptyMap(),
                         notifSenseOn = senseOn,
-                        concept = identity.concept() ?: app.anima.core.model.CreatureConcept.SPIRIT_ORB,
-                        seed = identity.seed() ?: 0L,
+                        concept = identity.concept(),
+                        seed = identity.seed(),
                     )
                 state.value =
                     state.value.copy(
