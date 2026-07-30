@@ -36,7 +36,13 @@ internal object RigScale {
     const val SPIRIT_ORB = 1.20f
     const val FOX_KIT = 1.07f
     const val JELLY = 1.09f
-    const val PIXEL_PET = 1.10f
+
+    // v1.1b task 2: 1.10 → 0.97. The pixel pet gained a one-cell silhouette
+    // outline, which is two cells of width the sprite did not have before; at
+    // 1.10 the outlined sprite measured 0.961 of the frame, i.e. it left the
+    // band from the top and had a cell hanging off the edge. Re-measured, not
+    // guessed: 0.97 puts it back at 0.85.
+    const val PIXEL_PET = 0.97f
     const val ROBOT = 1.22f
     const val SPROUT = 1.28f
     const val EMBER = 1.69f

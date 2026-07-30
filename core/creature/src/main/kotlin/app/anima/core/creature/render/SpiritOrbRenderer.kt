@@ -17,6 +17,14 @@ import kotlin.math.sin
 class SpiritOrbRenderer : CreatureRenderer {
     private val glow = GlowSkin()
 
+    private companion object {
+        /** Grounding geometry, in body radii (v1.1b task 2). */
+        const val SHADOW_DROP = 1.02f
+        const val SHADOW_HALF_W = 0.62f
+        const val SHADOW_HALF_H = 0.15f
+        const val CONTOUR_SHARE = 0.055f
+    }
+
     override fun DrawScope.render(ctx: RenderContext) {
         val pose = ctx.pose
         val c = Offset(size.width / 2f, size.height / 2f + size.minDimension * RigScale.SPIRIT_ORB_BIAS)
@@ -24,6 +32,17 @@ class SpiritOrbRenderer : CreatureRenderer {
         val hue = 190f // pale cyan spirit
         val core = Hues.bodyColor(hue, sat = 0.55f, light = 0.72f, ctx = ctx)
         val rim = Hues.bodyColor(hue + 24f, sat = 0.65f, light = 0.6f, ctx = ctx)
+
+        // v1.1b task 2: occlusion first, under everything. Without it the orb had
+        // nothing anywhere in its frame darker than the backdrop, which is why a
+        // busy photo showed straight through it.
+        with(Grounding) {
+            drawContactShadow(
+                center = c.copy(y = c.y + r * SHADOW_DROP),
+                halfWidth = r * SHADOW_HALF_W,
+                halfHeight = r * SHADOW_HALF_H,
+            )
+        }
 
         with(glow) {
             drawGlow(
@@ -63,14 +82,33 @@ class SpiritOrbRenderer : CreatureRenderer {
             )
         }
 
-        // Liquid-glass body: layered translucent discs with a bright caustic.
+        // v1.1b task 2: the body's own value, opaque, lit from above. Before this
+        // the orb WAS the translucent layer below — every pixel of it let the
+        // wallpaper through, so on a photo it stopped being a body at all. Glass
+        // still reads, because the caustic layers and the highlight are still
+        // painted over the top; what changed is that there is now something for
+        // them to be painted onto.
+        drawCircle(
+            brush =
+                Grounding.verticalBody(
+                    top = Hues.bodyColor(hue, sat = 0.42f, light = 0.80f, ctx = ctx),
+                    bottom = Hues.bodyColor(hue + 14f, sat = 0.55f, light = 0.44f, ctx = ctx),
+                    topY = c.y - r,
+                    bottomY = c.y + r,
+                ),
+            radius = r,
+            center = c,
+        )
+
+        // Liquid-glass caustics: the layered translucent discs, now on top of an
+        // opaque body rather than instead of one.
         drawCircle(
             brush =
                 Brush.radialGradient(
                     listOf(
-                        core.copy(alpha = 0.95f),
-                        core.copy(alpha = 0.55f),
-                        rim.copy(alpha = 0.30f),
+                        core.copy(alpha = 0.75f),
+                        core.copy(alpha = 0.35f),
+                        rim.copy(alpha = 0.15f),
                     ),
                     center = c.copy(y = c.y - r * 0.25f),
                     radius = r * 1.4f,
@@ -85,6 +123,12 @@ class SpiritOrbRenderer : CreatureRenderer {
             radius = r * 0.32f,
             center = Offset(c.x - r * 0.3f + wob * r * 0.12f, c.y - r * 0.38f),
         )
+
+        // v1.1b task 2: the edge, both ways round. A single dark ring would
+        // vanish on a dark wallpaper and a single light one on paper.
+        with(Grounding) {
+            drawTwoToneRing(center = c, radius = r, hue = hue, ctx = ctx, width = r * CONTOUR_SHARE)
+        }
 
         // Eyes float inside the light.
         val eyeGap = r * 0.42f
