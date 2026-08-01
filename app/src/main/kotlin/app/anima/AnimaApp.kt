@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.pm.ApplicationInfo
 import android.os.StrictMode
 import app.anima.core.data.crypto.SoulVaultWarmer
+import app.anima.core.data.identity.IdentityRepair
 import app.anima.core.modeldelivery.PackModelSource
 import app.anima.feature.settings.CrashLog
 import app.anima.feature.widget.WidgetRefresh
@@ -21,6 +22,8 @@ class AnimaApp : Application() {
 
     @Inject lateinit var packModelSource: PackModelSource
 
+    @Inject lateinit var identityRepair: IdentityRepair
+
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onCreate() {
@@ -29,7 +32,15 @@ class AnimaApp : Application() {
         // launch. The passphrase is deliberately NOT scrubbed: the WAL pool
         // re-keys every new connection from it — SoulKeyHolder / ADR-003
         // addendum v0.4.
-        appScope.launch { soulVaultWarmer.warmUp() }
+        // v1.1c task 3: an identity that provably contradicts itself is repaired
+        // before any screen reads it — after the vault is warm, because it needs
+        // the encrypted DB. It refuses to touch a body that was CHOSEN or
+        // TRANSFERRED, backs the identity rows up first, and writes what it did
+        // to filesDir/crash/identity-repair.txt. Nothing lived is ever rewritten.
+        appScope.launch {
+            soulVaultWarmer.warmUp()
+            runCatching { identityRepair.run() }
+        }
         // Plaintext soul exports are share-sheet ephemera (audit-v03 F2):
         // whatever a previous session left in cache/exports dies here.
         appScope.launch {

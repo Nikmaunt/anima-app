@@ -229,6 +229,13 @@ class IdentityRepository
 
         suspend fun concept(): CreatureConcept? = metaDao.get(KEY_CONCEPT)?.let(CreatureConcept::fromWire)
 
+        /**
+         * v1.1c: the raw stored wire value, unparsed. `IdentityRepair` has to be
+         * able to tell "no body was recorded" from "a body this build does not
+         * know" — [concept] returns null for both, and they are different damage.
+         */
+        suspend fun conceptWire(): String? = metaDao.get(KEY_CONCEPT)
+
         suspend fun seed(): Long? = metaDao.get(KEY_SEED)?.toLongOrNull()
 
         suspend fun hatchedAtMillis(): Long? = metaDao.get(KEY_HATCHED_AT)?.toLongOrNull()

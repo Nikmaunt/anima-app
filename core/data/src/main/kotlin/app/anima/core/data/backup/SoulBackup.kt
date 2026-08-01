@@ -154,6 +154,11 @@ class SoulBackup
             val hatchedAt = creature.getValue("hatchedAtMillis").jsonPrimitive.long
             identity.hatch(name, concept, seed, hatchedAt)
             identity.restoreHatchedAt(hatchedAt)
+            // v1.1c: this body belongs to the phone the soul was born on, not to
+            // this one, and the seed in the file is that phone's seed. Marking
+            // the era is what stops `IdentityRepair` from "fixing" a transferred
+            // creature into whatever this handset's number would have produced.
+            identity.markIdentityTransferred()
 
             var imported = 0
             var skipped = 0

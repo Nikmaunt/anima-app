@@ -236,6 +236,57 @@ class NoDefaultBodyTest {
     }
 
     /**
+     * v1.1c task 3.5 — the four things that leave the phone carrying a body.
+     *
+     * Two of them are covered by real behaviour tests in `core:data`
+     * (`SoulBackupIdentityTest`: the JSON payload and the encrypted copy both
+     * throw `NoBodyToExport` rather than name a body). The other two live in
+     * `SoulViewModel`, which needs a `Context` and sits in a module with no
+     * Robolectric — so they are held here, by reading the source, and this
+     * comment is the honest statement of that limit: what is checked is that
+     * each path returns before writing when identity is unknown, not that it
+     * does so at runtime. The runtime half is on the owner's device checklist.
+     */
+    @Test
+    fun `nothing leaves the phone carrying a body it invented`() {
+        val soulViewModel =
+            File(repoRoot, "feature/soul/src/main/kotlin/app/anima/feature/soul/SoulViewModel.kt")
+                .readText()
+                .let(::stripComments)
+
+        // The markdown export and the shareable postcard PNG. Both must refuse
+        // BEFORE they write anything: the postcard was found doing neither in
+        // v1.1b, and a postcard is the one artefact that ends up in somebody
+        // else's chat window.
+        listOf("buildExportIntent", "buildPostcardIntent").forEach { fn ->
+            val start = soulViewModel.indexOf("fun $fn(")
+            assertWithMessage("$fn must still exist").that(start).isGreaterThan(0)
+            val body = soulViewModel.substring(start, minOf(start + functionWindow, soulViewModel.length))
+
+            val refusal = body.indexOf("BackupNotice.NoBodyYet")
+            assertWithMessage("$fn must refuse, with a notice, when the body is unknown")
+                .that(refusal)
+                .isGreaterThan(0)
+
+            val firstWrite =
+                listOf("writeText(", "createBitmap(", "outputStream(", "compress(")
+                    .mapNotNull { needle -> body.indexOf(needle).takeIf { it >= 0 } }
+                    .minOrNull()
+            assertWithMessage("$fn writes nothing this test can see; the guard may be checking a stale shape")
+                .that(firstWrite)
+                .isNotNull()
+            assertWithMessage(
+                "$fn refuses only AFTER it has already written a file. A refusal below the write " +
+                    "is not a refusal.",
+            ).that(refusal)
+                .isLessThan(firstWrite!!)
+        }
+    }
+
+    /** Enough of a function to reach its first write; none of these is long. */
+    private val functionWindow = 4000
+
+    /**
      * The two durable write paths from task 1a. A read draws one wrong frame; a
      * write travels to the next phone inside the soul file.
      */
