@@ -190,7 +190,14 @@ fun RestContent(
                     modifier = Modifier.testTag("rest.back"),
                 )
             }
-            Spacer(Modifier.height(8.dp))
+            // v1.1c: everything below used to stack from the top and the bottom
+            // HALF of the screen was empty — visible on the device shot
+            // docs/design/v11/after-v11c/06-rest.png. The content is one small
+            // group (creature, question, chips, reassurance), so it belongs on
+            // the optical centre line rather than pinned under the back button.
+            // Two weighted spacers, 1:1.4, which puts the group slightly above
+            // centre the way Home does.
+            Spacer(Modifier.weight(1f))
 
             // v1.1b task 1c: identity, or an empty 220dp box. The box holds the
             // layout so nothing below it shifts when the real body arrives.
@@ -286,6 +293,7 @@ fun RestContent(
                     GhostButton(stringResource(R.string.rest_thanks), onClick = onDone)
                 }
             }
+            Spacer(Modifier.weight(1.4f))
         }
     }
 }

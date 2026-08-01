@@ -5,7 +5,7 @@
     <string name="settings_title">Настройки</string>
     <string name="settings_save">Сохранить</string>
     <string name="settings_body_label">Тело</string>
-    <string name="settings_body_hint">Одна и та же душа может жить в другом теле. Превью живые — в каждой клетке настоящий движок.</string>
+    <string name="settings_body_hint">Существо этого телефона и его имя. Здесь нечего выбирать — тело пришло вместе с телефоном.</string>
     <string name="settings_calm_motion_title">Спокойные движения</string>
     <string name="settings_calm_motion_hint">Неподвижная поза, редкие моргания. Сам следует системной настройке «меньше анимаций».</string>
     <string name="settings_character_label">Характер</string>
@@ -137,10 +137,10 @@
     <string name="trust_yourdata_body">Забудь воспоминание — и оно помечается в душе как мёртвое (существо перестаёт им пользоваться). Экспортируй душу в один файл, который принадлежит тебе. Удали Anima — и всё уйдёт вместе с ней: другой копии нет нигде.</string>
 
     <!-- Wardrobe (Forms) screen -->
-    <string name="wardrobe_title">Формы</string>
-    <string name="wardrobe_intro">Палитры открываются, пока вы живёте вместе — дни, воспоминания, отдых. Что открылось — открыто навсегда.</string>
-    <string name="wardrobe_worn_now">надета сейчас</string>
-    <string name="wardrobe_open_tap">открыта — нажми, чтобы надеть</string>
+    <string name="wardrobe_title">Оттенки</string>
+    <string name="wardrobe_intro">То же тело в другом свете. Оттенки открываются, пока вы живёте вместе — дни, воспоминания, отдых. Что открылось — открыто навсегда.</string>
+    <string name="wardrobe_worn_now">надет сейчас</string>
+    <string name="wardrobe_open_tap">открыт — нажми, чтобы надеть</string>
     <string name="wardrobe_opens_at">откроется: %1$s</string>
 
     <!-- Crash log screen -->

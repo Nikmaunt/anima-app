@@ -5,7 +5,7 @@
     <string name="settings_title">Ajustes</string>
     <string name="settings_save">Guardar</string>
     <string name="settings_body_label">Cuerpo</string>
-    <string name="settings_body_hint">La misma alma puede vivir en otro cuerpo. Las vistas previas están vivas: cada celda es el motor real.</string>
+    <string name="settings_body_hint">La criatura de este teléfono y su nombre. Aquí no hay nada que elegir — el cuerpo vino con el teléfono.</string>
     <string name="settings_calm_motion_title">Movimiento tranquilo</string>
     <string name="settings_calm_motion_hint">Pose quieta, parpadeos escasos. Sigue automáticamente el ajuste del sistema de reducir animaciones.</string>
     <string name="settings_character_label">Carácter</string>
@@ -137,10 +137,10 @@
     <string name="trust_yourdata_body">Olvida un recuerdo y queda marcado como muerto en el alma (la criatura deja de usarlo). Exporta el alma a un único archivo que es tuyo. Borra Anima y todo se va con ella: no hay copia en ningún otro sitio.</string>
 
     <!-- Wardrobe (Forms) screen -->
-    <string name="wardrobe_title">Formas</string>
-    <string name="wardrobe_intro">Las paletas se abren mientras vivís juntos: días, recuerdos, descansos. Lo que se abre, queda abierto para siempre.</string>
-    <string name="wardrobe_worn_now">puesta ahora</string>
-    <string name="wardrobe_open_tap">abierta — toca para ponerla</string>
+    <string name="wardrobe_title">Tonos</string>
+    <string name="wardrobe_intro">El mismo cuerpo con otra luz. Los tonos se abren mientras viven juntos — días, recuerdos, descansos. Lo que se abre queda abierto para siempre.</string>
+    <string name="wardrobe_worn_now">puesto ahora</string>
+    <string name="wardrobe_open_tap">abierto — toca para llevarlo</string>
     <string name="wardrobe_opens_at">se abre con: %1$s</string>
 
     <!-- Crash log screen -->

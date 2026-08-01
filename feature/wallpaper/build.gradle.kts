@@ -23,4 +23,13 @@ dependencies {
 
     testImplementation(libs.junit4)
     testImplementation(libs.truth)
+
+    // v1.1c task 6: the wallpaper frame had never been looked at in eleven
+    // runs. WallpaperFrameDumpTest renders every body to a real Skia canvas on
+    // a device image and writes the PNGs out, so they can be opened.
+    androidTestImplementation(libs.junit4)
+    androidTestImplementation(libs.truth)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.core.ktx)
 }

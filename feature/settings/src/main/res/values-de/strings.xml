@@ -5,7 +5,7 @@
     <string name="settings_title">Einstellungen</string>
     <string name="settings_save">Speichern</string>
     <string name="settings_body_label">Körper</string>
-    <string name="settings_body_hint">Dieselbe Seele kann in einem anderen Körper leben. Die Vorschauen sind live — in jeder Zelle läuft die echte Engine.</string>
+    <string name="settings_body_hint">Das Wesen dieses Handys und sein Name. Hier gibt es nichts zu wählen — der Körper kam mit dem Handy.</string>
     <string name="settings_calm_motion_title">Ruhige Bewegungen</string>
     <string name="settings_calm_motion_hint">Stille Pose, seltenes Blinzeln. Folgt automatisch der Systemeinstellung für reduzierte Animationen.</string>
     <string name="settings_character_label">Charakter</string>
@@ -137,10 +137,10 @@
     <string name="trust_yourdata_body">Vergiss eine Erinnerung, und sie wird in der Seele als tot markiert (das Wesen nutzt sie nicht mehr). Exportiere die Seele in eine Datei, die dir gehört. Lösche Anima, und alles geht mit — es gibt nirgendwo eine andere Kopie.</string>
 
     <!-- Wardrobe (Forms) screen -->
-    <string name="wardrobe_title">Formen</string>
-    <string name="wardrobe_intro">Paletten öffnen sich, während ihr zusammenlebt — Tage, Erinnerungen, Ruhepausen. Was sich öffnet, bleibt offen. Für immer.</string>
-    <string name="wardrobe_worn_now">wird gerade getragen</string>
-    <string name="wardrobe_open_tap">offen — tippe zum Anziehen</string>
+    <string name="wardrobe_title">Töne</string>
+    <string name="wardrobe_intro">Derselbe Körper in anderem Licht. Töne öffnen sich, während ihr zusammenlebt — Tage, Erinnerungen, Ruhe. Was sich öffnet, bleibt offen.</string>
+    <string name="wardrobe_worn_now">jetzt getragen</string>
+    <string name="wardrobe_open_tap">offen — zum Tragen tippen</string>
     <string name="wardrobe_opens_at">öffnet sich bei: %1$s</string>
 
     <!-- Crash log screen -->

@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- v1.1c task 6: the thumbnail was missing, so the system picker showed the
+     generic broken-image placeholder next to the app's name. -->
 <wallpaper xmlns:android="http://schemas.android.com/apk/res/android"
     android:label="@string/wallpaper_label"
-    android:description="@string/wallpaper_description" />
+    android:description="@string/wallpaper_description"
+    android:thumbnail="@drawable/wallpaper_thumb" />

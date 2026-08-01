@@ -5,13 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
-import android.graphics.Paint
 import android.os.BatteryManager
 import android.service.wallpaper.WallpaperService
 import android.view.SurfaceHolder
-import app.anima.core.creature.render.StillRender
 import app.anima.core.data.repo.IdentityRepository
-import app.anima.core.model.CreatureConcept
 import app.anima.core.model.Mood
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -52,6 +49,7 @@ class AnimaWallpaperService : WallpaperService() {
         private var scope: CoroutineScope? = null
         private var lastStateDrawMs: Long? = null
         private var lastMood: Mood? = null
+        private var lastNight: Boolean? = null
 
         private val batteryReceiver =
             object : BroadcastReceiver() {
@@ -85,6 +83,48 @@ class AnimaWallpaperService : WallpaperService() {
             requestDraw(WallpaperBudget.Reason.SURFACE, stickyBattery())
         }
 
+        /**
+         * v1.1c task 6 — found by putting the wallpaper on an actual home
+         * screen, which is the thing eleven runs never did.
+         *
+         * The day frame is a light beige (#F4F0E9). The launcher paints its
+         * date, its app labels and its clock in whatever colour the *wallpaper*
+         * tells it to use, and this service told it nothing — so on the light
+         * frame the launcher kept white text and the labels became unreadable.
+         * Visible in `docs/design/v11/device/home-wallpaper-day.png`.
+         *
+         * `WallpaperColors.fromBitmap` computes the hints — including
+         * `HINT_SUPPORTS_DARK_TEXT` — from real pixels, so the answer stays
+         * correct if the palette ever changes. It is given a thumbnail of the
+         * frame the wallpaper would actually draw, creature included, rather
+         * than a swatch of the background: the launcher's own contrast maths
+         * should see what the user sees.
+         */
+        override fun onComputeColors(): android.app.WallpaperColors {
+            val night = isNightNow()
+            val thumb =
+                android.graphics.Bitmap.createBitmap(
+                    COLOR_THUMB_W,
+                    COLOR_THUMB_H,
+                    android.graphics.Bitmap.Config.ARGB_8888,
+                )
+            val battery = stickyBattery()
+            val concept = runCatching { kotlinx.coroutines.runBlocking { identityRepo().concept() } }.getOrNull()
+            val seed = runCatching { kotlinx.coroutines.runBlocking { identityRepo().seed() } }.getOrNull()
+            WallpaperFrame.draw(
+                canvas = android.graphics.Canvas(thumb),
+                concept = concept,
+                seed = seed,
+                mood = moodOf(batteryPercent(battery), batteryCharging(battery), night),
+                batteryPercent = batteryPercent(battery),
+                charging = batteryCharging(battery),
+                night = night,
+            )
+            return android.app.WallpaperColors
+                .fromBitmap(thumb)
+                .also { thumb.recycle() }
+        }
+
         override fun onSurfaceDestroyed(holder: SurfaceHolder) {
             stopEverything()
             super.onSurfaceDestroyed(holder)
@@ -100,6 +140,11 @@ class AnimaWallpaperService : WallpaperService() {
             scope?.cancel()
             scope = null
         }
+
+        private fun identityRepo(): IdentityRepository =
+            EntryPointAccessors
+                .fromApplication(applicationContext, WallpaperEntryPoint::class.java)
+                .identity()
 
         private fun stickyBattery(): Intent? = registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
 
@@ -149,28 +194,26 @@ class AnimaWallpaperService : WallpaperService() {
             val charging = batteryCharging(battery)
             val night = isNightNow()
             val mood = moodOf(percent, charging, night)
+            val wasNight = lastNight
             lastMood = mood
+            lastNight = night
+            // Day and night are different background LUMINANCES, so the answer
+            // to onComputeColors changes with them and the launcher has to be
+            // told. Cheap: it only asks when it is told something moved.
+            if (wasNight != null && wasNight != night) notifyColorsChanged()
 
             val canvas = runCatching { holder.lockCanvas() }.getOrNull() ?: return
             try {
-                canvas.drawColor(if (night) NIGHT_BG else DAY_BG)
-                if (concept == null || seed == null) return
-                val side = minOf(canvas.width, canvas.height) * CREATURE_FRACTION
-                val bitmap =
-                    StillRender.tile(
-                        concept = concept,
-                        seed = seed,
-                        mood = mood,
-                        batteryPercent = percent,
-                        charging = charging,
-                        night = night,
-                        growth = DEFAULT_GROWTH,
-                        sizePx = side.toInt().coerceAtLeast(MIN_TILE_PX),
-                        paletteShiftDeg = paletteShift,
-                    )
-                val left = (canvas.width - bitmap.width) / 2f
-                val top = (canvas.height - bitmap.height) / 2f
-                canvas.drawBitmap(bitmap, left, top, Paint(Paint.FILTER_BITMAP_FLAG))
+                WallpaperFrame.draw(
+                    canvas = canvas,
+                    concept = concept,
+                    seed = seed,
+                    mood = mood,
+                    batteryPercent = percent,
+                    charging = charging,
+                    night = night,
+                    paletteShiftDeg = paletteShift,
+                )
             } finally {
                 runCatching { holder.unlockCanvasAndPost(canvas) }
             }
@@ -181,12 +224,14 @@ class AnimaWallpaperService : WallpaperService() {
     }
 
     private companion object {
-        const val NIGHT_BG = 0xFF0B0E14.toInt()
-        val DAY_BG = Color.rgb(244, 240, 233)
-        const val CREATURE_FRACTION = 0.55f
-        const val MIN_TILE_PX = 256
-        const val DEFAULT_GROWTH = 0.5f
         const val SLEEPY_BATTERY = 20
+
+        /**
+         * Big enough for `WallpaperColors.fromBitmap` to see the creature as
+         * well as the wall, small enough that computing it costs nothing.
+         */
+        const val COLOR_THUMB_W = 108
+        const val COLOR_THUMB_H = 234
         const val NIGHT_FROM = 22
         const val NIGHT_UNTIL = 7
 

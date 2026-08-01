@@ -5,7 +5,7 @@
     <string name="settings_title">Settings</string>
     <string name="settings_save">Save</string>
     <string name="settings_body_label">Body</string>
-    <string name="settings_body_hint">The same soul can live in another body. Live previews — every cell is the real engine.</string>
+    <string name="settings_body_hint">This phone’s creature, and its name. Nothing here can be picked — the body came with the phone.</string>
     <string name="settings_calm_motion_title">Calm motion</string>
     <string name="settings_calm_motion_hint">Still pose, rare blinks. Follows the system reduce-animations setting automatically.</string>
     <string name="settings_character_label">Character</string>
@@ -139,8 +139,8 @@
     <string name="trust_yourdata_body">Forget a memory and it\'s marked dead in the soul (the creature stops using it). Export the soul to one file you own. Delete Anima and everything goes with it — there is no copy anywhere else.</string>
 
     <!-- Wardrobe (Forms) screen -->
-    <string name="wardrobe_title">Forms</string>
-    <string name="wardrobe_intro">Palettes open as you live together — days, memories, rests. Whatever opens stays open, forever.</string>
+    <string name="wardrobe_title">Shades</string>
+    <string name="wardrobe_intro">The same body, in a different light. Shades open as you live together — days, memories, rests. Whatever opens stays open, forever.</string>
     <string name="wardrobe_worn_now">worn now</string>
     <string name="wardrobe_open_tap">open — tap to wear</string>
     <string name="wardrobe_opens_at">opens at %1$s</string>

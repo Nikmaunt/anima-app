@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.anima.core.model.FactCategory
+import app.anima.core.ui.components.ActionRow
 import app.anima.core.ui.components.EmptyState
 import app.anima.core.ui.components.GhostButton
 import app.anima.core.ui.components.PillButton
@@ -50,6 +51,7 @@ import app.anima.core.ui.components.ScrollableChipRow
 import app.anima.core.ui.components.SectionCard
 import app.anima.core.ui.components.SectionLabel
 import app.anima.core.ui.components.SecureWhile
+import app.anima.core.ui.components.StatRow
 import app.anima.core.ui.theme.LocalAnimaColors
 
 /** The soul: counters, memory browser, edits, encrypted migration, story. */
@@ -126,7 +128,13 @@ fun SoulScreen(
                                 modifier = Modifier.testTag("soul.together.empty"),
                             )
                         } else {
-                            Row {
+                            // v1.1c: StatRow, not Row. A plain Row divides the
+                            // width evenly and lets the last caption break —
+                            // "кормёжек" came out as "кормёж / ек" and its
+                            // baseline fell out of line with the other three.
+                            // Defect class D1, still alive on this screen after
+                            // the layout primitives were built to end it.
+                            StatRow {
                                 Counter(
                                     pluralStringResource(R.plurals.soul_counter_days, days),
                                     days.toString(),
@@ -145,7 +153,14 @@ fun SoulScreen(
                                 )
                             }
                         }
-                        Row {
+                        // v1.1c: ActionRow wraps to a second line instead of
+                        // squeezing the third button to one character wide.
+                        // "Открытка" was rendering as eight stacked letters —
+                        // the loudest thing on the screen and unmistakably a
+                        // layout falling over. Found by an outside reviewer
+                        // looking at the screenshot, which is why that review
+                        // exists.
+                        ActionRow {
                             PillButton(stringResource(R.string.soul_export_button), onClick = {
                                 viewModel.buildExportIntent { context.startActivity(it) }
                             })

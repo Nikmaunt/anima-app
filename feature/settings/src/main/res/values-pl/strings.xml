@@ -5,7 +5,7 @@
     <string name="settings_title">Ustawienia</string>
     <string name="settings_save">Zapisz</string>
     <string name="settings_body_label">Ciało</string>
-    <string name="settings_body_hint">Ta sama dusza może zamieszkać w innym ciele. Podglądy są żywe — w każdej komórce pracuje prawdziwy silnik.</string>
+    <string name="settings_body_hint">Stworzenie tego telefonu i jego imię. Nie ma tu czego wybierać — ciało przyszło razem z telefonem.</string>
     <string name="settings_calm_motion_title">Spokojne ruchy</string>
     <string name="settings_calm_motion_hint">Nieruchoma poza, rzadkie mrugnięcia. Samo podąża za systemowym ustawieniem ograniczenia animacji.</string>
     <string name="settings_character_label">Charakter</string>
@@ -137,10 +137,10 @@
     <string name="trust_yourdata_body">Zapomnij wspomnienie, a zostanie oznaczone w duszy jako martwe (stworzenie przestaje z niego korzystać). Wyeksportuj duszę do jednego pliku, który należy do ciebie. Usuń Animę, a wszystko zniknie razem z nią — nigdzie nie ma innej kopii.</string>
 
     <!-- Wardrobe (Forms) screen -->
-    <string name="wardrobe_title">Formy</string>
-    <string name="wardrobe_intro">Palety otwierają się, gdy żyjecie razem — dni, wspomnienia, odpoczynki. Co się otworzy, zostaje otwarte na zawsze.</string>
-    <string name="wardrobe_worn_now">noszona teraz</string>
-    <string name="wardrobe_open_tap">otwarta — dotknij, aby założyć</string>
+    <string name="wardrobe_title">Odcienie</string>
+    <string name="wardrobe_intro">To samo ciało w innym świetle. Odcienie otwierają się, gdy żyjecie razem — dni, wspomnienia, odpoczynek. Co się otworzy, zostaje otwarte na zawsze.</string>
+    <string name="wardrobe_worn_now">założony teraz</string>
+    <string name="wardrobe_open_tap">otwarty — stuknij, by założyć</string>
     <string name="wardrobe_opens_at">otworzy się: %1$s</string>
 
     <!-- Crash log screen -->

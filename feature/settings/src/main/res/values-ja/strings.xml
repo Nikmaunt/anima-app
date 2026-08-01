@@ -5,7 +5,7 @@
     <string name="settings_title">設定</string>
     <string name="settings_save">保存</string>
     <string name="settings_body_label">体</string>
-    <string name="settings_body_hint">同じたましいが、別の体でも生きられるよ。プレビューはぜんぶ生きてる — どのマスも本物のエンジンで動いてる。</string>
+    <string name="settings_body_hint">この電話の生き物と、その名前。ここに選ぶものはない — からだは電話といっしょに来た。</string>
     <string name="settings_calm_motion_title">しずかな動き</string>
     <string name="settings_calm_motion_hint">じっとしたポーズ、まばたきは少なめ。システムの「アニメーションを減らす」設定に自動で合わせるよ。</string>
     <string name="settings_character_label">性格</string>
@@ -137,10 +137,10 @@
     <string name="trust_yourdata_body">思い出を忘れさせると、たましいの中で「もう使わない」印がつくよ（いきものはそれを使うのをやめる）。たましいはあなたのものとして1つのファイルに書き出せる。Animaを消せば、ぜんぶ一緒に消える — ほかの場所にコピーはどこにもないから。</string>
 
     <!-- Wardrobe (Forms) screen -->
-    <string name="wardrobe_title">すがた</string>
-    <string name="wardrobe_intro">パレットは、一緒に暮らすうちに開いていくよ — 日々、思い出、ひとやすみ。いちど開いたら、ずっと開いたまま。</string>
-    <string name="wardrobe_worn_now">いま着てるよ</string>
-    <string name="wardrobe_open_tap">開いてる — タップして着せてね</string>
+    <string name="wardrobe_title">いろあい</string>
+    <string name="wardrobe_intro">おなじからだを、ちがう光で。いろあいは一緒に過ごすほど開いていく — 日々、記憶、休息。ひとたび開いたものは、ずっと開いたまま。</string>
+    <string name="wardrobe_worn_now">いま まとっている</string>
+    <string name="wardrobe_open_tap">開いた — タップして まとう</string>
     <string name="wardrobe_opens_at">開く条件：%1$s</string>
 
     <!-- Crash log screen -->
