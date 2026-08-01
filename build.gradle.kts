@@ -21,9 +21,55 @@ plugins {
 // subprojects {} lambda.
 val ktlintEngineVersion = libs.versions.ktlintEngine.get()
 
+/**
+ * v1.1c task 1.1 — the CI contour, switched by one property.
+ *
+ * Three runs of this repo reported a green `check` that executed zero tests.
+ * `-Proborazzi.test.verify=true` does not change a test task's inputs, so Gradle
+ * keeps the task UP-TO-DATE, restores its result XML FROM-CACHE, and prints
+ * BUILD SUCCESSFUL in six seconds. Every one of the three was caught by a human
+ * reading task output, never by the build.
+ *
+ * `-Panima.ci=true` makes that impossible rather than unlikely: every `Test`
+ * task loses the right to be up-to-date and the right to be served from the
+ * cache. `settings.gradle.kts` adds the Roborazzi verify flag to the same
+ * switch. `tools/ci-verify.py` then reads the log and the result files and
+ * refuses a run where either guarantee failed to hold — belt as well as braces,
+ * because a contour that cannot fail proves nothing about the day it is
+ * misconfigured.
+ */
+val animaCiContour = providers.gradleProperty("anima.ci").orNull == "true"
+
+if (animaCiContour) {
+    // Nobody may run the CI contour with comparison switched off. The default
+    // lives in gradle.properties; this refuses an explicit override, which is
+    // the only remaining way to get a green run that measured no pixels.
+    val verify = providers.gradleProperty("roborazzi.test.verify").orNull
+    val record = providers.gradleProperty("roborazzi.test.record").orNull
+    if (verify != "true" || record == "true") {
+        throw GradleException(
+            "-Panima.ci=true requires roborazzi.test.verify=true and record off. " +
+                "Got verify=$verify record=$record. Goldens would be captured and never compared.",
+        )
+    }
+    // The ground truth tools/ci-verify.py reads. Printed from the task graph, so
+    // a task that is about to come back UP-TO-DATE announces itself anyway —
+    // which is exactly the case the verifier has to be able to see.
+    gradle.taskGraph.whenReady {
+        allTasks.filterIsInstance<Test>().forEach { logger.lifecycle("ANIMA-CI-TEST-TASK ${it.path}") }
+    }
+}
+
 subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
+    if (animaCiContour) {
+        tasks.withType<Test>().configureEach {
+            outputs.upToDateWhen { false }
+            outputs.doNotCacheIf("the CI contour must execute tests, not recall them") { true }
+        }
+    }
 
     extensions.configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
         // Rule analysis only (no type resolution: that needs a detekt built
