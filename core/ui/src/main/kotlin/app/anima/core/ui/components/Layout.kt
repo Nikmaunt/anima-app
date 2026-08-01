@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,9 +26,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.anima.core.ui.theme.AnimaMotion
 import app.anima.core.ui.theme.AnimaRadius
@@ -248,3 +260,85 @@ fun Modifier.pressable(onClick: () -> Unit): Modifier {
             )
         }
 }
+
+/**
+ * v1.1c defect D2 — a scrolling row that says it scrolls.
+ *
+ * The chip rows on Rest and Soul have had `horizontalScroll` since v0.5, so the
+ * previous run's diagnosis ("no scroll") was wrong. The real defect was that
+ * nothing SAID so: the row was clipped dead on the parent's 24dp padding, the
+ * cut landed in the middle of the fourth chip, and at font scale 1.3 all that
+ * remained of it was "2…". A clean cut through a glyph reads as broken layout,
+ * not as more content.
+ *
+ * Two changes, both cheap and both about the edge:
+ *  * a soft fade appears on whichever side has more to show, and only on that
+ *    side. A fade that is always there is decoration; a fade that appears when
+ *    there is something behind it is information;
+ *  * [contentPadding] is the row's own inner margin, so a caller that wants the
+ *    chips to slide under the screen margin can ask for it here rather than by
+ *    negating the parent's padding — Compose rejects a negative padding
+ *    outright ("Padding must be non-negative"), which is how the first attempt
+ *    at this took out six Rest goldens at once.
+ */
+@Composable
+fun ScrollableChipRow(
+    modifier: Modifier = Modifier,
+    contentPadding: Dp = 0.dp,
+    spacing: Dp = AnimaSpacing.s,
+    content: @Composable () -> Unit,
+) {
+    val scroll = rememberScrollState()
+    val fade = with(LocalDensity.current) { FADE_WIDTH.toPx() }
+    val startFade by animateFloatAsState(
+        targetValue = if (scroll.canScrollBackward) 1f else 0f,
+        animationSpec = AnimaMotion.effectsDefault(),
+        label = "chipFadeStart",
+    )
+    val endFade by animateFloatAsState(
+        targetValue = if (scroll.canScrollForward) 1f else 0f,
+        animationSpec = AnimaMotion.effectsDefault(),
+        label = "chipFadeEnd",
+    )
+    Row(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+                .drawWithContent {
+                    drawContent()
+                    if (startFade > 0f) {
+                        drawRect(
+                            brush =
+                                Brush.horizontalGradient(
+                                    listOf(Color.Transparent, Color.Black),
+                                    startX = 0f,
+                                    endX = fade * startFade,
+                                ),
+                            size = Size(fade * startFade, size.height),
+                            blendMode = BlendMode.DstIn,
+                        )
+                    }
+                    if (endFade > 0f) {
+                        drawRect(
+                            brush =
+                                Brush.horizontalGradient(
+                                    listOf(Color.Black, Color.Transparent),
+                                    startX = size.width - fade * endFade,
+                                    endX = size.width,
+                                ),
+                            topLeft = Offset(size.width - fade * endFade, 0f),
+                            size = Size(fade * endFade, size.height),
+                            blendMode = BlendMode.DstIn,
+                        )
+                    }
+                }.horizontalScroll(scroll)
+                .padding(horizontal = contentPadding),
+        horizontalArrangement = Arrangement.spacedBy(spacing),
+        verticalAlignment = Alignment.CenterVertically,
+        content = { content() },
+    )
+}
+
+/** Wide enough to read as a fade at 420dpi, narrow enough not to eat a chip. */
+private val FADE_WIDTH = 28.dp

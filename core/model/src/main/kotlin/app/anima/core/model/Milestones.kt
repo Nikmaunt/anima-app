@@ -9,20 +9,24 @@ package app.anima.core.model
  *   monotonic counters, so nothing can ever re-lock or expire;
  * - the soul carries its hatch date through export/import, so unlocks
  *   travel with the creature;
- * - locked variants show their condition honestly ("30 days together"),
+ * - locked variants show their condition honestly (30 days together),
  *   never a countdown.
+ *
+ * v1.1c defect D4: the `label` was an English string literal in a JVM module
+ * with no `res/`, so all six locales showed "True self", "Dawn", "Aurora"…
+ * The name of a shade is wording, and wording belongs to the module that owns
+ * `res/` — this enum keeps only what is a fact: the wire value and the degrees.
  */
 enum class PaletteVariant(
     val wire: String,
     val shiftDeg: Float,
-    val label: String,
 ) {
-    TRUE_SELF("true_self", 0f, "True self"),
-    DAWN("dawn", 38f, "Dawn"),
-    AURORA("aurora", 120f, "Aurora"),
-    DEEP_SEA("deep_sea", -120f, "Deep sea"),
-    MOONLIT("moonlit", 75f, "Moonlit"),
-    EMBERWISE("emberwise", -45f, "Emberwise"),
+    TRUE_SELF("true_self", 0f),
+    DAWN("dawn", 38f),
+    AURORA("aurora", 120f),
+    DEEP_SEA("deep_sea", -120f),
+    MOONLIT("moonlit", 75f),
+    EMBERWISE("emberwise", -45f),
     ;
 
     companion object {
@@ -31,9 +35,23 @@ enum class PaletteVariant(
 }
 
 object Milestones {
+    /**
+     * v1.1c defect D4: `condition` used to be an English sentence built here
+     * ("7 days together", "100 remembered facts"). It is now the *shape* of the
+     * condition plus its threshold; the screen writes the sentence.
+     */
+    enum class UnlockKind {
+        ALWAYS,
+        DAYS_TOGETHER,
+        REMEMBERED_FACTS,
+        RESTS_TOGETHER,
+        WISE_STAGE,
+    }
+
     data class Unlock(
         val variant: PaletteVariant,
-        val condition: String,
+        val kind: UnlockKind,
+        val threshold: Int,
         val achieved: Boolean,
     )
 
@@ -51,20 +69,37 @@ object Milestones {
         val days = stats.daysTogether(nowMillis)
         val score = Evolution.score(stats, nowMillis)
         return listOf(
-            Unlock(PaletteVariant.TRUE_SELF, "always yours", achieved = true),
-            Unlock(PaletteVariant.DAWN, "$DAWN_AT_DAYS days together", days >= DAWN_AT_DAYS),
-            Unlock(PaletteVariant.AURORA, "$AURORA_AT_DAYS days together", days >= AURORA_AT_DAYS),
+            Unlock(PaletteVariant.TRUE_SELF, UnlockKind.ALWAYS, 0, achieved = true),
+            Unlock(
+                PaletteVariant.DAWN,
+                UnlockKind.DAYS_TOGETHER,
+                DAWN_AT_DAYS.toInt(),
+                days >= DAWN_AT_DAYS,
+            ),
+            Unlock(
+                PaletteVariant.AURORA,
+                UnlockKind.DAYS_TOGETHER,
+                AURORA_AT_DAYS.toInt(),
+                days >= AURORA_AT_DAYS,
+            ),
             Unlock(
                 PaletteVariant.DEEP_SEA,
-                "$DEEP_SEA_AT_FACTS remembered facts",
+                UnlockKind.REMEMBERED_FACTS,
+                DEEP_SEA_AT_FACTS,
                 stats.liveFactCount >= DEEP_SEA_AT_FACTS,
             ),
             Unlock(
                 PaletteVariant.MOONLIT,
-                "$MOONLIT_AT_RESTS rests together",
+                UnlockKind.RESTS_TOGETHER,
+                MOONLIT_AT_RESTS,
                 stats.restSessionCount >= MOONLIT_AT_RESTS,
             ),
-            Unlock(PaletteVariant.EMBERWISE, "the wise stage", score >= EMBERWISE_AT_SCORE),
+            Unlock(
+                PaletteVariant.EMBERWISE,
+                UnlockKind.WISE_STAGE,
+                EMBERWISE_AT_SCORE.toInt(),
+                score >= EMBERWISE_AT_SCORE,
+            ),
         )
     }
 

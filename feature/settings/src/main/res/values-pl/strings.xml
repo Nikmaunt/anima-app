@@ -177,4 +177,32 @@
     <string name="passport_transfer_hint">Nowy telefon to nowe ciało — przenosi się dusza: wspomnienia, kamienie milowe, policzone dni.</string>
     <string name="passport_transfer_open">Dusza i przeprowadzka</string>
     <string name="palettes_title">Odcienie</string>
+
+    <!-- v1.1c defect D4: shade names and unlock conditions, out of core/model at last -->
+    <string name="palette_true_self">Prawdziwe ja</string>
+    <string name="palette_dawn">Świt</string>
+    <string name="palette_aurora">Zorza</string>
+    <string name="palette_deep_sea">Głębina</string>
+    <string name="palette_moonlit">Księżycowe</string>
+    <string name="palette_emberwise">Żarowe</string>
+    <string name="unlock_always">zawsze twoje</string>
+    <string name="unlock_wise_stage">mądry etap</string>
+    <plurals name="unlock_days_together">
+        <item quantity="one">%1$d dzień razem</item>
+        <item quantity="few">%1$d dni razem</item>
+        <item quantity="many">%1$d dni razem</item>
+        <item quantity="other">%1$d dni razem</item>
+    </plurals>
+    <plurals name="unlock_remembered_facts">
+        <item quantity="one">%1$d zapamiętana rzecz</item>
+        <item quantity="few">%1$d zapamiętane rzeczy</item>
+        <item quantity="many">%1$d zapamiętanych rzeczy</item>
+        <item quantity="other">%1$d zapamiętanych rzeczy</item>
+    </plurals>
+    <plurals name="unlock_rests_together">
+        <item quantity="one">%1$d odpoczynek razem</item>
+        <item quantity="few">%1$d odpoczynki razem</item>
+        <item quantity="many">%1$d odpoczynków razem</item>
+        <item quantity="other">%1$d odpoczynków razem</item>
+    </plurals>
 </resources>

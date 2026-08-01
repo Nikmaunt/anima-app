@@ -141,4 +141,7 @@
     <string name="chat_experimental_note">Experimentell. Das Wesen kann nur sprechen, wenn eine Geist-Datei auf diesem Telefon installiert ist; die Worte sind rauer als alles andere hier.</string>
     <string name="chat_no_mind_voice">«Mein Geist schläft. Ohne Geist-Datei spüre ich dich, finde aber keine Worte.»</string>
     <string name="chat_no_mind_action">Einen Geist bringen</string>
+
+    <!-- v1.1c defect D9: an empty chart is ruled paper, not information -->
+    <string name="diary_energy_empty">Ich habe noch keinen ganzen Tag verfolgt. Komm wieder, wenn ich es habe.</string>
 </resources>

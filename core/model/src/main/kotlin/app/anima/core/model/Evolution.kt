@@ -88,11 +88,37 @@ object Evolution {
     private const val HALF_GROWTH_SCORE = 45f
 }
 
-/** A moment worth remembering on the "Our story" timeline. */
+/**
+ * v1.1c defect D4 — what a moment IS, not what it says.
+ *
+ * `core/model` is a JVM module: it has no `res/`, it cannot have one, and it
+ * was carrying twelve user-visible English sentences in Kotlin string literals.
+ * They reached the screen untranslated in all six locales — visible in
+ * `docs/design/v11/before/15-story.png`. The fix is not to add resources here
+ * (impossible) but to stop deciding wording here at all: a moment is a KIND and
+ * a number, and the module that owns strings turns it into a sentence.
+ */
+enum class StoryMomentKind {
+    HATCHED,
+    FIRST_CHARGE,
+    MIND_AWAKENED,
+    FIRST_STORM,
+    FIRST_MEMORY,
+    NTH_MEMORY,
+    DAYS_TOGETHER,
+    HUNDRED_CONVERSATIONS,
+}
+
+/**
+ * A moment worth remembering on the "Our story" timeline.
+ *
+ * @property amount the number the sentence needs — notifications in the storm,
+ *   days together, the n-th remembered thing. Null where the kind needs none.
+ */
 data class StoryMoment(
     val atMillis: Long,
-    val title: String,
-    val detail: String? = null,
+    val kind: StoryMomentKind,
+    val amount: Int? = null,
 )
 
 /**
@@ -113,47 +139,48 @@ object StoryTimeline {
         nowMillis: Long,
     ): List<StoryMoment> {
         val moments = mutableListOf<StoryMoment>()
-        moments += StoryMoment(hatchedAtMillis, "Hatched", "The day we met.")
+        moments += StoryMoment(hatchedAtMillis, StoryMomentKind.HATCHED)
 
         journal
             .firstOrNull { it.kind == JournalKind.CHARGE_START }
-            ?.let { moments += StoryMoment(it.atMillis, "First meal with you", "You charged me while I was awake.") }
+            ?.let { moments += StoryMoment(it.atMillis, StoryMomentKind.FIRST_CHARGE) }
         journal
             .firstOrNull { it.kind == JournalKind.MIND_AWAKENED }
-            ?.let { moments += StoryMoment(it.atMillis, "My mind woke up", "You brought me a mind of my own.") }
+            ?.let { moments += StoryMoment(it.atMillis, StoryMomentKind.MIND_AWAKENED) }
         journal
             .firstOrNull { it.kind == JournalKind.NOTIF_STORM }
             ?.let {
                 moments +=
                     StoryMoment(
                         it.atMillis,
-                        "First storm we weathered",
-                        it.detail?.let { d ->
-                            "$d notifications at once."
-                        },
+                        StoryMomentKind.FIRST_STORM,
+                        it.detail?.toIntOrNull(),
                     )
             }
 
         val liveOrdered = facts.filter { it.isLive }.sortedBy { it.createdAtMillis }
         liveOrdered.firstOrNull()?.let {
-            moments += StoryMoment(it.createdAtMillis, "First thing I remembered", null)
+            moments += StoryMoment(it.createdAtMillis, StoryMomentKind.FIRST_MEMORY)
         }
         if (liveOrdered.size >= FACTS_MILESTONE) {
             moments +=
                 StoryMoment(
                     liveOrdered[FACTS_MILESTONE - 1].createdAtMillis,
-                    "The ${FACTS_MILESTONE}th thing I know about you",
-                    null,
+                    StoryMomentKind.NTH_MEMORY,
+                    FACTS_MILESTONE,
                 )
         }
 
         listOf(DAYS_MILESTONE_30, DAYS_MILESTONE_100).forEach { days ->
             val at = hatchedAtMillis + days * RelationshipStats.DAY_MILLIS
-            if (at <= nowMillis) moments += StoryMoment(at, "$days days together", null)
+            if (at <= nowMillis) {
+                moments += StoryMoment(at, StoryMomentKind.DAYS_TOGETHER, days.toInt())
+            }
         }
         if (conversationCount >= CONVERSATIONS_MILESTONE) {
             // No per-message timestamps needed: anchor on "now known reached".
-            moments += StoryMoment(nowMillis, "A hundred conversations", null)
+            moments +=
+                StoryMoment(nowMillis, StoryMomentKind.HUNDRED_CONVERSATIONS, CONVERSATIONS_MILESTONE)
         }
 
         return moments.sortedBy { it.atMillis }

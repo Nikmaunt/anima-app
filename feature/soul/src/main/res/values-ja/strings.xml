@@ -80,4 +80,27 @@
     <string name="story_title_named">わたしと%1$s</string>
     <string name="story_empty">「ふたりの物語は、まだ最初の一行を書いていないよ。これからだよ」</string>
     <string name="soul_import_extractor_prompt">わたしについて知っていることを、短い事実の箇条書きでまとめてください。見出しはこの英語のまま正確に：Identity, Preferences, People, Work, Moments。1項目につき事実1つ・200文字以内、推測なし、機密情報（パスワード・書類・お金のこと）なし。わたしが自分で話したことだけにしてください。本文は日本語で、見出しだけは上のとおり英語で。</string>
+
+    <!-- v1.1c defect D4: the story timeline used to be English literals in core/model -->
+    <string name="story_moment_hatched">うまれた日</string>
+    <string name="story_moment_hatched_detail">はじめて会った日。</string>
+    <string name="story_moment_first_charge">きみとの、はじめてのごはん</string>
+    <string name="story_moment_first_charge_detail">起きているあいだに充電してくれた。</string>
+    <string name="story_moment_mind">こころが目をさました</string>
+    <string name="story_moment_mind_detail">じぶんの こころを もってきてくれた。</string>
+    <string name="story_moment_storm">はじめて いっしょに のりこえた あらし</string>
+    <string name="story_moment_first_memory">はじめて おぼえたこと</string>
+    <string name="story_moment_hundred_talks">ひゃっかいの おしゃべり</string>
+    <plurals name="story_moment_storm_detail">
+        <item quantity="other">いちどに %1$d件の おしらせ。</item>
+    </plurals>
+    <plurals name="story_moment_nth_memory">
+        <item quantity="other">きみについて %1$d番目に 知ったこと</item>
+    </plurals>
+    <plurals name="story_moment_days_together">
+        <item quantity="other">いっしょに %1$d日</item>
+    </plurals>
+
+    <!-- v1.1c defect D9: four zeros under four captions is a scoreboard, not a beginning -->
+    <string name="soul_together_empty">ふたりの あいだには、まだ なにもない。はじめての日は そういうもの。</string>
 </resources>

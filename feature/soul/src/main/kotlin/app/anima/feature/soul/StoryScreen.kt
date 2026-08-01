@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,6 +32,7 @@ import app.anima.core.data.repo.JournalRepository
 import app.anima.core.data.repo.SoulRepository
 import app.anima.core.model.CreatureConcept
 import app.anima.core.model.StoryMoment
+import app.anima.core.model.StoryMomentKind
 import app.anima.core.model.StoryTimeline
 import app.anima.core.ui.components.GhostButton
 import app.anima.core.ui.theme.LocalAnimaColors
@@ -148,8 +150,8 @@ fun StoryScreen(
                             dateFormat.format(Date(moment.atMillis)),
                             style = MaterialTheme.typography.labelMedium,
                         )
-                        Text(moment.title, style = MaterialTheme.typography.bodyLarge)
-                        moment.detail?.let {
+                        Text(momentTitle(moment), style = MaterialTheme.typography.bodyLarge)
+                        momentDetail(moment)?.let {
                             Text(it, style = MaterialTheme.typography.bodyMedium)
                         }
                     }
@@ -158,3 +160,45 @@ fun StoryScreen(
         }
     }
 }
+
+/**
+ * v1.1c defect D4. The timeline used to arrive from `core/model` as finished
+ * English sentences — a JVM module with no `res/` was deciding wording, so all
+ * six locales read "Hatched" and "First meal with you". A moment now arrives as
+ * a kind and a number, and this is where it becomes a sentence.
+ */
+@Composable
+private fun momentTitle(moment: StoryMoment): String =
+    when (moment.kind) {
+        StoryMomentKind.HATCHED -> stringResource(R.string.story_moment_hatched)
+        StoryMomentKind.FIRST_CHARGE -> stringResource(R.string.story_moment_first_charge)
+        StoryMomentKind.MIND_AWAKENED -> stringResource(R.string.story_moment_mind)
+        StoryMomentKind.FIRST_STORM -> stringResource(R.string.story_moment_storm)
+        StoryMomentKind.FIRST_MEMORY -> stringResource(R.string.story_moment_first_memory)
+        StoryMomentKind.NTH_MEMORY ->
+            pluralStringResource(
+                R.plurals.story_moment_nth_memory,
+                moment.amount ?: 0,
+                moment.amount ?: 0,
+            )
+        StoryMomentKind.DAYS_TOGETHER ->
+            pluralStringResource(
+                R.plurals.story_moment_days_together,
+                moment.amount ?: 0,
+                moment.amount ?: 0,
+            )
+        StoryMomentKind.HUNDRED_CONVERSATIONS -> stringResource(R.string.story_moment_hundred_talks)
+    }
+
+@Composable
+private fun momentDetail(moment: StoryMoment): String? =
+    when (moment.kind) {
+        StoryMomentKind.HATCHED -> stringResource(R.string.story_moment_hatched_detail)
+        StoryMomentKind.FIRST_CHARGE -> stringResource(R.string.story_moment_first_charge_detail)
+        StoryMomentKind.MIND_AWAKENED -> stringResource(R.string.story_moment_mind_detail)
+        StoryMomentKind.FIRST_STORM ->
+            moment.amount?.let {
+                pluralStringResource(R.plurals.story_moment_storm_detail, it, it)
+            }
+        else -> null
+    }

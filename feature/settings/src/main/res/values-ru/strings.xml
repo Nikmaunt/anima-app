@@ -177,4 +177,32 @@
     <string name="passport_transfer_hint">Новый телефон — новое тело. Переезжает душа: воспоминания, вехи, посчитанные дни.</string>
     <string name="passport_transfer_open">Душа и перенос</string>
     <string name="palettes_title">Оттенки</string>
+
+    <!-- v1.1c defect D4: shade names and unlock conditions, out of core/model at last -->
+    <string name="palette_true_self">Настоящее</string>
+    <string name="palette_dawn">Рассвет</string>
+    <string name="palette_aurora">Сияние</string>
+    <string name="palette_deep_sea">Глубина</string>
+    <string name="palette_moonlit">Лунное</string>
+    <string name="palette_emberwise">Угольное</string>
+    <string name="unlock_always">всегда твоё</string>
+    <string name="unlock_wise_stage">мудрая пора</string>
+    <plurals name="unlock_days_together">
+        <item quantity="one">%1$d день вместе</item>
+        <item quantity="few">%1$d дня вместе</item>
+        <item quantity="many">%1$d дней вместе</item>
+        <item quantity="other">%1$d дней вместе</item>
+    </plurals>
+    <plurals name="unlock_remembered_facts">
+        <item quantity="one">%1$d запомненная вещь</item>
+        <item quantity="few">%1$d запомненные вещи</item>
+        <item quantity="many">%1$d запомненных вещей</item>
+        <item quantity="other">%1$d запомненных вещей</item>
+    </plurals>
+    <plurals name="unlock_rests_together">
+        <item quantity="one">%1$d отдых вместе</item>
+        <item quantity="few">%1$d отдыха вместе</item>
+        <item quantity="many">%1$d отдыхов вместе</item>
+        <item quantity="other">%1$d отдыхов вместе</item>
+    </plurals>
 </resources>

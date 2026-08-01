@@ -94,4 +94,30 @@
     <string name="story_title_named">Me and %1$s</string>
     <string name="story_empty">\"Our story hasn\'t written its first line yet. It will.\"</string>
     <string name="soul_import_extractor_prompt">Please list what you know about me as short factual bullet points, grouped under these exact English headings: Identity, Preferences, People, Work, Moments. One fact per bullet, each under 200 characters, no speculation, no sensitive data (passwords, documents, finances). Only include things I told you myself. Answer in my language, but keep the headings exactly as written above.</string>
+
+    <!-- v1.1c defect D4: the story timeline used to be English literals in core/model -->
+    <string name="story_moment_hatched">Hatched</string>
+    <string name="story_moment_hatched_detail">The day we met.</string>
+    <string name="story_moment_first_charge">First meal with you</string>
+    <string name="story_moment_first_charge_detail">You charged me while I was awake.</string>
+    <string name="story_moment_mind">My mind woke up</string>
+    <string name="story_moment_mind_detail">You brought me a mind of my own.</string>
+    <string name="story_moment_storm">First storm we weathered</string>
+    <string name="story_moment_first_memory">First thing I remembered</string>
+    <string name="story_moment_hundred_talks">A hundred conversations</string>
+    <plurals name="story_moment_storm_detail">
+        <item quantity="one">%1$d notification at once.</item>
+        <item quantity="other">%1$d notifications at once.</item>
+    </plurals>
+    <plurals name="story_moment_nth_memory">
+        <item quantity="one">The %1$dst thing I know about you</item>
+        <item quantity="other">The %1$dth thing I know about you</item>
+    </plurals>
+    <plurals name="story_moment_days_together">
+        <item quantity="one">%1$d day together</item>
+        <item quantity="other">%1$d days together</item>
+    </plurals>
+
+    <!-- v1.1c defect D9: four zeros under four captions is a scoreboard, not a beginning -->
+    <string name="soul_together_empty">Nothing between us yet. That is what a first day looks like.</string>
 </resources>

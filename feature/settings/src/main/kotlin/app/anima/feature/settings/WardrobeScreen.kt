@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -154,20 +155,18 @@ fun WardrobeScreen(
                                 night = colors.isNight,
                                 modifier = Modifier.size(88.dp),
                                 interactive = false,
-                                contentDescription = unlock.variant.label,
+                                contentDescription = paletteName(unlock.variant),
                             )
                         } else {
                             Spacer(Modifier.size(88.dp))
                         }
                         Column(Modifier.weight(1f)) {
-                            SectionLabel(unlock.variant.label)
+                            SectionLabel(paletteName(unlock.variant))
                             Text(
                                 when {
                                     selected -> stringResource(R.string.wardrobe_worn_now)
                                     unlock.achieved -> stringResource(R.string.wardrobe_open_tap)
-                                    // l10n: context-bound — unlock.condition comes
-                                    // from core Milestones (out of module scope).
-                                    else -> stringResource(R.string.wardrobe_opens_at, unlock.condition)
+                                    else -> stringResource(R.string.wardrobe_opens_at, unlockCondition(unlock))
                                 },
                                 style = MaterialTheme.typography.bodyMedium,
                             )
@@ -178,3 +177,35 @@ fun WardrobeScreen(
         }
     }
 }
+
+/**
+ * v1.1c defect D4. `PaletteVariant.label` and `Unlock.condition` were English
+ * literals in `core/model` — a JVM module that has no `res/` and cannot have
+ * one. The enum now carries only facts (a wire value, a hue shift, a threshold)
+ * and the wording lives here, where the six locales are.
+ */
+@Composable
+private fun paletteName(variant: PaletteVariant): String =
+    stringResource(
+        when (variant) {
+            PaletteVariant.TRUE_SELF -> R.string.palette_true_self
+            PaletteVariant.DAWN -> R.string.palette_dawn
+            PaletteVariant.AURORA -> R.string.palette_aurora
+            PaletteVariant.DEEP_SEA -> R.string.palette_deep_sea
+            PaletteVariant.MOONLIT -> R.string.palette_moonlit
+            PaletteVariant.EMBERWISE -> R.string.palette_emberwise
+        },
+    )
+
+@Composable
+private fun unlockCondition(unlock: Milestones.Unlock): String =
+    when (unlock.kind) {
+        Milestones.UnlockKind.ALWAYS -> stringResource(R.string.unlock_always)
+        Milestones.UnlockKind.WISE_STAGE -> stringResource(R.string.unlock_wise_stage)
+        Milestones.UnlockKind.DAYS_TOGETHER ->
+            pluralStringResource(R.plurals.unlock_days_together, unlock.threshold, unlock.threshold)
+        Milestones.UnlockKind.REMEMBERED_FACTS ->
+            pluralStringResource(R.plurals.unlock_remembered_facts, unlock.threshold, unlock.threshold)
+        Milestones.UnlockKind.RESTS_TOGETHER ->
+            pluralStringResource(R.plurals.unlock_rests_together, unlock.threshold, unlock.threshold)
+    }

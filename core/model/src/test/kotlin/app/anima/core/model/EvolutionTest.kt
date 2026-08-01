@@ -79,13 +79,17 @@ class EvolutionTest {
                 conversationCount = 0,
                 nowMillis = 200 * day,
             )
-        assertThat(moments.map { it.title })
+        // v1.1c defect D4: moments carry a kind and a number now, not a
+        // finished English sentence — core/model has no res/ and never should
+        // have been choosing words. The two 'days together' entries are told
+        // apart by their amount, which the old string comparison did by prose.
+        assertThat(moments.map { it.kind to it.amount })
             .containsExactly(
-                "Hatched",
-                "First meal with you",
-                "30 days together",
-                "My mind woke up",
-                "100 days together",
+                StoryMomentKind.HATCHED to null,
+                StoryMomentKind.FIRST_CHARGE to null,
+                StoryMomentKind.DAYS_TOGETHER to 30,
+                StoryMomentKind.MIND_AWAKENED to null,
+                StoryMomentKind.DAYS_TOGETHER to 100,
             ).inOrder()
     }
 
@@ -99,6 +103,6 @@ class EvolutionTest {
                 conversationCount = 0,
                 nowMillis = 3 * day,
             )
-        assertThat(moments.map { it.title }).containsExactly("Hatched")
+        assertThat(moments.map { it.kind }).containsExactly(StoryMomentKind.HATCHED)
     }
 }

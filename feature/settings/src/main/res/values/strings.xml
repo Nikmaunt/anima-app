@@ -179,4 +179,26 @@
     <string name="passport_transfer_hint">A new phone means a new body — the soul is what moves: the memories, the milestones, the days you have counted.</string>
     <string name="passport_transfer_open">The soul, and moving it</string>
     <string name="palettes_title">Shades</string>
+
+    <!-- v1.1c defect D4: shade names and unlock conditions, out of core/model at last -->
+    <string name="palette_true_self">True self</string>
+    <string name="palette_dawn">Dawn</string>
+    <string name="palette_aurora">Aurora</string>
+    <string name="palette_deep_sea">Deep sea</string>
+    <string name="palette_moonlit">Moonlit</string>
+    <string name="palette_emberwise">Emberwise</string>
+    <string name="unlock_always">always yours</string>
+    <string name="unlock_wise_stage">the wise stage</string>
+    <plurals name="unlock_days_together">
+        <item quantity="one">%1$d day together</item>
+        <item quantity="other">%1$d days together</item>
+    </plurals>
+    <plurals name="unlock_remembered_facts">
+        <item quantity="one">%1$d remembered thing</item>
+        <item quantity="other">%1$d remembered things</item>
+    </plurals>
+    <plurals name="unlock_rests_together">
+        <item quantity="one">%1$d rest together</item>
+        <item quantity="other">%1$d rests together</item>
+    </plurals>
 </resources>

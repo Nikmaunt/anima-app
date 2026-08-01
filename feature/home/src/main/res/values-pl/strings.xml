@@ -162,4 +162,7 @@
     <string name="chat_experimental_note">Eksperymentalne. Stworzenie może mówić tylko wtedy, gdy na tym telefonie jest zainstalowany plik umysłu; słowa wychodzą surowsze niż wszystko inne tutaj.</string>
     <string name="chat_no_mind_voice">«Mój umysł śpi. Bez pliku umysłu czuję cię, ale nie znajduję słów.»</string>
     <string name="chat_no_mind_action">Przynieś umysł</string>
+
+    <!-- v1.1c defect D9: an empty chart is ruled paper, not information -->
+    <string name="diary_energy_empty">Nie prześledziłem jeszcze całego dnia. Wróć, kiedy to zrobię.</string>
 </resources>

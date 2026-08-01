@@ -177,4 +177,26 @@
     <string name="passport_transfer_hint">Un teléfono nuevo significa un cuerpo nuevo — lo que se muda es el alma: recuerdos, hitos, los días contados.</string>
     <string name="passport_transfer_open">El alma y la mudanza</string>
     <string name="palettes_title">Tonos</string>
+
+    <!-- v1.1c defect D4: shade names and unlock conditions, out of core/model at last -->
+    <string name="palette_true_self">Ser verdadero</string>
+    <string name="palette_dawn">Alba</string>
+    <string name="palette_aurora">Aurora</string>
+    <string name="palette_deep_sea">Mar profundo</string>
+    <string name="palette_moonlit">Claro de luna</string>
+    <string name="palette_emberwise">Brasa</string>
+    <string name="unlock_always">siempre tuyo</string>
+    <string name="unlock_wise_stage">la etapa sabia</string>
+    <plurals name="unlock_days_together">
+        <item quantity="one">%1$d día juntos</item>
+        <item quantity="other">%1$d días juntos</item>
+    </plurals>
+    <plurals name="unlock_remembered_facts">
+        <item quantity="one">%1$d cosa recordada</item>
+        <item quantity="other">%1$d cosas recordadas</item>
+    </plurals>
+    <plurals name="unlock_rests_together">
+        <item quantity="one">%1$d descanso juntos</item>
+        <item quantity="other">%1$d descansos juntos</item>
+    </plurals>
 </resources>

@@ -141,4 +141,7 @@
     <string name="chat_experimental_note">Experimental. La criatura solo puede hablar si hay un archivo de mente instalado en este teléfono; las palabras salen más toscas que todo lo demás aquí.</string>
     <string name="chat_no_mind_voice">«Mi mente duerme. Sin un archivo de mente te siento, pero no encuentro palabras.»</string>
     <string name="chat_no_mind_action">Traer una mente</string>
+
+    <!-- v1.1c defect D9: an empty chart is ruled paper, not information -->
+    <string name="diary_energy_empty">Todavía no he visto pasar un día entero. Vuelve cuando lo haya hecho.</string>
 </resources>

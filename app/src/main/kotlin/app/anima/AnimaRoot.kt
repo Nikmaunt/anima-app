@@ -49,6 +49,7 @@ class RootViewModel
     @Inject
     constructor(
         prefs: AnimaPrefs,
+        private val identity: app.anima.core.data.repo.IdentityRepository,
     ) : ViewModel() {
         /** null = still reading; avoids flashing onboarding for a hatched creature. */
         val onboardingDone: StateFlow<Boolean?> =
@@ -56,6 +57,49 @@ class RootViewModel
                 .onboardingDone()
                 .map { it as Boolean? }
                 .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+        /**
+         * v1.1c task 5.3 — the app's accent, from the creature's own genome AND
+         * the shade it is wearing.
+         *
+         * `SignatureHue` has existed since v1.1 and was proven safe across all
+         * 360 hues, but `AnimaTheme` was still being called with no hue at all,
+         * so every phone's app looked identical. Turning it on recolours every
+         * screen at once, which is why the run that was scoped to Home did not.
+         *
+         * The owner's instruction is explicit that it follows the **worn**
+         * variant, not the base genome: a creature wearing Dawn should tint the
+         * app toward Dawn. So `paletteShiftDeg` is part of the sum, exactly as
+         * `SignatureHue.resolve` already allowed for.
+         *
+         * Null until identity is read — the same rule as everywhere else since
+         * v1.1b, and here it costs nothing: the theme falls back to the fixed
+         * v1.0 palette for one frame rather than to somebody else's colour.
+         */
+        val accentHueDeg: StateFlow<Float?> =
+            kotlinx.coroutines.flow
+                .combine(
+                    identity.observeConcept(),
+                    prefs.paletteVariant(),
+                ) { concept, wire -> concept to wire }
+                .map { (concept, wire) ->
+                    concept?.let {
+                        val genome =
+                            app.anima.core.model.CreatureGenome
+                                .from(identity.seed() ?: return@let null)
+                        val stats = identity.stats(System.currentTimeMillis())
+                        app.anima.core.ui.theme.SignatureHue.resolve(
+                            conceptName = it.name,
+                            genomeHueShiftDeg = genome.hueShiftDeg,
+                            paletteShiftDeg =
+                                app.anima.core.model.Milestones.effectiveShiftDeg(
+                                    wire,
+                                    stats,
+                                    System.currentTimeMillis(),
+                                ),
+                        )
+                    }
+                }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
     }
 
 @Composable
@@ -63,7 +107,8 @@ fun AnimaRoot(
     actions: kotlinx.coroutines.flow.Flow<String> = kotlinx.coroutines.flow.emptyFlow(),
     viewModel: RootViewModel = hiltViewModel(),
 ) {
-    AnimaTheme {
+    val accentHue by viewModel.accentHueDeg.collectAsState()
+    AnimaTheme(creatureHueDeg = accentHue) {
         val done by viewModel.onboardingDone.collectAsState()
         val colors = LocalAnimaColors.current
         when (done) {

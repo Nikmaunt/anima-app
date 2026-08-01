@@ -177,4 +177,26 @@
     <string name="passport_transfer_hint">Ein neues Handy heißt ein neuer Körper — was umzieht, ist die Seele: Erinnerungen, Meilensteine, die gezählten Tage.</string>
     <string name="passport_transfer_open">Die Seele und der Umzug</string>
     <string name="palettes_title">Töne</string>
+
+    <!-- v1.1c defect D4: shade names and unlock conditions, out of core/model at last -->
+    <string name="palette_true_self">Wahres Selbst</string>
+    <string name="palette_dawn">Morgengrauen</string>
+    <string name="palette_aurora">Polarlicht</string>
+    <string name="palette_deep_sea">Tiefsee</string>
+    <string name="palette_moonlit">Mondlicht</string>
+    <string name="palette_emberwise">Glutweise</string>
+    <string name="unlock_always">immer deins</string>
+    <string name="unlock_wise_stage">die weise Zeit</string>
+    <plurals name="unlock_days_together">
+        <item quantity="one">%1$d Tag zusammen</item>
+        <item quantity="other">%1$d Tage zusammen</item>
+    </plurals>
+    <plurals name="unlock_remembered_facts">
+        <item quantity="one">%1$d erinnertes Ding</item>
+        <item quantity="other">%1$d erinnerte Dinge</item>
+    </plurals>
+    <plurals name="unlock_rests_together">
+        <item quantity="one">%1$d Ruhepause zusammen</item>
+        <item quantity="other">%1$d Ruhepausen zusammen</item>
+    </plurals>
 </resources>

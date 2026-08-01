@@ -52,6 +52,7 @@ import app.anima.core.model.Mood
 import app.anima.core.model.RestPhase
 import app.anima.core.model.RestSessions
 import app.anima.core.ui.components.GhostButton
+import app.anima.core.ui.components.ScrollableChipRow
 import app.anima.core.ui.theme.LocalAnimaColors
 import kotlinx.coroutines.delay
 
@@ -320,10 +321,14 @@ private fun PickPanel(
     Spacer(Modifier.height(16.dp))
     // Overflow-safe (pseudolocale finding, v0.5): long locales scroll the
     // row instead of clipping the last chip or wrapping inside chips.
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier.horizontalScroll(rememberScrollState()),
-    ) {
+    //
+    // v1.1c defect D2: scrolling was never the problem — the row has scrolled
+    // since v0.5. Nothing SAID it scrolled: the clip fell dead on the parent's
+    // 24dp padding, through the middle of the fourth chip, and at font scale
+    // 1.3 all that survived was "2…". ScrollableChipRow runs to the container
+    // edge (hence the negative margin, which cancels that padding) and fades
+    // whichever side still has something behind it.
+    ScrollableChipRow(spacing = 12.dp) {
         RestSessions.DURATIONS_MIN.forEach { minutes ->
             Box(
                 Modifier

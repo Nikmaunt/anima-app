@@ -177,4 +177,23 @@
     <string name="passport_transfer_hint">あたらしい電話は、あたらしいからだ。うつるのはたましい — 記憶、節目、かぞえた日々。</string>
     <string name="passport_transfer_open">たましいと、ひっこし</string>
     <string name="palettes_title">いろあい</string>
+
+    <!-- v1.1c defect D4: shade names and unlock conditions, out of core/model at last -->
+    <string name="palette_true_self">ほんとうのすがた</string>
+    <string name="palette_dawn">よあけ</string>
+    <string name="palette_aurora">オーロラ</string>
+    <string name="palette_deep_sea">ふかい うみ</string>
+    <string name="palette_moonlit">つきあかり</string>
+    <string name="palette_emberwise">おきびいろ</string>
+    <string name="unlock_always">ずっと きみのもの</string>
+    <string name="unlock_wise_stage">かしこい ころ</string>
+    <plurals name="unlock_days_together">
+        <item quantity="other">いっしょに %1$d日</item>
+    </plurals>
+    <plurals name="unlock_remembered_facts">
+        <item quantity="other">おぼえたこと %1$d こ</item>
+    </plurals>
+    <plurals name="unlock_rests_together">
+        <item quantity="other">いっしょの きゅうけい %1$d かい</item>
+    </plurals>
 </resources>

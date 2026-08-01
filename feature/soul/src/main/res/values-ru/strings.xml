@@ -108,4 +108,36 @@
     <string name="story_title_named">Я и %1$s</string>
     <string name="story_empty">«Первая строка нашей истории ещё не написана. Но обязательно будет.»</string>
     <string name="soul_import_extractor_prompt">Перечисли, что ты знаешь обо мне, короткими фактами-пунктами, сгруппированными под этими ТОЧНЫМИ английскими заголовками: Identity, Preferences, People, Work, Moments. Один факт на пункт, до 200 символов, без домыслов, без чувствительных данных (пароли, документы, финансы). Только то, что я рассказывал(а) сам(а). Отвечай по-русски, но заголовки оставь ровно такими, как выше.</string>
+
+    <!-- v1.1c defect D4: the story timeline used to be English literals in core/model -->
+    <string name="story_moment_hatched">Вылупление</string>
+    <string name="story_moment_hatched_detail">День, когда мы встретились.</string>
+    <string name="story_moment_first_charge">Первая еда с тобой</string>
+    <string name="story_moment_first_charge_detail">Ты поставил меня на зарядку, пока я не спало.</string>
+    <string name="story_moment_mind">Мой разум проснулся</string>
+    <string name="story_moment_mind_detail">Ты принёс мне собственный разум.</string>
+    <string name="story_moment_storm">Первая буря, которую мы пережили</string>
+    <string name="story_moment_first_memory">Первое, что я запомнило</string>
+    <string name="story_moment_hundred_talks">Сто разговоров</string>
+    <plurals name="story_moment_storm_detail">
+        <item quantity="one">%1$d уведомление разом.</item>
+        <item quantity="few">%1$d уведомления разом.</item>
+        <item quantity="many">%1$d уведомлений разом.</item>
+        <item quantity="other">%1$d уведомлений разом.</item>
+    </plurals>
+    <plurals name="story_moment_nth_memory">
+        <item quantity="one">%1$d-я вещь, которую я о тебе знаю</item>
+        <item quantity="few">%1$d-я вещь, которую я о тебе знаю</item>
+        <item quantity="many">%1$d-я вещь, которую я о тебе знаю</item>
+        <item quantity="other">%1$d-я вещь, которую я о тебе знаю</item>
+    </plurals>
+    <plurals name="story_moment_days_together">
+        <item quantity="one">%1$d день вместе</item>
+        <item quantity="few">%1$d дня вместе</item>
+        <item quantity="many">%1$d дней вместе</item>
+        <item quantity="other">%1$d дней вместе</item>
+    </plurals>
+
+    <!-- v1.1c defect D9: four zeros under four captions is a scoreboard, not a beginning -->
+    <string name="soul_together_empty">Между нами пока ничего. Так и выглядит первый день.</string>
 </resources>

@@ -85,27 +85,7 @@ fun ChatScreen(
         }
 
         if (state.mindStatus != MindStatus.READY) {
-            // Not an error screen and not an empty box: the honest state,
-            // with the one step that changes it.
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .padding(AnimaSpacing.m),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                EmptyState(
-                    voice = stringResource(R.string.chat_no_mind_voice),
-                    action = {
-                        PillButton(
-                            stringResource(R.string.chat_no_mind_action),
-                            onClick = onOpenMind,
-                            modifier = Modifier.testTag("chat.openMind"),
-                        )
-                    },
-                    modifier = Modifier.testTag("chat.noMind"),
-                )
-            }
+            ChatNoMind(onOpenMind = onOpenMind)
             return@Column
         }
 
@@ -125,6 +105,43 @@ fun ChatScreen(
             },
             onReportReply = { message -> viewModel.reportReply(message.id) },
             modifier = Modifier.weight(1f),
+        )
+    }
+}
+
+/**
+ * v1.1c task 5.5 — the far end of the `experimentalChat` toggle, when there is
+ * no local mind.
+ *
+ * Turning the toggle on opens a door, and a door has to lead somewhere. Without
+ * a mind installed this screen has nothing to say and no way to say it, so the
+ * only wrong answers are an error page, an empty box, and a text field that
+ * swallows what you type. What it does instead is state the situation in the
+ * creature's voice and offer the single step that changes it.
+ *
+ * Stateless and internal so `ChatDeadEndTest` can drive exactly this, rather
+ * than a Hilt-injected screen it would have to build a whole graph for.
+ */
+@Composable
+internal fun ChatNoMind(onOpenMind: () -> Unit) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(AnimaSpacing.m)
+            .testTag("chat.noMind.root"),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        EmptyState(
+            voice = stringResource(R.string.chat_no_mind_voice),
+            action = {
+                PillButton(
+                    stringResource(R.string.chat_no_mind_action),
+                    onClick = onOpenMind,
+                    modifier = Modifier.testTag("chat.openMind"),
+                )
+            },
+            modifier = Modifier.testTag("chat.noMind"),
         )
     }
 }

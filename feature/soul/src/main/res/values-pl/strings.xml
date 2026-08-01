@@ -108,4 +108,36 @@
     <string name="story_title_named">Ja i %1$s</string>
     <string name="story_empty">„Pierwsza linijka naszej historii jeszcze nie została napisana. Ale będzie.”</string>
     <string name="soul_import_extractor_prompt">Wypisz, co o mnie wiesz, w krótkich punktach-faktach, pogrupowanych pod tymi DOKŁADNYMI angielskimi nagłówkami: Identity, Preferences, People, Work, Moments. Jeden fakt na punkt, do 200 znaków, bez spekulacji, bez danych wrażliwych (hasła, dokumenty, finanse). Tylko to, co sam(a) ci powiedziałem(-am). Odpowiadaj po polsku, ale nagłówki zostaw dokładnie jak wyżej.</string>
+
+    <!-- v1.1c defect D4: the story timeline used to be English literals in core/model -->
+    <string name="story_moment_hatched">Wykluło się</string>
+    <string name="story_moment_hatched_detail">Dzień, w którym się poznaliśmy.</string>
+    <string name="story_moment_first_charge">Pierwszy posiłek z tobą</string>
+    <string name="story_moment_first_charge_detail">Podłączyłeś mnie do ładowania, gdy nie spałem.</string>
+    <string name="story_moment_mind">Mój umysł się obudził</string>
+    <string name="story_moment_mind_detail">Przyniosłeś mi własny umysł.</string>
+    <string name="story_moment_storm">Pierwsza burza, którą przetrwaliśmy</string>
+    <string name="story_moment_first_memory">Pierwsza rzecz, którą zapamiętałem</string>
+    <string name="story_moment_hundred_talks">Sto rozmów</string>
+    <plurals name="story_moment_storm_detail">
+        <item quantity="one">%1$d powiadomienie naraz.</item>
+        <item quantity="few">%1$d powiadomienia naraz.</item>
+        <item quantity="many">%1$d powiadomień naraz.</item>
+        <item quantity="other">%1$d powiadomień naraz.</item>
+    </plurals>
+    <plurals name="story_moment_nth_memory">
+        <item quantity="one">%1$d. rzecz, którą o tobie wiem</item>
+        <item quantity="few">%1$d. rzecz, którą o tobie wiem</item>
+        <item quantity="many">%1$d. rzecz, którą o tobie wiem</item>
+        <item quantity="other">%1$d. rzecz, którą o tobie wiem</item>
+    </plurals>
+    <plurals name="story_moment_days_together">
+        <item quantity="one">%1$d dzień razem</item>
+        <item quantity="few">%1$d dni razem</item>
+        <item quantity="many">%1$d dni razem</item>
+        <item quantity="other">%1$d dni razem</item>
+    </plurals>
+
+    <!-- v1.1c defect D9: four zeros under four captions is a scoreboard, not a beginning -->
+    <string name="soul_together_empty">Między nami jeszcze nic. Tak wygląda pierwszy dzień.</string>
 </resources>

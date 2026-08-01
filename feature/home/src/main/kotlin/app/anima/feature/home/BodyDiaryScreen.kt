@@ -46,6 +46,7 @@ import app.anima.core.model.MindEvent
 import app.anima.core.model.MindPrompt
 import app.anima.core.model.MindStatus
 import app.anima.core.model.RelationshipStats
+import app.anima.core.ui.components.EmptyState
 import app.anima.core.ui.components.GhostButton
 import app.anima.core.ui.components.SectionCard
 import app.anima.core.ui.components.SectionLabel
@@ -333,6 +334,18 @@ fun BodyDiaryScreen(
 
             SectionCard {
                 SectionLabel(stringResource(R.string.diary_energy_label))
+                // v1.1c defect D9: with no samples this drew an empty grid and
+                // a line of apologetic small print underneath. An empty chart
+                // is not a chart with no data in it — it is a screen that has
+                // nothing to show yet, and it should say so in the creature's
+                // voice instead of leaving ruled paper on the page.
+                if (state.samples.isEmpty()) {
+                    EmptyState(
+                        voice = stringResource(R.string.diary_energy_empty),
+                        modifier = Modifier.testTag("diary.energy.empty"),
+                    )
+                    return@SectionCard
+                }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     GhostButton(
                         if (state.chartWeek) {

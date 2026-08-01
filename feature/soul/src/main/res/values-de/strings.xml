@@ -87,4 +87,30 @@
     <string name="story_title_named">Ich und %1$s</string>
     <string name="story_empty">„Die erste Zeile unserer Geschichte ist noch nicht geschrieben. Sie kommt.“</string>
     <string name="soul_import_extractor_prompt">Liste auf, was du über mich weißt, als kurze Fakten-Stichpunkte, gruppiert unter diesen EXAKTEN englischen Überschriften: Identity, Preferences, People, Work, Moments. Ein Fakt pro Punkt, je unter 200 Zeichen, keine Spekulationen, keine sensiblen Daten (Passwörter, Dokumente, Finanzen). Nur, was ich dir selbst erzählt habe. Antworte auf Deutsch, aber lass die Überschriften genau wie oben.</string>
+
+    <!-- v1.1c defect D4: the story timeline used to be English literals in core/model -->
+    <string name="story_moment_hatched">Geschlüpft</string>
+    <string name="story_moment_hatched_detail">Der Tag, an dem wir uns trafen.</string>
+    <string name="story_moment_first_charge">Die erste Mahlzeit mit dir</string>
+    <string name="story_moment_first_charge_detail">Du hast mich geladen, während ich wach war.</string>
+    <string name="story_moment_mind">Mein Verstand ist erwacht</string>
+    <string name="story_moment_mind_detail">Du hast mir einen eigenen Verstand gebracht.</string>
+    <string name="story_moment_storm">Der erste Sturm, den wir überstanden</string>
+    <string name="story_moment_first_memory">Das Erste, woran ich mich erinnerte</string>
+    <string name="story_moment_hundred_talks">Hundert Gespräche</string>
+    <plurals name="story_moment_storm_detail">
+        <item quantity="one">%1$d Benachrichtigung auf einmal.</item>
+        <item quantity="other">%1$d Benachrichtigungen auf einmal.</item>
+    </plurals>
+    <plurals name="story_moment_nth_memory">
+        <item quantity="one">Das %1$d. Ding, das ich über dich weiß</item>
+        <item quantity="other">Das %1$d. Ding, das ich über dich weiß</item>
+    </plurals>
+    <plurals name="story_moment_days_together">
+        <item quantity="one">%1$d Tag zusammen</item>
+        <item quantity="other">%1$d Tage zusammen</item>
+    </plurals>
+
+    <!-- v1.1c defect D9: four zeros under four captions is a scoreboard, not a beginning -->
+    <string name="soul_together_empty">Zwischen uns ist noch nichts. So sieht ein erster Tag aus.</string>
 </resources>

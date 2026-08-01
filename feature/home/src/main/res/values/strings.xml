@@ -152,4 +152,7 @@
     <string name="chat_experimental_note">Experimental. The creature can talk only if a mind file is installed on this phone; the words are rougher than everything else here.</string>
     <string name="chat_no_mind_voice">«My mind is asleep. Without a mind file I can feel you, but I cannot find words.»</string>
     <string name="chat_no_mind_action">Bring a mind</string>
+
+    <!-- v1.1c defect D9: an empty chart is ruled paper, not information -->
+    <string name="diary_energy_empty">I have not watched a whole day go by yet. Come back when I have.</string>
 </resources>

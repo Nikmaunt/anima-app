@@ -53,6 +53,15 @@ class MilestonesTest {
         val (s, now) = stats()
         val board = Milestones.board(s, now)
         assertThat(board.map { it.variant }).containsExactlyElementsIn(PaletteVariant.entries)
-        assertThat(board.none { it.condition.contains("hurry") }).isTrue()
+        // v1.1c defect D4: `condition` was an English sentence built in a JVM
+        // module with no res/. What is left is the shape and the threshold, and
+        // the honesty claim the old string check stood for is now checkable:
+        // every condition that has a number carries a real one, so no shade can
+        // advertise itself as "opens at 0".
+        board.forEach { unlock ->
+            if (unlock.kind != Milestones.UnlockKind.ALWAYS) {
+                assertThat(unlock.threshold).isGreaterThan(0)
+            }
+        }
     }
 }

@@ -43,8 +43,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.anima.core.model.FactCategory
+import app.anima.core.ui.components.EmptyState
 import app.anima.core.ui.components.GhostButton
 import app.anima.core.ui.components.PillButton
+import app.anima.core.ui.components.ScrollableChipRow
 import app.anima.core.ui.components.SectionCard
 import app.anima.core.ui.components.SectionLabel
 import app.anima.core.ui.components.SecureWhile
@@ -107,21 +109,41 @@ fun SoulScreen(
                 item {
                     SectionCard {
                         SectionLabel(stringResource(R.string.soul_together_label))
-                        Row {
-                            val days = stats.daysTogether(System.currentTimeMillis()).toInt()
-                            Counter(pluralStringResource(R.plurals.soul_counter_days, days), days.toString())
-                            Counter(
-                                pluralStringResource(R.plurals.soul_counter_talks, stats.conversationCount),
-                                stats.conversationCount.toString(),
+                        val days = stats.daysTogether(System.currentTimeMillis()).toInt()
+                        // v1.1c defect D9: on the first day this row was four
+                        // zeros under four captions — a scoreboard reading nil,
+                        // which is the least welcoming thing a relationship
+                        // screen can open with. Nothing lived yet is not a
+                        // score of nothing; it is a state, and it gets a state.
+                        val nothingYet =
+                            days == 0 &&
+                                stats.conversationCount == 0 &&
+                                stats.liveFactCount == 0 &&
+                                stats.chargeCount == 0
+                        if (nothingYet) {
+                            EmptyState(
+                                voice = stringResource(R.string.soul_together_empty),
+                                modifier = Modifier.testTag("soul.together.empty"),
                             )
-                            Counter(
-                                pluralStringResource(R.plurals.soul_counter_memories, stats.liveFactCount),
-                                stats.liveFactCount.toString(),
-                            )
-                            Counter(
-                                pluralStringResource(R.plurals.soul_counter_meals, stats.chargeCount),
-                                stats.chargeCount.toString(),
-                            )
+                        } else {
+                            Row {
+                                Counter(
+                                    pluralStringResource(R.plurals.soul_counter_days, days),
+                                    days.toString(),
+                                )
+                                Counter(
+                                    pluralStringResource(R.plurals.soul_counter_talks, stats.conversationCount),
+                                    stats.conversationCount.toString(),
+                                )
+                                Counter(
+                                    pluralStringResource(R.plurals.soul_counter_memories, stats.liveFactCount),
+                                    stats.liveFactCount.toString(),
+                                )
+                                Counter(
+                                    pluralStringResource(R.plurals.soul_counter_meals, stats.chargeCount),
+                                    stats.chargeCount.toString(),
+                                )
+                            }
                         }
                         Row {
                             PillButton(stringResource(R.string.soul_export_button), onClick = {
@@ -164,12 +186,9 @@ fun SoulScreen(
                 }
             }
             item {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
+                // v1.1c defect D2: the same fade as Rest, for the same reason —
+                // a row cut clean through a chip reads as broken, not as more.
+                ScrollableChipRow(spacing = 8.dp) {
                     CategoryChip(stringResource(R.string.soul_category_all), state.categoryFilter == null) {
                         viewModel.onCategoryFilter(null)
                     }
