@@ -4,10 +4,8 @@
     <string name="settings_back">Atrás</string>
     <string name="settings_title">Ajustes</string>
     <string name="settings_save">Guardar</string>
-    <string name="settings_name_label">Nombre</string>
     <string name="settings_body_label">Cuerpo</string>
     <string name="settings_body_hint">La misma alma puede vivir en otro cuerpo. Las vistas previas están vivas: cada celda es el motor real.</string>
-    <string name="settings_forms_button">Formas…</string>
     <string name="settings_calm_motion_title">Movimiento tranquilo</string>
     <string name="settings_calm_motion_hint">Pose quieta, parpadeos escasos. Sigue automáticamente el ajuste del sistema de reducir animaciones.</string>
     <string name="settings_character_label">Carácter</string>
@@ -160,4 +158,23 @@
     <string name="settings_chat_toggle">Hablar con palabras</string>
     <string name="settings_chat_desc">Desactivado. La criatura vive a través de su cuerpo, no de una caja de chat: las palabras necesitan un archivo de mente y aun así salen más toscas que todo lo demás. Al activarlo aparecen la pantalla de conversación y la de Mente.</string>
     <string name="settings_chat_open">Conversación…</string>
+
+    <!-- v1.1c: the creature passport, which replaced the eight-body grid -->
+    <string name="passport_title">Pasaporte</string>
+    <string name="passport_open">Abrir el pasaporte</string>
+    <string name="passport_name_label">NOMBRE</string>
+    <string name="passport_facts_label">CUERPO</string>
+    <string name="passport_hatched_at">Nació</string>
+    <string name="passport_fingerprint">Genoma</string>
+    <string name="passport_fingerprint_hint">el número de este teléfono, corto para leerlo en voz alta</string>
+    <string name="passport_device">Teléfono</string>
+    <string name="passport_device_transferred">otro teléfono — trasladada aquí</string>
+    <string name="passport_unknown">aún no se sabe</string>
+    <string name="passport_body_belongs">Este cuerpo es el cuerpo de este teléfono. Otro teléfono — otro cuerpo.</string>
+    <string name="passport_palettes_label">TONOS</string>
+    <string name="passport_palettes_hint">El mismo cuerpo con otra luz. Los tonos se abren con el tiempo; el cuerpo nunca cambia.</string>
+    <string name="passport_transfer_label">MUDANZA</string>
+    <string name="passport_transfer_hint">Un teléfono nuevo significa un cuerpo nuevo — lo que se muda es el alma: recuerdos, hitos, los días contados.</string>
+    <string name="passport_transfer_open">El alma y la mudanza</string>
+    <string name="palettes_title">Tonos</string>
 </resources>

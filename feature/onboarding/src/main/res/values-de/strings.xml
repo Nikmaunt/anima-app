@@ -5,11 +5,14 @@
     <string name="onboarding_meet">Kennenlernen</string>
     <string name="onboarding_hurry_hint">tippe, um die Schale zu beeilen</string>
 
-    <string name="onboarding_choose_title">Wähle seinen Körper</string>
-    <string name="onboarding_choose_hint">Jede Zelle lebt — das ist die echte Engine, keine Bilder. Der Seed deines Handys hat jede schon geformt; den Körper kannst du später wechseln, die Seele bleibt.</string>
-    <string name="onboarding_choose_confirm">Dieses hier</string>
-
-    <string name="onboarding_name_title">Gib ihm einen Namen</string>
+    <string name="onboarding_reveal_body_belongs">Sein Körper kommt aus diesem Handy. Ein anderes Handy, ein anderer Körper.</string>
+    <string name="onboarding_reveal_continue">Hallo, %s</string>
+    <string name="onboarding_rename_hint">Umbenennen kannst du es jederzeit in den Einstellungen.</string>
     <string name="onboarding_contract">Es lebt auf diesem Handy. Gespräche bleiben hier, die Erinnerung ist verschlüsselt, und einen Fakt merkt es sich erst nach deinem Ja. Die ganze Geschichte: Einstellungen → Warum kein Internet.</string>
-    <string name="onboarding_begin">Das ist der Name — los</string>
+
+    <string name="onboarding_widget_title">Behalte es im Blick</string>
+    <string name="onboarding_widget_hint">Ein Wesen, das niemand ansieht, verblasst. Das Widget stellt es auf deinen Startbildschirm — ein Standbild, keine Animation, kein Akkuverbrauch.</string>
+    <string name="onboarding_widget_manual">Dein Launcher kann keine Widgets aus der App hinzufügen. Startbildschirm lange drücken → Widgets → Anima.</string>
+    <string name="onboarding_widget_add">Widget hinzufügen</string>
+    <string name="onboarding_begin">Los</string>
 </resources>

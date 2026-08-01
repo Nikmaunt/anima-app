@@ -4,10 +4,8 @@
     <string name="settings_back">Назад</string>
     <string name="settings_title">Настройки</string>
     <string name="settings_save">Сохранить</string>
-    <string name="settings_name_label">Имя</string>
     <string name="settings_body_label">Тело</string>
     <string name="settings_body_hint">Одна и та же душа может жить в другом теле. Превью живые — в каждой клетке настоящий движок.</string>
-    <string name="settings_forms_button">Формы…</string>
     <string name="settings_calm_motion_title">Спокойные движения</string>
     <string name="settings_calm_motion_hint">Неподвижная поза, редкие моргания. Сам следует системной настройке «меньше анимаций».</string>
     <string name="settings_character_label">Характер</string>
@@ -160,4 +158,23 @@
     <string name="settings_chat_toggle">Разговор словами</string>
     <string name="settings_chat_desc">Выключено. Существо живёт телом, а не окном чата — для слов нужен файл разума, и получаются они грубее всего остального. Включишь — появятся экран разговора и экран Разум.</string>
     <string name="settings_chat_open">Разговор…</string>
+
+    <!-- v1.1c: the creature passport, which replaced the eight-body grid -->
+    <string name="passport_title">Паспорт</string>
+    <string name="passport_open">Открыть паспорт</string>
+    <string name="passport_name_label">ИМЯ</string>
+    <string name="passport_facts_label">ТЕЛО</string>
+    <string name="passport_hatched_at">Вылупилось</string>
+    <string name="passport_fingerprint">Геном</string>
+    <string name="passport_fingerprint_hint">число этого телефона, короткое настолько, чтобы прочесть вслух</string>
+    <string name="passport_device">Телефон</string>
+    <string name="passport_device_transferred">другой телефон — перенесено сюда</string>
+    <string name="passport_unknown">пока неизвестно</string>
+    <string name="passport_body_belongs">Это тело — тело этого телефона. Другой телефон — другое тело.</string>
+    <string name="passport_palettes_label">ОТТЕНКИ</string>
+    <string name="passport_palettes_hint">То же тело в другом свете. Оттенки открываются, пока вы живёте вместе; само тело не меняется.</string>
+    <string name="passport_transfer_label">ПЕРЕЕЗД</string>
+    <string name="passport_transfer_hint">Новый телефон — новое тело. Переезжает душа: воспоминания, вехи, посчитанные дни.</string>
+    <string name="passport_transfer_open">Душа и перенос</string>
+    <string name="palettes_title">Оттенки</string>
 </resources>

@@ -127,7 +127,18 @@ class SpiritOrbRenderer : CreatureRenderer {
         // v1.1b task 2: the edge, both ways round. A single dark ring would
         // vanish on a dark wallpaper and a single light one on paper.
         with(Grounding) {
-            drawTwoToneRing(center = c, radius = r, hue = hue, ctx = ctx, width = r * CONTOUR_SHARE)
+            // v1.1c task 2.4: a whisper of an edge, not a ring. At full strength
+            // this turned a gathering of light into a glass marble with a dark
+            // outline — the grounding that works for this body is the occlusion
+            // shadow above and its own top-to-bottom value, not a border.
+            drawTwoToneRing(
+                center = c,
+                radius = r,
+                hue = hue,
+                ctx = ctx,
+                width = r * CONTOUR_SHARE,
+                strength = Grounding.LIGHT_BODY_CONTOUR,
+            )
         }
 
         // Eyes float inside the light.

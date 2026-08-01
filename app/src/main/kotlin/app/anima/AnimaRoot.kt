@@ -31,6 +31,7 @@ import app.anima.feature.rest.RestTileService
 import app.anima.feature.settings.CrashLogScreen
 import app.anima.feature.settings.LicensesScreen
 import app.anima.feature.settings.MindScreen
+import app.anima.feature.settings.PassportScreen
 import app.anima.feature.settings.SettingsScreen
 import app.anima.feature.settings.TrustScreen
 import app.anima.feature.settings.WardrobeScreen
@@ -148,7 +149,7 @@ private fun AnimaNavHost(
                 onOpenMind = { nav.navigate(Routes.MIND) },
                 onOpenTrust = { nav.navigate(Routes.TRUST) },
                 onOpenCrashLog = { nav.navigate(Routes.CRASHLOG) },
-                onOpenWardrobe = { nav.navigate(Routes.WARDROBE) },
+                onOpenPassport = { nav.navigate(Routes.PASSPORT) },
                 onOpenLicenses = { nav.navigate(Routes.LICENSES) },
                 onOpenChat = { nav.navigate(Routes.CHAT) },
             )
@@ -161,6 +162,16 @@ private fun AnimaNavHost(
         }
         composable(Routes.LICENSES) {
             LicensesScreen(onBack = { nav.popBackStack() })
+        }
+        // v1.1c task 5.2: the passport replaced the eight-body grid in Settings.
+        // Palettes are reachable only from inside it (task 5.3) — the body and
+        // its shades are one subject, and Settings should not list them twice.
+        composable(Routes.PASSPORT) {
+            PassportScreen(
+                onBack = { nav.popBackStack() },
+                onOpenSoul = { nav.navigate(Routes.SOUL) },
+                onOpenPalettes = { nav.navigate(Routes.WARDROBE) },
+            )
         }
         composable(Routes.WARDROBE) {
             WardrobeScreen(onBack = { nav.popBackStack() })
@@ -208,6 +219,7 @@ private object Routes {
     const val TRUST = "trust"
     const val CRASHLOG = "crashlog"
     const val WARDROBE = "wardrobe"
+    const val PASSPORT = "passport"
     const val LICENSES = "licenses"
 
     /**

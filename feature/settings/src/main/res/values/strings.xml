@@ -4,10 +4,8 @@
     <string name="settings_back">Back</string>
     <string name="settings_title">Settings</string>
     <string name="settings_save">Save</string>
-    <string name="settings_name_label">Name</string>
     <string name="settings_body_label">Body</string>
     <string name="settings_body_hint">The same soul can live in another body. Live previews — every cell is the real engine.</string>
-    <string name="settings_forms_button">Forms…</string>
     <string name="settings_calm_motion_title">Calm motion</string>
     <string name="settings_calm_motion_hint">Still pose, rare blinks. Follows the system reduce-animations setting automatically.</string>
     <string name="settings_character_label">Character</string>
@@ -162,4 +160,23 @@
     <string name="settings_chat_toggle">Talking in words</string>
     <string name="settings_chat_desc">Off. The creature lives through its body, not through a chat box — words need a mind file and still come out rougher than the rest of it. Turning this on adds a Chat screen and the Mind screen.</string>
     <string name="settings_chat_open">Chat…</string>
+
+    <!-- v1.1c: the creature passport, which replaced the eight-body grid -->
+    <string name="passport_title">Passport</string>
+    <string name="passport_open">Open the passport</string>
+    <string name="passport_name_label">NAME</string>
+    <string name="passport_facts_label">BODY</string>
+    <string name="passport_hatched_at">Hatched</string>
+    <string name="passport_fingerprint">Genome</string>
+    <string name="passport_fingerprint_hint">the phone\'s number, short enough to read aloud</string>
+    <string name="passport_device">Phone</string>
+    <string name="passport_device_transferred">another phone — moved here</string>
+    <string name="passport_unknown">not known yet</string>
+    <string name="passport_body_belongs">This body is this phone\'s body. Another phone — another body.</string>
+    <string name="passport_palettes_label">SHADES</string>
+    <string name="passport_palettes_hint">The same body in a different light. Shades open as you live together; the body itself never changes.</string>
+    <string name="passport_transfer_label">MOVING HOUSE</string>
+    <string name="passport_transfer_hint">A new phone means a new body — the soul is what moves: the memories, the milestones, the days you have counted.</string>
+    <string name="passport_transfer_open">The soul, and moving it</string>
+    <string name="palettes_title">Shades</string>
 </resources>

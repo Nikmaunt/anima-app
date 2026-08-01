@@ -175,6 +175,67 @@ class NoDefaultBodyTest {
     }
 
     /**
+     * v1.1c task 2.3. A default *seed* is the same defect as a default body,
+     * one level deeper: `deviceSeed()` used to fall back to the FNV-1a of the
+     * literal string `"anima-fallback"`, so every phone whose `ANDROID_ID` came
+     * back null got not merely the same body but the same life — same hue, same
+     * size, same blink rate, same name. Roll once and remember; never a constant.
+     */
+    @Test
+    fun `an unreadable device id does not become the same creature on every phone`() {
+        val offenders = mutableListOf<String>()
+        productionSources().forEach { file ->
+            val text = stripComments(file.readText())
+            if ("ANDROID_ID" !in text) return@forEach
+            text.lines().forEachIndexed { index, line ->
+                // `?: "anything"` on a line in a file that reads the device id.
+                if (Regex("""\?:\s*"[^"]*"""").containsMatchIn(line)) {
+                    offenders += "${relative(file)}:${index + 1}: constant device-id fallback — $line"
+                }
+            }
+        }
+        assertWithMessage(
+            "A phone that cannot read its own id must roll a seed ONCE and remember it, not " +
+                "share a constant with every other such phone.\n" + offenders.joinToString("\n"),
+        ).that(offenders)
+            .isEmpty()
+
+        val deviceSeed =
+            File(repoRoot, "core/data/src/main/kotlin/app/anima/core/data/identity/DeviceSeed.kt")
+        assertWithMessage("the rolled seed must be written down, or a reinstall is a different creature")
+            .that(deviceSeed.readText())
+            .contains("rememberDeviceSeedFallback")
+    }
+
+    /**
+     * v1.1c task 2.5 — the eight-body catalogue is unreachable from the UI.
+     *
+     * It is not deleted: `ConceptGallery` stays in `core:creature`, and so does
+     * `IdentityRepository.switchConcept`. What is gone is every surface that
+     * called them — the onboarding CHOOSE stage and the Settings body grid, in
+     * which **one tap rewrote the body with no confirmation and no undo**. A
+     * catalogue says the body is merchandise, and the body is not chosen.
+     */
+    @Test
+    fun `no screen shows the catalogue of eight bodies`() {
+        val gallery = "core/creature/src/main/kotlin/app/anima/core/creature/ConceptGallery.kt"
+        assertWithMessage("ConceptGallery is demoted, not deleted — the same rule chat lives under")
+            .that(File(repoRoot, gallery).exists())
+            .isTrue()
+
+        val callers =
+            productionSources()
+                .filterNot { relative(it) == gallery }
+                .filter { "ConceptGallery(" in stripComments(it.readText()) }
+                .map(::relative)
+        assertWithMessage(
+            "A screen composing ConceptGallery is a screen that lets the body be picked. " +
+                "The creature passport replaced it: feature/settings/.../PassportScreen.kt.",
+        ).that(callers)
+            .isEmpty()
+    }
+
+    /**
      * The two durable write paths from task 1a. A read draws one wrong frame; a
      * write travels to the next phone inside the soul file.
      */

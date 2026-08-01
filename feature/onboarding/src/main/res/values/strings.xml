@@ -6,13 +6,16 @@
     <string name="onboarding_meet">Meet it</string>
     <string name="onboarding_hurry_hint">tap to hurry the shell</string>
 
-    <!-- Choose stage -->
-    <string name="onboarding_choose_title">Choose its body</string>
-    <string name="onboarding_choose_hint">Every cell is alive — this is the real engine, not pictures. Your phone\'s seed already shaped each one; you can change the body later, the soul stays.</string>
-    <string name="onboarding_choose_confirm">This one</string>
-
-    <!-- Name stage + the honest contract -->
-    <string name="onboarding_name_title">Give it a name</string>
+    <!-- Reveal stage: the body and the name, both already decided by the phone -->
+    <string name="onboarding_reveal_body_belongs">Its body came from this phone. Another phone, another body.</string>
+    <string name="onboarding_reveal_continue">Hello, %s</string>
+    <string name="onboarding_rename_hint">You can rename it any time in Settings.</string>
     <string name="onboarding_contract">It lives on this phone. Conversations stay here, memory is encrypted, and it remembers a fact only after you tap yes. The whole story: Settings → Why no internet.</string>
-    <string name="onboarding_begin">That\'s the name — begin</string>
+
+    <!-- Widget stage -->
+    <string name="onboarding_widget_title">Keep it in sight</string>
+    <string name="onboarding_widget_hint">A creature nobody looks at is a creature that fades. The widget puts it on your home screen — one still picture, no animation, no battery.</string>
+    <string name="onboarding_widget_manual">Your launcher does not support adding widgets from an app. Long-press your home screen → Widgets → Anima.</string>
+    <string name="onboarding_widget_add">Add the widget</string>
+    <string name="onboarding_begin">Begin</string>
 </resources>

@@ -94,7 +94,9 @@ class JellyRenderer : CreatureRenderer {
                 ),
         )
         with(Grounding) {
-            drawTwoToneContour(bellPath, BELL_HUE, ctx, r * CONTOUR_SHARE)
+            // v1.1c task 2.4: the bell is a body of light too, and at full
+            // strength its near-white rim was the loudest thing in the row.
+            drawTwoToneContour(bellPath, BELL_HUE, ctx, r * CONTOUR_SHARE, Grounding.LIGHT_BODY_CONTOUR)
         }
         // Inner organs glow — a soft heart that beats with breath.
         drawCircle(

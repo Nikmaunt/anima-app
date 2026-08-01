@@ -4,10 +4,8 @@
     <string name="settings_back">Zurück</string>
     <string name="settings_title">Einstellungen</string>
     <string name="settings_save">Speichern</string>
-    <string name="settings_name_label">Name</string>
     <string name="settings_body_label">Körper</string>
     <string name="settings_body_hint">Dieselbe Seele kann in einem anderen Körper leben. Die Vorschauen sind live — in jeder Zelle läuft die echte Engine.</string>
-    <string name="settings_forms_button">Formen…</string>
     <string name="settings_calm_motion_title">Ruhige Bewegungen</string>
     <string name="settings_calm_motion_hint">Stille Pose, seltenes Blinzeln. Folgt automatisch der Systemeinstellung für reduzierte Animationen.</string>
     <string name="settings_character_label">Charakter</string>
@@ -160,4 +158,23 @@
     <string name="settings_chat_toggle">In Worten sprechen</string>
     <string name="settings_chat_desc">Aus. Das Wesen lebt über seinen Körper, nicht über ein Chatfenster — Worte brauchen eine Geist-Datei und geraten trotzdem rauer als alles andere. Eingeschaltet erscheinen ein Gesprächsbildschirm und der Geist-Bildschirm.</string>
     <string name="settings_chat_open">Gespräch…</string>
+
+    <!-- v1.1c: the creature passport, which replaced the eight-body grid -->
+    <string name="passport_title">Ausweis</string>
+    <string name="passport_open">Ausweis öffnen</string>
+    <string name="passport_name_label">NAME</string>
+    <string name="passport_facts_label">KÖRPER</string>
+    <string name="passport_hatched_at">Geschlüpft</string>
+    <string name="passport_fingerprint">Genom</string>
+    <string name="passport_fingerprint_hint">die Zahl dieses Handys, kurz genug zum Vorlesen</string>
+    <string name="passport_device">Handy</string>
+    <string name="passport_device_transferred">ein anderes Handy — hierher übertragen</string>
+    <string name="passport_unknown">noch nicht bekannt</string>
+    <string name="passport_body_belongs">Dieser Körper ist der Körper dieses Handys. Ein anderes Handy — ein anderer Körper.</string>
+    <string name="passport_palettes_label">TÖNE</string>
+    <string name="passport_palettes_hint">Derselbe Körper in anderem Licht. Töne öffnen sich mit der Zeit; der Körper selbst bleibt.</string>
+    <string name="passport_transfer_label">UMZUG</string>
+    <string name="passport_transfer_hint">Ein neues Handy heißt ein neuer Körper — was umzieht, ist die Seele: Erinnerungen, Meilensteine, die gezählten Tage.</string>
+    <string name="passport_transfer_open">Die Seele und der Umzug</string>
+    <string name="palettes_title">Töne</string>
 </resources>

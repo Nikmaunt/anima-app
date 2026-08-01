@@ -43,6 +43,32 @@ class AnimaPrefs
             context.animaDataStore.edit { it[onboardingDone] = true }
         }
 
+        private val deviceSeedFallback = longPreferencesKey("device_seed_fallback")
+
+        /**
+         * v1.1c task 2.3 — the seed used when `ANDROID_ID` cannot be read.
+         *
+         * It used to be the FNV-1a of the constant string `"anima-fallback"`,
+         * which is the default-body defect wearing different clothes and worse:
+         * every phone in the world whose device id failed to read would hatch
+         * the *same* creature — same body, same hue, same size, same blink rate.
+         * A default body is one wrong frame; a default seed is one wrong life.
+         *
+         * So: roll once, remember forever. Null means "not rolled yet" — never
+         * a number, because a number here would be exactly the bug.
+         */
+        suspend fun deviceSeedFallback(): Long? = context.animaDataStore.data.first()[deviceSeedFallback]
+
+        /** Writes the rolled seed only if there is not one already. Returns the seed in force. */
+        suspend fun rememberDeviceSeedFallback(rolled: Long): Long {
+            var inForce = rolled
+            context.animaDataStore.edit { prefs ->
+                val existing = prefs[deviceSeedFallback]
+                if (existing == null) prefs[deviceSeedFallback] = rolled else inForce = existing
+            }
+            return inForce
+        }
+
         /** In-app reduced-motion override on top of the system animator scale. */
         fun calmMotion(): Flow<Boolean> = context.animaDataStore.data.map { it[calmMotion] ?: false }
 

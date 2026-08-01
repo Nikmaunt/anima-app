@@ -4,10 +4,8 @@
     <string name="settings_back">戻る</string>
     <string name="settings_title">設定</string>
     <string name="settings_save">保存</string>
-    <string name="settings_name_label">名前</string>
     <string name="settings_body_label">体</string>
     <string name="settings_body_hint">同じたましいが、別の体でも生きられるよ。プレビューはぜんぶ生きてる — どのマスも本物のエンジンで動いてる。</string>
-    <string name="settings_forms_button">すがた…</string>
     <string name="settings_calm_motion_title">しずかな動き</string>
     <string name="settings_calm_motion_hint">じっとしたポーズ、まばたきは少なめ。システムの「アニメーションを減らす」設定に自動で合わせるよ。</string>
     <string name="settings_character_label">性格</string>
@@ -160,4 +158,23 @@
     <string name="settings_chat_toggle">言葉で話す</string>
     <string name="settings_chat_desc">オフ。いきものはチャット欄ではなく体で生きています。言葉にはマインドファイルが必要で、それでもほかの部分より粗くなります。オンにすると会話画面とマインド画面が現れます。</string>
     <string name="settings_chat_open">会話…</string>
+
+    <!-- v1.1c: the creature passport, which replaced the eight-body grid -->
+    <string name="passport_title">パスポート</string>
+    <string name="passport_open">パスポートを開く</string>
+    <string name="passport_name_label">なまえ</string>
+    <string name="passport_facts_label">からだ</string>
+    <string name="passport_hatched_at">うまれた日</string>
+    <string name="passport_fingerprint">ゲノム</string>
+    <string name="passport_fingerprint_hint">この電話の数字。声に出して読める長さ</string>
+    <string name="passport_device">電話</string>
+    <string name="passport_device_transferred">べつの電話 — ここに移された</string>
+    <string name="passport_unknown">まだわからない</string>
+    <string name="passport_body_belongs">このからだは、この電話のからだ。ちがう電話なら、ちがうからだ。</string>
+    <string name="passport_palettes_label">いろあい</string>
+    <string name="passport_palettes_hint">おなじからだを、ちがう光で。いろあいは一緒に過ごすほど開く。からだ自体は変わらない。</string>
+    <string name="passport_transfer_label">ひっこし</string>
+    <string name="passport_transfer_hint">あたらしい電話は、あたらしいからだ。うつるのはたましい — 記憶、節目、かぞえた日々。</string>
+    <string name="passport_transfer_open">たましいと、ひっこし</string>
+    <string name="palettes_title">いろあい</string>
 </resources>

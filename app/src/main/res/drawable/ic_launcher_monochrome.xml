@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- v0.6: themed-icon layer (API 33+). Single-tone silhouette: the orb
-     with punched-out comma eyes and its wisp — readable at 20dp. -->
+<!--
+  v1.1c task 2.1: the themed-icon layer (API 33+), by the same logic as the
+  foreground — an egg, not one of the eight bodies.
+
+  Single tone, so the crack has to be a hole rather than a highlight: the shell
+  and the crack are one path with fillType="evenOdd", which punches the crack
+  out of the silhouette. Readable at 20dp because it is two shapes, and the
+  smaller one touches the outline at both ends.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
@@ -9,10 +16,6 @@
     <path
         android:fillColor="#FFFFFFFF"
         android:fillType="evenOdd"
-        android:pathData="M54,54m-15,0a15,15 0 1,0 30,0a15,15 0 1,0 -30,0z
-            M48.4,52.2c0,-1.5 1.1,-2.6 1.9,-1.9c0.8,0.7 0.8,3 0,3.7c-0.8,0.7 -1.9,-0.3 -1.9,-1.8z
-            M57.7,52.2c0,-1.5 1.1,-2.6 1.9,-1.9c0.8,0.7 0.8,3 0,3.7c-0.8,0.7 -1.9,-0.3 -1.9,-1.8z" />
-    <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M54,33.5c2.6,0 3.4,2.2 2.1,3.2c-1,0.8 -3.2,0.8 -4.2,0c-1.3,-1 -0.5,-3.2 2.1,-3.2z" />
+        android:pathData="M54,28 C64.5,28 74,40.5 74,53 C74,65.5 65,74 54,74 C43,74 34,65.5 34,53 C34,40.5 43.5,28 54,28 Z
+            M55.4,29.6 L51.1,42 L56.9,47.9 L51.7,58.2 L57.3,63.8 L54.6,72.6 L52.2,71.8 L54.6,63.4 L49.2,58 L54.4,47.7 L48.6,41.6 L52.9,28.8 Z" />
 </vector>

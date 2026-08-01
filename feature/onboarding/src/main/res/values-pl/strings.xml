@@ -5,11 +5,14 @@
     <string name="onboarding_meet">Poznaj je</string>
     <string name="onboarding_hurry_hint">stuknij, by pospieszyć skorupkę</string>
 
-    <string name="onboarding_choose_title">Wybierz mu ciało</string>
-    <string name="onboarding_choose_hint">Każda komórka żyje — to prawdziwy silnik, nie obrazki. Ziarno twojego telefonu już ukształtowało każde z nich; ciało możesz zmienić później, dusza zostaje.</string>
-    <string name="onboarding_choose_confirm">To</string>
-
-    <string name="onboarding_name_title">Nadaj mu imię</string>
+    <string name="onboarding_reveal_body_belongs">Jego ciało wyszło z tego telefonu. Inny telefon — inne ciało.</string>
+    <string name="onboarding_reveal_continue">Cześć, %s</string>
+    <string name="onboarding_rename_hint">Nazwę zmienisz kiedykolwiek w Ustawieniach.</string>
     <string name="onboarding_contract">Ono żyje na tym telefonie. Rozmowy zostają tutaj, pamięć jest szyfrowana, a fakt zapamiętuje dopiero po twoim „tak”. Cała historia: Ustawienia → Dlaczego bez internetu.</string>
-    <string name="onboarding_begin">To imię — zaczynamy</string>
+
+    <string name="onboarding_widget_title">Niech będzie na widoku</string>
+    <string name="onboarding_widget_hint">Stworzenie, na które nikt nie patrzy, gaśnie. Widget stawia je na ekranie głównym — jeden nieruchomy obraz, bez animacji i bez baterii.</string>
+    <string name="onboarding_widget_manual">Twój launcher nie potrafi dodawać widgetów z aplikacji. Przytrzymaj ekran główny → Widgety → Anima.</string>
+    <string name="onboarding_widget_add">Dodaj widget</string>
+    <string name="onboarding_begin">Zaczynamy</string>
 </resources>

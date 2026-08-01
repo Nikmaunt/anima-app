@@ -36,11 +36,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.anima.core.cloudmind.CloudMindConfigStore
-import app.anima.core.creature.ConceptGallery
 import app.anima.core.data.prefs.AnimaPrefs
 import app.anima.core.data.repo.IdentityRepository
 import app.anima.core.model.CloudMindConfig
 import app.anima.core.model.CreatureConcept
+import app.anima.core.model.IdentityOrigin
 import app.anima.core.model.Personality
 import app.anima.core.ui.components.GhostButton
 import app.anima.core.ui.components.LabeledControl
@@ -69,6 +69,10 @@ data class SettingsUiState(
     val cloud: CloudMindConfig = CloudMindConfig.Disabled,
     /** FLAG_SECURE toggle for the Soul screen (threat-model: shoulder surfing). */
     val soulScreenshotsAllowed: Boolean = false,
+    /** v1.1c passport: null until the identity row is read. */
+    val hatchedAtMillis: Long? = null,
+    /** v1.1c: which era wrote the body. Decides whether repair may touch it. */
+    val origin: IdentityOrigin = IdentityOrigin.CHOSEN,
 )
 
 /** ADR-013: what the voice toggle should honestly display. */
@@ -149,6 +153,8 @@ class SettingsViewModel
         }
 
         private val seed = MutableStateFlow<Long?>(null)
+        private val hatchedAt = MutableStateFlow<Long?>(null)
+        private val origin = MutableStateFlow(IdentityOrigin.CHOSEN)
 
         val uiState: StateFlow<SettingsUiState> =
             combine(
@@ -156,9 +162,10 @@ class SettingsViewModel
                 identity.observeConcept(),
                 combine(prefs.calmMotion(), cloudStore.config, prefs.soulScreenshotsAllowed(), ::Triple),
                 prefs.personality(),
-                seed,
-            ) { name, concept, calmCloudShots, personality, s ->
+                combine(seed, hatchedAt, origin, ::Triple),
+            ) { name, concept, calmCloudShots, personality, identityFacts ->
                 val (calm, cloud, shots) = calmCloudShots
+                val (s, hatched, era) = identityFacts
                 SettingsUiState(
                     name = name.orEmpty(),
                     concept = concept,
@@ -173,20 +180,22 @@ class SettingsViewModel
                     personalityCustomised = personality != null,
                     cloud = cloud,
                     soulScreenshotsAllowed = shots,
+                    hatchedAtMillis = hatched,
+                    origin = era,
                 )
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
 
         init {
-            viewModelScope.launch { seed.value = identity.seed() }
+            viewModelScope.launch {
+                seed.value = identity.seed()
+                hatchedAt.value = identity.hatchedAtMillis()
+                origin.value = identity.identityOrigin()
+            }
         }
 
         fun rename(name: String) {
             if (name.isBlank()) return
             viewModelScope.launch { identity.rename(name) }
-        }
-
-        fun switchConcept(concept: CreatureConcept) {
-            viewModelScope.launch { identity.switchConcept(concept) }
         }
 
         fun setCalmMotion(value: Boolean) {
@@ -219,7 +228,7 @@ fun SettingsScreen(
     onOpenMind: () -> Unit,
     onOpenTrust: () -> Unit = {},
     onOpenCrashLog: () -> Unit = {},
-    onOpenWardrobe: () -> Unit = {},
+    onOpenPassport: () -> Unit = {},
     onOpenLicenses: () -> Unit = {},
     onOpenChat: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel(),
@@ -249,52 +258,25 @@ fun SettingsScreen(
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-            SectionCard {
-                SectionLabel(stringResource(R.string.settings_name_label))
-                var draft by androidx.compose.runtime.remember(state.name) {
-                    androidx.compose.runtime.mutableStateOf(state.name)
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    BasicTextField(
-                        value = draft,
-                        onValueChange = { draft = it },
-                        textStyle = MaterialTheme.typography.headlineSmall.copy(color = colors.text),
-                        cursorBrush = SolidColor(colors.accent),
-                        modifier =
-                            Modifier
-                                .weight(1f)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(colors.surfaceHigh)
-                                .padding(horizontal = 14.dp, vertical = 10.dp),
-                    )
-                    GhostButton(stringResource(R.string.settings_save), onClick = { viewModel.rename(draft) })
-                }
-            }
-
+            // v1.1c tasks 2.5 / 5.2: the eight-body grid used to be here, and one
+            // tap on it rewrote the body with no confirmation and no undo. It is
+            // replaced by a read-only passport — the same facts, none of them a
+            // control. Renaming moved there too, next to the face it renames.
             SectionCard {
                 SectionLabel(stringResource(R.string.settings_body_label))
                 Text(
                     stringResource(R.string.settings_body_hint),
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                // v1.1b task 1c: the gallery renders every body against THIS
-                // phone's seed, so with no seed there is nothing truthful to
-                // render. (The whole section leaves in Phase 4 — the owner's
-                // creature passport replaces it — but until then it must not
-                // draw eight creatures from seed 0.)
-                state.seed?.let { ownSeed ->
-                    ConceptGallery(
-                        seed = ownSeed,
-                        selected = state.concept,
-                        onSelect = viewModel::switchConcept,
-                        accent = colors.accent,
-                        surface = colors.surfaceHigh,
-                        outline = colors.outline,
-                        modifier = Modifier.height(660.dp),
-                    )
-                }
-                // v0.4 milestones: palettes opened by the relationship.
-                GhostButton(stringResource(R.string.settings_forms_button), onClick = onOpenWardrobe)
+                Text(
+                    state.name.ifBlank { stringResource(R.string.passport_unknown) },
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+                GhostButton(
+                    stringResource(R.string.passport_open),
+                    onClick = onOpenPassport,
+                    modifier = Modifier.testTag("settings.passport"),
+                )
             }
 
             SectionCard {

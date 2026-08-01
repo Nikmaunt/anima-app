@@ -5,11 +5,14 @@
     <string name="onboarding_meet">会ってみる</string>
     <string name="onboarding_hurry_hint">タップでからをせかす</string>
 
-    <string name="onboarding_choose_title">からだをえらんであげて</string>
-    <string name="onboarding_choose_hint">どの細胞も生きている — 絵じゃなくて、ほんもののエンジンだよ。きみの電話のたねがもう形をつくってある。からだはあとで変えられるし、たましいはそのまま。</string>
-    <string name="onboarding_choose_confirm">この子にする</string>
-
-    <string name="onboarding_name_title">名前をつけてあげて</string>
+    <string name="onboarding_reveal_body_belongs">このからだはこの電話から生まれた。ちがう電話なら、ちがうからだ。</string>
+    <string name="onboarding_reveal_continue">はじめまして、%s</string>
+    <string name="onboarding_rename_hint">名前はいつでも設定から変えられるよ。</string>
     <string name="onboarding_contract">この電話の中で生きているよ。会話はここに残って、記憶は暗号化されて、「いいよ」をタップしたことだけおぼえる。くわしくは：設定 → どうしてインターネットなしなの。</string>
-    <string name="onboarding_begin">この名前にする — はじめよう</string>
+
+    <string name="onboarding_widget_title">目の届くところに</string>
+    <string name="onboarding_widget_hint">だれも見ない生き物は、やがて消えてしまう。ウィジェットならホーム画面にいる — 静止画一枚だけで、アニメーションも電池消費もない。</string>
+    <string name="onboarding_widget_manual">このランチャーはアプリからのウィジェット追加に対応していないよ。ホーム画面を長押し → ウィジェット → Anima。</string>
+    <string name="onboarding_widget_add">ウィジェットを追加</string>
+    <string name="onboarding_begin">はじめよう</string>
 </resources>

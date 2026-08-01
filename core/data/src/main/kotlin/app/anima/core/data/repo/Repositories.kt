@@ -18,6 +18,7 @@ import app.anima.core.model.ChatRole
 import app.anima.core.model.CreatureConcept
 import app.anima.core.model.FactCategory
 import app.anima.core.model.FactSource
+import app.anima.core.model.IdentityOrigin
 import app.anima.core.model.Ids
 import app.anima.core.model.JournalKind
 import app.anima.core.model.RelationshipStats
@@ -263,6 +264,39 @@ class IdentityRepository
             metaDao.put(MetaEntity(KEY_CONCEPT, concept.wire))
         }
 
+        /**
+         * v1.1c: which era wrote this body, and therefore whether
+         * `IdentityRepair` is allowed to recompute it. Absent → [IdentityOrigin.CHOSEN],
+         * because every soul older than this row was hatched by a build that
+         * showed a gallery of eight bodies.
+         */
+        suspend fun identityOrigin(): IdentityOrigin = IdentityOrigin.fromWire(metaDao.get(KEY_ORIGIN))
+
+        /** Hatched by a build that derives the body from the seed. */
+        suspend fun markIdentityAssigned() {
+            metaDao.put(MetaEntity(KEY_ORIGIN, IdentityOrigin.ASSIGNED.wire))
+        }
+
+        /** Restored from a soul file: the body belongs to the previous phone, and stands. */
+        suspend fun markIdentityTransferred() {
+            metaDao.put(MetaEntity(KEY_ORIGIN, IdentityOrigin.TRANSFERRED.wire))
+        }
+
+        /**
+         * Repair path only (`IdentityRepair`). Separate from [switchConcept] so
+         * the one write that is allowed to overrule a stored body is greppable,
+         * and so that a future body-switching surface cannot reach it by
+         * accident.
+         */
+        suspend fun repairIdentity(
+            concept: CreatureConcept,
+            seed: Long,
+        ) {
+            metaDao.put(MetaEntity(KEY_CONCEPT, concept.wire))
+            metaDao.put(MetaEntity(KEY_SEED, seed.toString()))
+            metaDao.put(MetaEntity(KEY_ORIGIN, IdentityOrigin.ASSIGNED.wire))
+        }
+
         suspend fun stats(nowMillis: Long): RelationshipStats {
             val hatched = hatchedAtMillis() ?: nowMillis
             val conversations = chatDao.userMessageCount().first()
@@ -277,6 +311,7 @@ class IdentityRepository
             const val KEY_CONCEPT = "creature_concept"
             const val KEY_SEED = "creature_seed"
             const val KEY_HATCHED_AT = "hatched_at"
+            const val KEY_ORIGIN = "identity_origin"
         }
     }
 

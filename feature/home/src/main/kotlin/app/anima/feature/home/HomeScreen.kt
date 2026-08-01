@@ -364,7 +364,13 @@ fun HomeScreen(
         // LocalConfiguration, not BoxWithConstraints: subcomposition remeasures
         // against CreatureSurface's endless frame loop and can trap a pumped
         // test frame in a measure storm (caught live by the v0.6 E2E).
-        expanded = LocalConfiguration.current.screenWidthDp >= EXPANDED_MIN_WIDTH_DP,
+        // v1.1c task 2.2: WIDE **AND** LANDSCAPE. Width alone was wrong, and the
+        // proof is a screenshot: docs/design/v11/after-v11b/16-home-expanded-
+        // 1080dp-portrait-BAD.png, an unfolded Fold in portrait — 904x1114dp,
+        // past the 840dp threshold and taller than it is wide. It got two tall
+        // narrow columns with the body in one corner and nothing between them.
+        // A portrait screen wants air, not a second column, however wide it is.
+        expanded = isTwoPane(LocalConfiguration.current),
         headerRow = headerRow,
         creature = creature,
         cards = cardsAndNotices,
@@ -540,8 +546,23 @@ private fun Notice(
  */
 private const val NOTICE_STAGGER_BASE = 1
 
-/** WindowSizeClass "expanded" lower bound (dp) — the two-pane switch. */
+/** WindowSizeClass "expanded" lower bound (dp) — one half of the two-pane switch. */
 private const val EXPANDED_MIN_WIDTH_DP = 840
+
+/**
+ * v1.1c task 2.2 — two panes require width **and** a landscape shape.
+ *
+ * `screenWidthDp >= 840` alone fires on an unfolded Fold held in portrait
+ * (about 904 x 1114dp), which is a tall screen, not a wide one. The result was
+ * two narrow columns with the creature in a bottom corner and a void between
+ * them; it read as a broken layout, and it is this product's home turf.
+ *
+ * Internal rather than private so `HomeAdaptiveGoldenTest` can drive the same
+ * function the screen does, instead of a copy of its arithmetic.
+ */
+internal fun isTwoPane(configuration: android.content.res.Configuration): Boolean =
+    configuration.screenWidthDp >= EXPANDED_MIN_WIDTH_DP &&
+        configuration.screenWidthDp > configuration.screenHeightDp
 
 @Composable
 internal fun ChatPanel(

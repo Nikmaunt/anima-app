@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,20 +29,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import app.anima.core.creature.ConceptGallery
 import app.anima.core.creature.CreatureSurface
 import app.anima.core.creature.rememberCreature
 import app.anima.core.model.BodyState
@@ -54,7 +48,15 @@ import app.anima.core.ui.components.PillButton
 import app.anima.core.ui.theme.LocalAnimaColors
 import kotlin.math.sin
 
-/** Awakening: hatch → choose a body → give a name → the honest contract. */
+/**
+ * v1.1c: hatch → the body and the name appear → the widget.
+ *
+ * The middle step used to be a gallery of all eight bodies and a text field.
+ * Both are gone: the body is a function of this phone (`CreatureConcept.assignedTo`)
+ * and so is the name (`CreatureName.forSeed`), and renaming lives in Settings
+ * where it belongs — you rename something you already know, not something you
+ * are about to meet.
+ */
 @Composable
 fun OnboardingScreen(
     onFinished: () -> Unit,
@@ -72,28 +74,34 @@ fun OnboardingScreen(
             .imePadding(),
     ) {
         when (state.stage) {
-            OnboardingStage.HATCH -> HatchStage(onHatched = viewModel::onHatched)
-            OnboardingStage.CHOOSE ->
-                ChooseStage(
-                    seed = state.seed,
-                    selected = state.concept,
-                    onSelect = viewModel::onConceptChosen,
-                    onConfirm = viewModel::onConceptConfirmed,
+            OnboardingStage.HATCH ->
+                HatchStage(
+                    // Until the seed is read there is no creature to hatch into,
+                    // so the shell does not open. This is the same rule as
+                    // everywhere else since v1.1b: nobody, rather than somebody
+                    // else. The read is a DataStore hit and takes one frame.
+                    ready = state.seed != null,
+                    onHatched = viewModel::onHatched,
                 )
-            // v1.1b task 1c: NAME is only reachable through onConceptConfirmed(),
-            // which refuses a null concept — so the old `?: SPIRIT_ORB` here was
-            // unreachable, and it made the impossible case look handled. If the
-            // concept is somehow absent, show nothing rather than someone else.
-            OnboardingStage.NAME ->
-                state.concept?.let { chosen ->
-                    NameStage(
-                        seed = state.seed,
-                        concept = chosen,
-                        name = state.name,
-                        onNameChanged = viewModel::onNameChanged,
-                        onConfirm = { viewModel.complete(onFinished) },
-                    )
+
+            OnboardingStage.REVEAL ->
+                state.seed?.let { seed ->
+                    state.concept?.let { concept ->
+                        RevealStage(
+                            seed = seed,
+                            concept = concept,
+                            name = state.name,
+                            onContinue = viewModel::onRevealAcknowledged,
+                        )
+                    }
                 }
+
+            OnboardingStage.WIDGET ->
+                WidgetStage(
+                    canPin = state.canPinWidget,
+                    onPin = viewModel::onPinWidgetRequested,
+                    onDone = { viewModel.onFinished(onFinished) },
+                )
         }
     }
 }
@@ -105,8 +113,10 @@ fun OnboardingScreen(
  * ambient life continues.
  */
 @Composable
-private fun HatchStage(onHatched: () -> Unit) {
-    val colors = LocalAnimaColors.current
+private fun HatchStage(
+    ready: Boolean,
+    onHatched: () -> Unit,
+) {
     var progress by remember { mutableFloatStateOf(0f) }
     var skipped by remember { mutableStateOf(false) }
 
@@ -220,7 +230,7 @@ private fun HatchStage(onHatched: () -> Unit) {
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(20.dp))
-        if (progress >= 0.999f) {
+        if (progress >= 0.999f && ready) {
             PillButton(
                 stringResource(R.string.onboarding_meet),
                 onClick = onHatched,
@@ -236,58 +246,23 @@ private fun HatchStage(onHatched: () -> Unit) {
     }
 }
 
+/**
+ * The body and the name, both already decided by the phone. Read-only on
+ * purpose: nothing on this screen can be picked, so nothing on it implies the
+ * creature is a configuration.
+ */
 @Composable
-private fun ChooseStage(
-    seed: Long,
-    selected: CreatureConcept?,
-    onSelect: (CreatureConcept) -> Unit,
-    onConfirm: () -> Unit,
-) {
-    val colors = LocalAnimaColors.current
-    Column(Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
-        Text(
-            stringResource(R.string.onboarding_choose_title),
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(top = 16.dp),
-        )
-        Text(
-            stringResource(R.string.onboarding_choose_hint),
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
-        )
-        ConceptGallery(
-            seed = seed,
-            selected = selected,
-            onSelect = onSelect,
-            accent = colors.accent,
-            surface = colors.surface,
-            outline = colors.outline,
-            modifier = Modifier.weight(1f),
-        )
-        PillButton(
-            stringResource(R.string.onboarding_choose_confirm),
-            onClick = onConfirm,
-            enabled = selected != null,
-            modifier =
-                Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(vertical = 14.dp)
-                    .testTag("onboarding.confirmConcept"),
-        )
-    }
-}
-
-@Composable
-private fun NameStage(
+private fun RevealStage(
     seed: Long,
     concept: CreatureConcept,
     name: String,
-    onNameChanged: (String) -> Unit,
-    onConfirm: () -> Unit,
+    onContinue: () -> Unit,
 ) {
-    val colors = LocalAnimaColors.current
     Column(
-        Modifier.fillMaxSize().padding(horizontal = 20.dp),
+        Modifier
+            .fillMaxSize()
+            .padding(horizontal = 20.dp)
+            .testTag("onboarding.reveal"),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val controller = rememberCreature(concept, seed)
@@ -300,24 +275,12 @@ private fun NameStage(
                     .fillMaxWidth()
                     .weight(1f),
         )
-        Text(stringResource(R.string.onboarding_name_title), style = MaterialTheme.typography.headlineMedium)
-        Spacer(Modifier.height(14.dp))
-        BasicTextField(
-            value = name,
-            onValueChange = onNameChanged,
-            textStyle =
-                MaterialTheme.typography.displayMedium.copy(
-                    color = colors.text,
-                    textAlign = TextAlign.Center,
-                ),
-            cursorBrush = SolidColor(colors.accent),
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(colors.surface)
-                    .padding(vertical = 14.dp)
-                    .testTag("onboarding.name.input"),
+        Text(name, style = MaterialTheme.typography.displayMedium, textAlign = TextAlign.Center)
+        Spacer(Modifier.height(6.dp))
+        Text(
+            stringResource(R.string.onboarding_reveal_body_belongs),
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(14.dp))
         // The honest contract, compressed to what matters before the first
@@ -328,14 +291,68 @@ private fun NameStage(
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
         )
-        Spacer(Modifier.height(14.dp))
+        Spacer(Modifier.height(18.dp))
         PillButton(
-            stringResource(R.string.onboarding_begin),
-            onClick = onConfirm,
-            enabled = name.isNotBlank(),
-            modifier = Modifier.testTag("onboarding.begin"),
+            stringResource(R.string.onboarding_reveal_continue, name),
+            onClick = onContinue,
+            modifier = Modifier.testTag("onboarding.reveal.continue"),
+        )
+        Spacer(Modifier.height(10.dp))
+        Text(
+            stringResource(R.string.onboarding_rename_hint),
+            style = MaterialTheme.typography.labelMedium,
+            textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(24.dp))
+    }
+}
+
+/**
+ * The last step, and the one that decides whether the creature is ever seen
+ * again: a companion nobody looks at is a companion that dies of neglect by
+ * design. Asking here costs one tap and the system draws its own confirmation.
+ */
+@Composable
+private fun WidgetStage(
+    canPin: Boolean,
+    onPin: () -> Unit,
+    onDone: () -> Unit,
+) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(horizontal = 24.dp)
+            .testTag("onboarding.widget"),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            stringResource(R.string.onboarding_widget_title),
+            style = MaterialTheme.typography.headlineMedium,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(Modifier.height(12.dp))
+        Text(
+            stringResource(
+                if (canPin) R.string.onboarding_widget_hint else R.string.onboarding_widget_manual,
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(Modifier.height(24.dp))
+        if (canPin) {
+            PillButton(
+                stringResource(R.string.onboarding_widget_add),
+                onClick = onPin,
+                modifier = Modifier.testTag("onboarding.widget.add"),
+            )
+            Spacer(Modifier.height(10.dp))
+        }
+        GhostButton(
+            stringResource(R.string.onboarding_begin),
+            onClick = onDone,
+            modifier = Modifier.testTag("onboarding.begin"),
+        )
     }
 }
 

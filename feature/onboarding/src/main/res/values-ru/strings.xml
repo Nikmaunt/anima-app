@@ -5,11 +5,14 @@
     <string name="onboarding_meet">Познакомиться</string>
     <string name="onboarding_hurry_hint">коснись, чтобы поторопить скорлупу</string>
 
-    <string name="onboarding_choose_title">Выбери ему тело</string>
-    <string name="onboarding_choose_hint">Каждая клетка живая — это настоящий движок, а не картинки. Зерно твоего телефона уже придало форму каждому; тело можно сменить потом, душа останется.</string>
-    <string name="onboarding_choose_confirm">Вот это</string>
-
-    <string name="onboarding_name_title">Дай ему имя</string>
+    <string name="onboarding_reveal_body_belongs">Его тело вышло из этого телефона. Другой телефон — другое тело.</string>
+    <string name="onboarding_reveal_continue">Привет, %s</string>
+    <string name="onboarding_rename_hint">Переименовать можно когда угодно в Настройках.</string>
     <string name="onboarding_contract">Оно живёт на этом телефоне. Разговоры остаются здесь, память зашифрована, а факт оно запоминает только после твоего «да». Вся история: Настройки → Почему без интернета.</string>
-    <string name="onboarding_begin">Это имя — начнём</string>
+
+    <string name="onboarding_widget_title">Пусть будет на виду</string>
+    <string name="onboarding_widget_hint">Существо, на которое никто не смотрит, гаснет. Виджет ставит его на домашний экран — одна неподвижная картинка, без анимации и без батареи.</string>
+    <string name="onboarding_widget_manual">Ваш лаунчер не умеет добавлять виджеты из приложения. Долгое нажатие на домашнем экране → Виджеты → Anima.</string>
+    <string name="onboarding_widget_add">Добавить виджет</string>
+    <string name="onboarding_begin">Начать</string>
 </resources>

@@ -63,6 +63,13 @@ internal object Grounding {
     private const val RIM_LIFT_SHARE = 0.5f
 
     /**
+     * A weakened contour keeps some width rather than collapsing to a hairline:
+     * a 0.2-alpha stroke one pixel wide disappears at widget size, and the
+     * silhouette on a busy backdrop is the whole point of having one at all.
+     */
+    private const val MIN_WIDTH_SHARE = 0.45f
+
+    /**
      * The body's own dark edge, in the creature's own hue so it reads as shadow
      * on that body rather than as a black sticker outline.
      */
@@ -76,6 +83,32 @@ internal object Grounding {
         hue: Float,
         ctx: RenderContext,
     ): Color = Hues.bodyColor(hue, sat = RIM_SAT, light = RIM_LIGHT, ctx = ctx)
+
+    /**
+     * v1.1c task 2.4 — how much contour a body made of light should carry.
+     *
+     * The v1.1b grounding pass gave every body the same two-tone edge, and on
+     * the contact sheet the three transparent ones came out **outlined**:
+     * `SPIRIT_ORB` stopped reading as a gathering of light and started reading
+     * as a glass marble with a dark ring around it; `JELLY`'s bell picked up a
+     * near-white rim that was the loudest thing in its row; `MOTH`'s wing rim
+     * out-shouted the wing.
+     *
+     * The grounding that actually did the work for them was not the contour. It
+     * was the occlusion shadow and the body's own top-to-bottom value — the two
+     * things that make a shape darker than the wall behind it. The contour was
+     * the part that made it look like a sticker.
+     *
+     * So it is not removed (a silhouette with no edge at all loses the busy
+     * photograph again), it is reduced to a whisper: alpha and width both scaled
+     * by this factor. The number came from shooting the contact sheet at
+     * several values and looking at it, recorded in
+     * `docs/design/v11/phase2-contour.md`.
+     *
+     * Solid bodies — FOX_KIT, ROBOT, SPROUT, EMBER, PIXEL_PET — keep 1.0. Their
+     * edge is a drawn edge, not a halo, and it was never the problem.
+     */
+    const val LIGHT_BODY_CONTOUR = 0.22f
 
     /**
      * A soft ellipse of occlusion centred at [center]. Gradient, so it has no
@@ -114,10 +147,14 @@ internal object Grounding {
         hue: Float,
         ctx: RenderContext,
         width: Float,
+        strength: Float = 1f,
     ) {
-        drawPath(path, contour(hue, ctx), style = Stroke(width = width))
-        translate(top = -width * RIM_LIFT_SHARE) {
-            drawPath(path, rim(hue, ctx), style = Stroke(width = width * RIM_WIDTH_SHARE))
+        val s = strength.coerceIn(0f, 1f)
+        if (s <= 0f) return
+        val w = width * (MIN_WIDTH_SHARE + (1f - MIN_WIDTH_SHARE) * s)
+        drawPath(path, contour(hue, ctx).copy(alpha = s), style = Stroke(width = w))
+        translate(top = -w * RIM_LIFT_SHARE) {
+            drawPath(path, rim(hue, ctx).copy(alpha = s), style = Stroke(width = w * RIM_WIDTH_SHARE))
         }
     }
 
@@ -128,13 +165,22 @@ internal object Grounding {
         hue: Float,
         ctx: RenderContext,
         width: Float,
+        strength: Float = 1f,
     ) {
-        drawCircle(contour(hue, ctx), radius = radius, center = center, style = Stroke(width = width))
+        val s = strength.coerceIn(0f, 1f)
+        if (s <= 0f) return
+        val w = width * (MIN_WIDTH_SHARE + (1f - MIN_WIDTH_SHARE) * s)
         drawCircle(
-            rim(hue, ctx),
+            contour(hue, ctx).copy(alpha = s),
             radius = radius,
-            center = center.copy(y = center.y - width * RIM_LIFT_SHARE),
-            style = Stroke(width = width * RIM_WIDTH_SHARE),
+            center = center,
+            style = Stroke(width = w),
+        )
+        drawCircle(
+            rim(hue, ctx).copy(alpha = s),
+            radius = radius,
+            center = center.copy(y = center.y - w * RIM_LIFT_SHARE),
+            style = Stroke(width = w * RIM_WIDTH_SHARE),
         )
     }
 
