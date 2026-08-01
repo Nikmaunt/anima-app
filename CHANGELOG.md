@@ -14,6 +14,109 @@ keeps the formula available the day a real version scheme is needed. The
 invariant the original note cared about — pre-1.0 codes stay below every
 post-1.0 code — holds either way.
 
+## [1.1.1] — 2026-08-01
+
+The run that was told to distrust the previous handoff, and found that the
+product's single stated promise was not in the code at all.
+
+Nothing here has been merged or released.
+
+### Fixed
+- **The body is assigned to the phone now. It used to be chosen from a menu.**
+  Four documents said "the body is assigned, never chosen"; onboarding showed a
+  gallery of all eight and Settings replaced the body on one tap, with no
+  confirmation, on a phone where a single lived soul exists. The onboarding
+  string said so out loud: "Choose its body … you can change the body later".
+  `CreatureConcept.assignedTo(seed)` is a tournament, not an index — removing a
+  body moves only the creatures who had it, adding one takes a proportional
+  share and moves nobody sideways, and the enum's order is irrelevant. Checked
+  over 100 000 seeds and pinned, because changing the function would rename the
+  body of every phone that has not hatched yet.
+- **A green build that measured nothing.** The prescribed check returned BUILD
+  SUCCESSFUL in six seconds with every test task UP-TO-DATE, and before that
+  restored 36 result files FROM-CACHE. Third defect of one class. Golden
+  comparison is now the repository default, `-Panima.ci=true` strips every test
+  task of up-to-dateness and refuses to configure with comparison off, and
+  `tools/ci-verify.py` reads the log afterwards and fails on a recalled task, a
+  SKIPPED finalize task or a silently re-recorded golden. Proven to bite on the
+  exact log that fooled three runs. CI also stops running `testDebugUnitTest`,
+  which never touched `core:model` — 116 executions — or the release variant.
+- **Twenty-three English sentences hardcoded in `core/model`**, a JVM module
+  with no `res/` and no way to have one, reaching six locales untranslated. A
+  story moment is a kind and a number now; an unlock is a shape and a
+  threshold; the modules that own strings write the sentences.
+- **The Soul screen was rendering a button as eight stacked letters.** Defect
+  class D1 — the one the layout primitives were built to end — still alive on a
+  screen nobody had re-photographed. Found by an outside reviewer given nothing
+  but screenshots.
+- **The live wallpaper had no thumbnail**, so the system picker showed a
+  broken-image placeholder next to the app's name.
+- **`EMBER`, `PIXEL_PET`, `SPIRIT_ORB`, `JELLY` and `MOTH`** all changed; see
+  Changed.
+
+### Changed
+- **The launcher icon is an egg, not a body.** It was literally the spirit orb,
+  and on Android 12+ it is also the splash — so seven owners in eight met a
+  different creature full-screen at every launch, for longer than the flash
+  v1.1b removed. Adaptive and monochrome layers redrawn to match.
+- **Onboarding is hatch → the body and the name appear → the widget.** The
+  gallery and the name field are gone. The name comes from the seed too, from
+  pronounceable syllables that work in all six shipped locales.
+- **The eight-body grid in Settings is replaced by a read-only passport**: live
+  portrait, rename, hatch date, a genome fingerprint short enough to read
+  aloud, the phone, and the sentence the owner wrote. Nothing on it can be
+  picked. `ConceptGallery` and `switchConcept` are demoted, not deleted, and a
+  test fails if any screen composes the gallery again.
+- **Two panes require width AND landscape.** Width alone fired on an unfolded
+  Fold in portrait and produced two tall columns with the creature in a corner.
+- **A phone that cannot read `ANDROID_ID` rolls a seed once and writes it
+  down.** It used to hash the constant `"anima-fallback"` — every such phone
+  got the same hue, size, blink rate and name. A shared seed is a shared life.
+- **`SPIRIT_ORB` and `JELLY` lost their hard contour.** Grounding at full
+  strength turned a gathering of light into a glass marble with a dark ring;
+  what actually grounds those two is the occlusion shadow and their own
+  top-to-bottom value. Both variants were shot, opened and compared. `MOTH`
+  keeps its contour, where the edge separates two overlapping wings.
+- **`MOTH` was carrying a butterfly's antennae** — knobbed tips are the
+  diagnostic a field guide uses. Now plumose, with a delta silhouette, a furred
+  thorax, matte dusty brown, and an asleep state that is a roof rather than a
+  sliver. Honest: it stopped being a butterfly and did not fully become a moth.
+- **The app's accent follows the creature**, and the worn shade rather than the
+  base genome. `SignatureHue` was proven safe across all 360 hues in v1.1 and
+  had never been switched on.
+- **Identity repair at startup**, and a rule about who it may touch. Only a soul
+  this build hatched is repaired; one that was chosen or transferred is reported
+  and left exactly as it is. It backs the identity rows up first, writes what it
+  did to a local file, and never touches the diary, the memories, the capsules,
+  the dates or the name.
+- **"Формы" is "Оттенки"** — it was always tone shifts of one assigned body, not
+  a wardrobe — and it lives inside the passport rather than in Settings.
+- Rest and Soul chip rows fade on whichever side still has something behind
+  them; Rest's content sits on the optical centre instead of the top 45%.
+
+### Added
+- `tools/ci-verify.py`, `CiContourTest`, ADR-024 (what the test number counts:
+  EXECUTIONS, because android modules run every test twice).
+- `WallpaperFrame` as a pure function, `WallpaperFrameDumpTest` and
+  `WidgetFrameDumpTest` — the widget and the live wallpaper had never been
+  looked at in eleven runs, and now both can be rendered to files and opened.
+  The wallpaper was also set on a real home screen for the first time.
+- `IdentityOrigin`, `IdentityRepair`, `DeviceSeed`, `CreatureName`,
+  `GenomeFingerprint`, `BodyAssignment`, `ScrollableChipRow`, the creature
+  passport, and `ChatDeadEndTest`.
+
+### Known, not fixed, awaiting a decision
+- The launcher's own labels are hard to read on the wallpaper's light day frame.
+  `onComputeColors()` is implemented and made no visible difference on the
+  emulator's Pixel launcher. Whether One UI honours it is unverified.
+- `MOTH` reads as an insect and not clearly as a moth; the "it flies at the
+  light" idea did not land at any size that matters.
+- The widget has still never been placed on a launcher — Android has no shell
+  command for it and Launcher3 needs a drag.
+- `DayInLifeTest` still hangs on soul import; the E2E floor is unfixed.
+- The independent design review's verdict on the nav row, the energy chart and
+  the passport's alignment is in `docs/handoff-v12.md`, unactioned.
+
 ## [1.1.0] — 2026-07-30
 
 Two runs under one version. The first (`0d7f185`..`832bde2`) looked at the app

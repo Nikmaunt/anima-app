@@ -101,8 +101,8 @@ android {
         // Scheme: CHANGELOG.md header. versionCode stays the run number — the
         // planned switch to MAJOR*10000+MINOR*100+PATCH is deferred at 1.0.0,
         // with the reasoning, not silently skipped.
-        versionCode = 11
-        versionName = "1.1.0"
+        versionCode = 12
+        versionName = "1.1.1"
         // v0.5 day-in-life E2E: Hilt swaps the mind for a deterministic fake.
         testInstrumentationRunner = "app.anima.HiltTestRunner"
     }
