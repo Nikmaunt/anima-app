@@ -1,0 +1,44 @@
+# The instrumented suite on a gradle-managed aosp-atd emulator, run on demand.
+# It used to be the second job of ci.yml; it moved here because the emulator
+# does not start on the GitHub-hosted runner (EmulatorStartFailedException in
+# :app:atd34Setup, KVM udev rule already applied), so it could only ever turn
+# push/PR CI red without measuring anything. Run it from the Actions tab; one
+# built-in retry because GMD-on-CI has a documented flake history
+# (issuetracker 193118030) — a retried pass is green, two failures are a real red.
+name: gmd
+
+on:
+  workflow_dispatch:
+
+jobs:
+  gmd:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Instrumented suite on managed device (one retry for GMD flakes)
+        run: >
+          ./gradlew atd34DebugAndroidTest
+          || ./gradlew atd34DebugAndroidTest
+
+      - name: Upload instrumentation results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gmd-results
+          path: "**/build/outputs/androidTest-results/"
+          if-no-files-found: ignore
