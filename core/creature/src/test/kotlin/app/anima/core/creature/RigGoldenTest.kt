@@ -12,6 +12,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import app.anima.core.creature.render.StillRender
 import app.anima.core.model.CreatureConcept
 import app.anima.core.model.Mood
+import app.anima.core.testing.GoldenOptions
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
@@ -61,7 +62,10 @@ class RigGoldenTest {
                 compose.waitForIdle()
                 compose
                     .onNodeWithTag(TAG)
-                    .captureRoboImage("src/test/screenshots/rig/${concept.name.lowercase()}-${state.slug}.png")
+                    .captureRoboImage(
+                        "src/test/screenshots/rig/${concept.name.lowercase()}-${state.slug}.png",
+                        roborazziOptions = GoldenOptions,
+                    )
             }
         }
     }

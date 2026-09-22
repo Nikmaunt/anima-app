@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import app.anima.core.model.ChatMessage
 import app.anima.core.model.ChatRole
 import app.anima.core.model.MindStatus
+import app.anima.core.testing.GoldenOptions
 import app.anima.core.ui.theme.AnimaTheme
 import app.anima.core.ui.theme.LocalAnimaColors
 import app.anima.core.ui.theme.Season
@@ -94,13 +95,19 @@ class HomeAdaptiveGoldenTest {
     @Config(qualifiers = EXPANDED_DEVICE)
     fun `expanded two-pane`() {
         compose.setContent { Scaffold(expanded = true) }
-        compose.onRoot().captureRoboImage("src/test/screenshots/home/adaptive-expanded.png")
+        compose.onRoot().captureRoboImage(
+            "src/test/screenshots/home/adaptive-expanded.png",
+            roborazziOptions = GoldenOptions,
+        )
     }
 
     @Test
     @Config(qualifiers = PHONE_DEVICE)
     fun `compact stacked`() {
         compose.setContent { Scaffold(expanded = false) }
-        compose.onRoot().captureRoboImage("src/test/screenshots/home/adaptive-compact.png")
+        compose.onRoot().captureRoboImage(
+            "src/test/screenshots/home/adaptive-compact.png",
+            roborazziOptions = GoldenOptions,
+        )
     }
 }

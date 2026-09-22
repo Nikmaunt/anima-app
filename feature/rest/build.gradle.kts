@@ -33,6 +33,7 @@ dependencies {
     testImplementation(libs.androidx.test.ext.junit)
     testImplementation(libs.androidx.ui.test.junit4)
     testImplementation(libs.androidx.ui.test.manifest)
+    testImplementation(projects.core.testing)
     testImplementation(libs.roborazzi)
     testImplementation(libs.roborazzi.compose)
 }

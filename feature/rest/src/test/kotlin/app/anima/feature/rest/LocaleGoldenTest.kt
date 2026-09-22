@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.LayoutDirection
 import app.anima.core.model.CreatureConcept
 import app.anima.core.model.RestPhase
+import app.anima.core.testing.GoldenOptions
 import app.anima.core.ui.theme.AnimaTheme
 import app.anima.core.ui.theme.Season
 import com.github.takahirom.roborazzi.RoborazziOptions
@@ -92,7 +93,10 @@ class LocaleGoldenTest {
         phase: RestPhase,
     ) {
         render(phase)
-        compose.onRoot().captureRoboImage("src/test/screenshots/rest/$slug.png")
+        compose.onRoot().captureRoboImage(
+            "src/test/screenshots/rest/$slug.png",
+            roborazziOptions = GoldenOptions,
+        )
     }
 
     /**

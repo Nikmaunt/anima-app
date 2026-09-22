@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import app.anima.core.model.CreatureConcept
 import app.anima.core.model.RestPhase
+import app.anima.core.testing.GoldenOptions
 import app.anima.core.ui.theme.AnimaTheme
 import app.anima.core.ui.theme.Season
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -57,7 +58,10 @@ class RestContentGoldenTest {
                 )
             }
         }
-        compose.onRoot().captureRoboImage("src/test/screenshots/rest/$slug.png")
+        compose.onRoot().captureRoboImage(
+            "src/test/screenshots/rest/$slug.png",
+            roborazziOptions = GoldenOptions,
+        )
     }
 
     @Test

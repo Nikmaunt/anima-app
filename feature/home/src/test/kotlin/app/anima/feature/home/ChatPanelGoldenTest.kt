@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import app.anima.core.model.ChatMessage
 import app.anima.core.model.ChatRole
 import app.anima.core.model.MindStatus
+import app.anima.core.testing.GoldenOptions
 import app.anima.core.ui.theme.AnimaTheme
 import app.anima.core.ui.theme.LocalAnimaColors
 import app.anima.core.ui.theme.Season
@@ -88,7 +89,10 @@ class ChatPanelGoldenTest {
 
     private fun golden(slug: String) {
         render()
-        compose.onRoot().captureRoboImage("src/test/screenshots/home/$slug.png")
+        compose.onRoot().captureRoboImage(
+            "src/test/screenshots/home/$slug.png",
+            roborazziOptions = GoldenOptions,
+        )
     }
 
     /**

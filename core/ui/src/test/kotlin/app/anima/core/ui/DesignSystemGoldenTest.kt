@@ -12,14 +12,13 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.dp
+import app.anima.core.testing.GoldenOptions
 import app.anima.core.ui.components.GhostButton
 import app.anima.core.ui.components.SectionCard
 import app.anima.core.ui.components.SectionLabel
 import app.anima.core.ui.theme.AnimaTheme
 import app.anima.core.ui.theme.LocalAnimaColors
 import app.anima.core.ui.theme.Season
-import com.dropbox.differ.SimpleImageComparator
-import com.github.takahirom.roborazzi.RoborazziOptions
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
@@ -31,12 +30,6 @@ import org.robolectric.annotation.GraphicsMode
  * Phase 0.4 screenshot regression: the design system in BOTH themes.
  * Season pinned (the seasonal tint reads the wall clock); no animation, no
  * wall-clock text — bit-stable goldens in src/test/screenshots/ds/.
- *
- * Bit-stable per platform, not across them: the Linux CI runner anti-aliases
- * glyph edges up to 2/255 per channel differently from the Windows machine
- * that recorded the goldens (distance ≤ 0.0136, above Roborazzi's default
- * 0.007). [GLYPH_NOISE] admits exactly that and nothing a layout, colour or
- * missing element would produce; every pixel still has to pass it.
  */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -81,18 +74,8 @@ class DesignSystemGoldenTest {
                 .onNodeWithTag("ds-$slug")
                 .captureRoboImage(
                     "src/test/screenshots/ds/design-system-$slug.png",
-                    roborazziOptions = GLYPH_NOISE,
+                    roborazziOptions = GoldenOptions,
                 )
         }
-    }
-
-    private companion object {
-        val GLYPH_NOISE =
-            RoborazziOptions(
-                compareOptions =
-                    RoborazziOptions.CompareOptions(
-                        imageComparator = SimpleImageComparator(maxDistance = 0.015F),
-                    ),
-            )
     }
 }
