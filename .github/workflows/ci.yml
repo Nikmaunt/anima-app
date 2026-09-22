@@ -45,11 +45,12 @@ jobs:
       # build refuse to start if golden comparison is off. `--no-build-cache`
       # says the same thing a second way. The log is kept because the next step
       # is what reads it.
+      # `--continue` so one run reports every failing module, not just the first.
       - name: Tests + goldens (the whole check contour, forced to execute)
         run: |
           find . -path "*/build/test-results" -type d -exec rm -rf {} + || true
           set -o pipefail
-          ./gradlew -Panima.ci=true check --no-build-cache | tee build-check.log
+          ./gradlew -Panima.ci=true check --no-build-cache --continue | tee build-check.log
 
       # The step that makes the one above mean something. Fails if any test task
       # was UP-TO-DATE/FROM-CACHE, if the Roborazzi finalize task was SKIPPED
